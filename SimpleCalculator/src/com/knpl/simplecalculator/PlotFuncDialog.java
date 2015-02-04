@@ -52,7 +52,6 @@ public class PlotFuncDialog extends DialogFragment {
 			
 			ufd = new UserFuncDef(sig, fdn.getExpression());
 			ufd.compile();
-			
 
 			GlobalDefinitions defs = GlobalDefinitions.getInstance();
 			if(!defs.putUserFuncDef(ufd)) {

@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.PathGenerator;
-import com.knpl.simplecalculator.plot.ProgramEvalStrategy;
+import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
 import com.knpl.simplecalculator.plot.RegularPathGenerator;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.Evaluate;
@@ -37,7 +37,7 @@ public abstract class Expr extends Node {
 			ArrayList<PathGenerator> pglist = new ArrayList<PathGenerator>(1);
 			pglist.add(
 				new RegularPathGenerator(
-					new ProgramEvalStrategy(compile.getProgram())
+					new ProgramXtoYMapper(compile.getProgram())
 				)
 			);
 			

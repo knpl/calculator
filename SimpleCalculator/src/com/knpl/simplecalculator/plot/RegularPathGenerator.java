@@ -12,15 +12,15 @@ public class RegularPathGenerator implements PathGenerator {
 		DRAW, SKIP;
 	}
 	
-	private EvalStrategy _evalStrategy;
+	private Mapper _evalStrategy;
 	private float[] _data;
 	private int _nsamples;
 	
-	public RegularPathGenerator(EvalStrategy evalStrategy) {
+	public RegularPathGenerator(Mapper evalStrategy) {
 		this(evalStrategy, DEFAULT_NSAMPLES);
 	}
 	
-	public RegularPathGenerator(EvalStrategy evalStrategy, int nsamples) {
+	public RegularPathGenerator(Mapper evalStrategy, int nsamples) {
 		_evalStrategy = evalStrategy;
 		_nsamples = nsamples;
 		_data = null;
@@ -37,7 +37,7 @@ public class RegularPathGenerator implements PathGenerator {
 	public Path generatePath(Axis x, Axis y) {
 		float[] data = getData();
 		RectF window = new RectF(x.min, y.min, x.max, y.max);
-		_evalStrategy.execute(data, x);
+		_evalStrategy.map(data, x, y);
 		x.modelToView(data, 0, 2);
 		y.modelToView(data, 1, 2);
 		return trace(window);

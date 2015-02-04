@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.knpl.simplecalculator.PlotFuncDialog.PlotFuncDialogListener;
 import com.knpl.simplecalculator.plot.PathGenerator;
-import com.knpl.simplecalculator.plot.ProgramEvalStrategy;
+import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
 import com.knpl.simplecalculator.plot.RegularPathGenerator;
 
 public class PlotMenuFragment extends ListFragment implements PlotFuncDialogListener {
@@ -120,7 +120,7 @@ public class PlotMenuFragment extends ListFragment implements PlotFuncDialogList
 		for (UserFuncDef ufd : ufds) {
 			try {
 				p = ufd.getProgram();
-				pglist.add(new RegularPathGenerator(new ProgramEvalStrategy(p)));
+				pglist.add(new RegularPathGenerator(new ProgramXtoYMapper(p)));
 			}
 			catch (Exception e) {
 	    		e.printStackTrace();

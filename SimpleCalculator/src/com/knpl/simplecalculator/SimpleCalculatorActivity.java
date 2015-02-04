@@ -3,7 +3,6 @@ package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
 import com.knpl.simplecalculator.nodes.Node;
-import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Axis;
