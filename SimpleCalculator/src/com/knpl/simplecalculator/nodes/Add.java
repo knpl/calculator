@@ -1,0 +1,21 @@
+package com.knpl.simplecalculator.nodes;
+
+import com.knpl.simplecalculator.visitors.Visitor;
+
+
+public class Add extends BinOp {
+	
+	public Add(Expr lhs, Expr rhs) {
+		super(lhs, rhs);
+	}
+
+	@Override
+	public String getOpString() {
+		return "+";
+	}
+
+	@Override
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
+	}
+}
