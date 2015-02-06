@@ -7,16 +7,16 @@ public class ProgramThetaToRMapper implements Mapper {
 	private static final long serialVersionUID = 2595871216194630358L;
 	
 	private Program program;
-	private Axis t;
+	private Axis deltaphi;
 	
-	public ProgramThetaToRMapper(Program program, Axis t) {
+	public ProgramThetaToRMapper(Program program, Axis deltaphi) {
 		this.program = program;
-		this.t = t;
+		this.deltaphi = deltaphi;
 	}
 	
 	@Override
 	public void map(float[] data, Axis xaxis, Axis yaxis) {
-		t.generate(data, 0, 2);
+		deltaphi.generate(data, 0, 2);
 		program.evaluate(data, 1, 2, data, 0, 2);
 		
 		double theta, r;

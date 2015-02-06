@@ -9,20 +9,26 @@ import com.knpl.simplecalculator.nodes.*;
 
 public class Resolve extends Visitor {
 	
-	private Map<String,Var> freeVariableMap;
-	private Map<String,Var> boundedVariableMap;
+	private Map<String,Var> freeVarMap;
+	private Map<String,Var> boundedVarMap;
 	
 	public Resolve() {
-		freeVariableMap = new HashMap<String,Var>();
-		boundedVariableMap = new HashMap<String,Var>();
+		freeVarMap = new HashMap<String,Var>();
+		boundedVarMap = new HashMap<String,Var>();
 	}
 	
-	public Map<String, Var> getFreeVariableMap()  {
-		return freeVariableMap;
+	public Resolve(Map<String, Var> boundedVarMap) {
+		freeVarMap = new HashMap<String, Var>();
+		this.boundedVarMap = boundedVarMap;
 	}
 	
-	public Map<String, Var> getBoundedVariableMap() {
-		return boundedVariableMap;
+	
+	public Map<String, Var> getFreeVarMap()  {
+		return freeVarMap;
+	}
+	
+	public Map<String, Var> getBoundedVarMap() {
+		return boundedVarMap;
 	}
 	
 	@Override
@@ -36,7 +42,7 @@ public class Resolve extends Visitor {
 	@Override
 	public Node visit(Signature node) throws Exception {
 		for (Var param : node.getParameters()) {
-			boundedVariableMap.put(param.getName(), param);
+			boundedVarMap.put(param.getName(), param);
 		}
 		return node;
 	}
@@ -63,11 +69,11 @@ public class Resolve extends Visitor {
 	public Node visit(Var node) throws Exception {
 		String name = node.getName();
 		
-		Var variable = boundedVariableMap.get(name);
+		Var variable = boundedVarMap.get(name);
 		if (variable != null)
 			return variable;
 		
-		variable = freeVariableMap.get(name);
+		variable = freeVarMap.get(name);
 		if (variable != null)
 			return variable;
 		
@@ -75,7 +81,7 @@ public class Resolve extends Visitor {
 		if (constant != null)
 			return constant;
 		
-		freeVariableMap.put(name, node);
+		freeVarMap.put(name, node);
 		
 		return node;
 	}

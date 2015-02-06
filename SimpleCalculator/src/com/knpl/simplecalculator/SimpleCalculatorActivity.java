@@ -2,13 +2,17 @@ package com.knpl.simplecalculator;
 
 
 import java.util.ArrayList;
+
+import com.knpl.simplecalculator.PlotMenuFragment.PlotEntry;
 import com.knpl.simplecalculator.nodes.Node;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Axis;
-import com.knpl.simplecalculator.plot.PathGenerator;
+import com.knpl.simplecalculator.plot.Mapper;
+import com.knpl.simplecalculator.util.Pair;
 
 import android.content.res.Configuration;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -50,7 +54,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 						yaxis = DEFAULT_AXIS;
 	
 	private static PlotFragment plotFragment = 
-			PlotFragment.createPlotFragment(new ArrayList<PathGenerator>(), xaxis, yaxis);
+			PlotFragment.createPlotFragment(new ArrayList<Pair<Mapper, Integer>>(), xaxis, yaxis);
 	
 	private static int currentFragmentPosition;
 	
@@ -205,8 +209,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     	}
     }
     
-    public void plot(ArrayList<PathGenerator> pglist) {
-    	plotFragment = PlotFragment.createPlotFragment(pglist, xaxis, yaxis);
+    public void plot(ArrayList<Pair<Mapper, Integer>> mappers) {
+    	plotFragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
     	setFragment(PLOT_FRAGMENT_POSITION, true);
     }
    
@@ -236,12 +240,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	}
 
 	@Override
-	public void addUserFuncDef(UserFuncDef ufd) {
-		plotmenuFragment.addUserFuncDef(ufd);
-	}
-
-	@Override
-	public void removeUserFuncDef(int position) {
-		plotmenuFragment.removeUserFuncDef(position);
+	public void addPlotEntry(PlotEntry plotEntry) {
+		plotmenuFragment.addPlotEntry(plotEntry);
 	}
 }

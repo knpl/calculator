@@ -1,15 +1,17 @@
 package com.knpl.simplecalculator.plot;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
+import com.knpl.simplecalculator.util.Pair;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -17,12 +19,6 @@ public class PlotView extends View {
 	
 	private static final DecimalFormat EFMT = new DecimalFormat("0.###E0");
 	private static final DecimalFormat FMT = new DecimalFormat("0.###");
-
-	static {
-		DecimalFormatSymbols sym = EFMT.getDecimalFormatSymbols();
-		sym.setExponentSeparator("e");
-		EFMT.setDecimalFormatSymbols(sym);
-	}
 	
 	private static final Paint standardPaint;
 	
@@ -40,7 +36,7 @@ public class PlotView extends View {
 		standardPaint.setTextSize(16f);
 	}
 	
-	private List<PathGenerator> paths;
+	private List<Pair<Mapper, Integer>> mappers;
 	
 	private Axis xaxis,
 				 yaxis;
@@ -50,7 +46,7 @@ public class PlotView extends View {
 	public PlotView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
-		paths = null;
+		mappers = null;
 		
 		xaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
 		yaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
@@ -58,8 +54,8 @@ public class PlotView extends View {
 		ctm = new Matrix();
 	}
 	
-	public PlotView init(List<PathGenerator> paths, Axis x, Axis y) {
-		this.paths = paths;
+	public PlotView init(List<Pair<Mapper, Integer>> paths, Axis x, Axis y) {
+		this.mappers = paths;
 		this.xaxis = x;
 		this.yaxis = y;
 		
@@ -93,10 +89,92 @@ public class PlotView extends View {
 		
 		c.concat(ctm);
 
-		for (PathGenerator ppg: paths) {
-			c.drawPath(ppg.generatePath(x, y), standardPaint);
-		}	
+		float[] data = new float[512];
+		RectF window = new RectF(x.min, y.min, x.max, y.max);
+		
+		for (Pair<Mapper, Integer> pair : mappers) {
+			Mapper mapper = pair.getFirst();
+			int color = pair.getLast();
+			
+			mapper.map(data, x, y);
+			x.modelToView(data, 0, 2);
+			y.modelToView(data, 1, 2);
+			
+			standardPaint.setColor(color);
+			c.drawPath(trace(data, window), standardPaint);
+		}
+		standardPaint.setColor(Color.BLACK);
 	}
+	
+
+	
+	private static boolean ok(float x, float y) {
+		return !(Float.isNaN(x) || Float.isNaN(y) ||
+				 Float.isInfinite(x) || Float.isInfinite(y));
+	}
+	
+
+	private enum State {
+		DRAW, SKIP;
+	}
+	
+	private Path trace(float[] data, RectF window) {
+		Path path = new Path();
+		
+		State state = State.SKIP;
+		if (ok(data[0], data[1]) && window.contains(data[0], data[1])) {
+			path.moveTo(data[0], data[1]);
+			state = State.DRAW;
+		}
+		
+		for (int i = 2; i < data.length; i+=2) {
+			
+			switch (state) {
+			
+			case SKIP:
+				
+				if (ok(data[i], data[i+1]) && window.contains(data[i], data[i+1])) {
+					if (data[i-1] == Float.POSITIVE_INFINITY) {
+						path.moveTo(data[i], window.bottom);
+						path.lineTo(data[i], data[i+1]);
+					}
+					else if (data[i-1] == Float.NEGATIVE_INFINITY) {
+						path.moveTo(data[i], window.top);
+						path.lineTo(data[i], data[i+1]);
+					}
+					else if (Float.isNaN(data[i-1])) {
+						path.moveTo(data[i], data[i+1]);
+					}
+					else {
+						path.moveTo(data[i], data[i+1]);
+					}
+					state = State.DRAW;
+				}
+				break;
+				
+			case DRAW:
+				
+				if (ok(data[i], data[i+1])) {
+					if (!window.contains(data[i], data[i+1])) {
+						state = State.SKIP;
+					}
+					else {
+						path.lineTo(data[i], data[i+1]);
+					}
+				}
+				else {
+					state = State.SKIP;
+				}
+				break;
+				
+			default:
+				return path;
+			}
+		}
+		
+		return path;
+	}
+	
 
 	private void fill(float[] dst, int index, int step, float fill, int n) {
 		for (int i = index; i < step*n; i += step) {

@@ -1,13 +1,21 @@
 package com.knpl.simplecalculator;
 
-import com.knpl.simplecalculator.nodes.FuncDefNode;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import com.knpl.simplecalculator.PlotMenuFragment.PlotEntry;
+import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Signature;
+import com.knpl.simplecalculator.nodes.Var;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.visitors.Resolve;
 
+import afzkl.development.colorpickerview.dialog.ColorPickerDialog;
 import android.app.Activity;
-import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -16,63 +24,77 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 public class PlotFuncDialog extends DialogFragment {
 	
-	private EditText input;
-	private TextView message;
-	
-
 	public interface PlotFuncDialogListener {
-        void addUserFuncDef(UserFuncDef ufd);
-        void removeUserFuncDef(int position);
+        void addPlotEntry(PlotEntry plotEntry);
     }
 	
-	PlotFuncDialogListener listener;
-
-	public PlotFuncDialog() {
+	private PlotFuncDialogListener listener;
+	
+	public static PlotFuncDialog createInstance(String title, int position) {
+		PlotFuncDialog dialog = new PlotFuncDialog();
+		
+		Bundle args = new Bundle();
+		args.putString("title", title);
+		args.putInt("position", position);
+        dialog.setArguments(args);
+        
+        return dialog;
 	}
 	
-	private void confirm() {
-		Parser parser = 
-			new Parser(new Lexer(input.getText().toString().toCharArray()));
+	private void displayMessage(String message) {
+		Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+	}
+	
+	private void save(String name, String expression, int color) {
 		
-		if (!parser.definition()) {
-			message.setText("Syntax Error");
+		if (!Pattern.matches("[_a-zA-Z][_a-zA-Z0-9]*", name)) {
+			displayMessage("Invalid name: "+name);
 			return;
 		}
 		
-		FuncDefNode fdn = (FuncDefNode) parser.getResult();
-		Signature sig = fdn.getSignature();
-		UserFuncDef ufd;
+		GlobalDefinitions defs = GlobalDefinitions.getInstance();
+		if (defs.getFunctionDefinition(name)!= null) {
+			displayMessage("Function "+name+" exists.");
+			return;
+		}
 		
-		try {
-			fdn.accept(new Resolve());
+		Parser parser = 
+			new Parser(new Lexer(expression.toCharArray()));
+		
+		if (!parser.expr()) {
+			displayMessage("Syntax error: "+expression);
+			return;
+		}
+		
+		Expr expr = (Expr) parser.getResult();
+		Map<String, Var> boundedVarMap = new HashMap<String, Var>();
+		Var var = new Var("x");
+		boundedVarMap.put(var.getName(), var);
+		Resolve visitor = new Resolve(boundedVarMap);
 			
-			ufd = new UserFuncDef(sig, fdn.getExpression());
-			ufd.compile();
-
-			GlobalDefinitions defs = GlobalDefinitions.getInstance();
-			if(!defs.putUserFuncDef(ufd)) {
-				throw new Exception("Function \""+sig.getName()+"\" already defined");
+		try {	
+			expr = (Expr) expr.accept(visitor);
+			if (!visitor.getFreeVarMap().isEmpty()) {
+				displayMessage("Expression contains free variables");
+				return;
 			}
+			
+			UserFuncDef ufd = new UserFuncDef(new Signature(name, Arrays.asList(var)), expr);
+			ufd.compile();
+			
+			defs.putUserFuncDef(ufd);
+			
+			listener.addPlotEntry(new PlotEntry(ufd, expression, color));
+			getDialog().dismiss();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			message.setText("Caught Exception: "+e.getMessage());
-			return;
+			displayMessage("Caught Exception: "+e.getMessage());
 		}
-		
-		listener.addUserFuncDef(ufd);
-		getDialog().dismiss();
-	}
-	
-	private void delete(String id, int position) {
-		GlobalDefinitions defs = GlobalDefinitions.getInstance();
-		defs.removeUserFuncDef(id);
-		listener.removeUserFuncDef(position);
-		getDialog().dismiss();
 	}
 	
 	@Override
@@ -98,35 +120,57 @@ public class PlotFuncDialog extends DialogFragment {
 	{
 		View view = inflater.inflate(R.layout.fragment_dialog, container);
 		
-		Bundle args = getArguments();
-		final String name = args.getString("title");
-		final int position = args.getInt("position");
+		getDialog().setTitle("new expression");
 		
-		Dialog dialog = getDialog();
-		dialog.setTitle(args.getString("title"));
-		
-		message = (TextView) view.findViewById(R.id.function_message);
-		input = (EditText) view.findViewById(R.id.function_input);
-		Button confirm = (Button) view.findViewById(R.id.function_confirm);
-		Button delete = (Button) view.findViewById(R.id.function_delete);
-		if (position == -1) {
-			delete.setEnabled(false);
+		String defaultName = "";
+		GlobalDefinitions defs = GlobalDefinitions.getInstance();
+		for (char c = 'f'; c < 'z'; ++c) {
+			String name = ""+c;
+			if (defs.getFunctionDefinition(name) == null) {
+				defaultName = name;
+				break;
+			}
 		}
 		
-		confirm.setOnClickListener(new View.OnClickListener() {
+		final EditText fnameET = (EditText) view.findViewById(R.id.dialog_function_name);
+		final EditText fexprET = (EditText) view.findViewById(R.id.dialog_expression);
+		final Button save = (Button) view.findViewById(R.id.dialog_save);
+		final Button pickColor = (Button) view.findViewById(R.id.dialog_color_pick);
+		
+		final ColorPickerDialog colorDialog = new ColorPickerDialog(getActivity(), 0xFF000000);
+		colorDialog.setAlphaSliderVisible(true);
+		colorDialog.setTitle("Pick a Color");
+		
+		colorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				confirm();
+			public void onClick(DialogInterface dialog, int which) {
+				pickColor.setBackgroundColor(colorDialog.getColor());
 			}
 		});
 		
-		delete.setOnClickListener(new View.OnClickListener() {
+		colorDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		
+		fnameET.setText(defaultName);
+		
+		save.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				delete(name, position);
+				save(fnameET.getText().toString(), fexprET.getText().toString(), colorDialog.getColor());
+			}
+		});
+		
+		pickColor.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				colorDialog.show();
 			}
 		});
 		
 		return view;
 	}
+	
 }

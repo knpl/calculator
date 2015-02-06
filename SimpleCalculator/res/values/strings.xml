@@ -22,6 +22,13 @@
         <item>Plot menu</item>
     </string-array>
     
+    <string-array name="mappertypes">
+        <item>x to y</item>
+        <item>y to x</item>
+        <item>theta to r</item>
+        <item>parametric</item>
+    </string-array>
+    
     <string-array name="axistypes">
         <item>Linear</item>
         <item>Logarithmic</item>

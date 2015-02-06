@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knpl.simplecalculator.plot.Axis;
+import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.PathGenerator;
 import com.knpl.simplecalculator.plot.PlotView;
+import com.knpl.simplecalculator.util.Pair;
+
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +25,11 @@ public class PlotFragment extends Fragment {
 		 return initPlotFragment(v);
 	}
 	
-	public static PlotFragment createPlotFragment(ArrayList<PathGenerator> paths, Axis x, Axis y) {
+	public static PlotFragment createPlotFragment(ArrayList<Pair<Mapper, Integer>> mappers, Axis x, Axis y) {
 		PlotFragment fragment = new PlotFragment();
 		Bundle args = new Bundle();
 		
-		args.putSerializable("paths", paths);
+		args.putParcelableArrayList("paths", mappers);
 		args.putSerializable("xaxis", x);
 		args.putSerializable("yaxis", y);
 		fragment.setArguments(args);
@@ -35,11 +40,15 @@ public class PlotFragment extends Fragment {
 	public PlotView initPlotFragment(PlotView v) {
 		Bundle args = getArguments();
 		
+		// This works somehow.
 		@SuppressWarnings("unchecked")
-		final List<PathGenerator> paths = (ArrayList<PathGenerator>) args.getSerializable("paths");
+		final List<Pair<Mapper, Integer>> paths = 
+				(List<Pair<Mapper, Integer>>) 
+					(List<? extends Parcelable>) args.getParcelableArrayList("paths");	
 		final Axis x = (Axis) args.getSerializable("xaxis");
 		final Axis y = (Axis) args.getSerializable("yaxis");
 		
 		return v.init(paths, x, y);
 	}
+	
 }

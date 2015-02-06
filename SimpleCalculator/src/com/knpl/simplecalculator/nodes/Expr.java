@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
-import com.knpl.simplecalculator.plot.PathGenerator;
+import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
-import com.knpl.simplecalculator.plot.RegularPathGenerator;
+import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.Evaluate;
 import com.knpl.simplecalculator.visitors.Resolve;
@@ -20,7 +24,7 @@ public abstract class Expr extends Node {
 		Resolve resolve = new Resolve();
 		Expr node = (Expr) accept(resolve);
 		
-		Collection<Var> freeVariables = resolve.getFreeVariableMap().values();
+		Collection<Var> freeVariables = resolve.getFreeVarMap().values();
 		
 		int n = freeVariables.size();
 		if (n == 0) {
@@ -34,14 +38,15 @@ public abstract class Expr extends Node {
 			Compile compile = new Compile();
 			def.accept(compile);
 			
-			ArrayList<PathGenerator> pglist = new ArrayList<PathGenerator>(1);
-			pglist.add(
-				new RegularPathGenerator(
-					new ProgramXtoYMapper(compile.getProgram())
+			ArrayList<Pair<Mapper, Integer>> mappers = new ArrayList<Pair<Mapper, Integer>>(1);
+			mappers.add(
+				new Pair<Mapper, Integer>(
+					new ProgramXtoYMapper(compile.getProgram()),
+					0xFF0000FF
 				)
 			);
 			
-			calculator.plot(pglist);
+			calculator.plot(mappers);
 		}
 		else {
 			calculator.print("Can't plot expression with more than one free variable");
