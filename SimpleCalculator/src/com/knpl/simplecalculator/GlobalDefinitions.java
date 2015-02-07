@@ -96,15 +96,9 @@ public class GlobalDefinitions {
 		return result;
 	}
 	
-	public boolean putUserFuncDef(UserFuncDef ufd) {
-		boolean result = false;
-		String newname = ufd.getSignature().getName();
-		FunctionDefinition f = builtinFuncDefMap.get(newname);
-		if (f == null) {
-			userFuncDefMap.put(newname, ufd);
-			result = true;
-		}
-		return result;
+	public UserFuncDef putUserFuncDef(UserFuncDef ufd) {
+		String name = ufd.getSignature().getName();
+		return userFuncDefMap.put(name, ufd);
 	}
 	
 }

@@ -41,8 +41,7 @@ public abstract class Expr extends Node {
 			ArrayList<Pair<Mapper, Integer>> mappers = new ArrayList<Pair<Mapper, Integer>>(1);
 			mappers.add(
 				new Pair<Mapper, Integer>(
-					new ProgramXtoYMapper(compile.getProgram()),
-					0xFF0000FF
+					new ProgramXtoYMapper(compile.getProgram()), Color.BLUE
 				)
 			);
 			

@@ -11,12 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.knpl.simplecalculator.PlotFuncDialog.PlotFuncDialogListener;
+import com.knpl.simplecalculator.PlotEntryDialog.PlotEntryDialogListener;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
 import com.knpl.simplecalculator.util.Pair;
 
-public class PlotMenuFragment extends ListFragment implements PlotFuncDialogListener {
+public class PlotMenuFragment extends ListFragment implements PlotEntryDialogListener {
 	
 	public static class PlotEntry {
 		private final UserFuncDef userFuncDef;
@@ -64,22 +64,20 @@ public class PlotMenuFragment extends ListFragment implements PlotFuncDialogList
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {	
-		UserFuncDef ufd = (UserFuncDef) getListAdapter().getItem(position);
-		showDialog(ufd, position);
+		PlotEntry entry = (PlotEntry) getListAdapter().getItem(position);
+		showDialog(entry, position);
 		
 		super.onListItemClick(l, v, position, id);
 	}
 	
-	
-	
 	private void showDialog() {
-		PlotFuncDialog dialog = PlotFuncDialog.createInstance("new expression", -1);
+		PlotEntryDialog dialog = PlotEntryDialog.createInstance();
         dialog.show(getChildFragmentManager(), null);
 	}
 	
-	private void showDialog(UserFuncDef ufd, int position) {
-		PlotFuncDialog dialog = 
-				PlotFuncDialog.createInstance(ufd.getSignature().getName(), position);
+	private void showDialog(PlotEntry entry, int position) {
+		PlotEntryDialog dialog = 
+				PlotEntryDialog.createInstance(entry, position);
         dialog.show(getChildFragmentManager(), null);
 	}
 
@@ -146,10 +144,21 @@ public class PlotMenuFragment extends ListFragment implements PlotFuncDialogList
 	}
 
 	@Override
-	public void addPlotEntry(PlotEntry plotEntry) {
-		plotEntries.add(plotEntry);
-		PlotEntryAdapter adapter = (PlotEntryAdapter) getListAdapter();
-		adapter.notifyDataSetChanged();
+	public void addPlotEntry(PlotEntry entry) {
+		plotEntries.add(entry);
+		((PlotEntryAdapter) getListAdapter()).notifyDataSetChanged();
+	}
+	
+	@Override
+	public void setPlotEntry(int position, PlotEntry entry) {
+		plotEntries.set(position, entry);
+		((PlotEntryAdapter) getListAdapter()).notifyDataSetChanged();
+	}
+
+	@Override
+	public void removePlotEntry(int position) {
+		plotEntries.remove(position);
+		((PlotEntryAdapter) getListAdapter()).notifyDataSetChanged();
 	}
 }
 

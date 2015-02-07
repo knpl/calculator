@@ -5,11 +5,9 @@ import java.util.List;
 
 import com.knpl.simplecalculator.plot.Axis;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.plot.PathGenerator;
 import com.knpl.simplecalculator.plot.PlotView;
 import com.knpl.simplecalculator.util.Pair;
 
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -40,7 +38,7 @@ public class PlotFragment extends Fragment {
 	public PlotView initPlotFragment(PlotView v) {
 		Bundle args = getArguments();
 		
-		// This works somehow.
+		// Avert your eyes.
 		@SuppressWarnings("unchecked")
 		final List<Pair<Mapper, Integer>> paths = 
 				(List<Pair<Mapper, Integer>>) 

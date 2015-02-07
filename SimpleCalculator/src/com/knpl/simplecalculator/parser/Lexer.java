@@ -1,15 +1,18 @@
 package com.knpl.simplecalculator.parser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 
 public class Lexer {
 	private int i;
-	private char[] text;
+	final String input;
+	final int len;
 	
-	public Lexer(char[] text) {
+	public Lexer(String input) {
 		i = 0;
-		this.text = text;
+		this.input = input;
+		this.len = input.length();
 	}
 	
 	public void print(PrintStream out) {
@@ -23,11 +26,20 @@ public class Lexer {
 		while (type != TokenType.EOF && type != TokenType.INVALID);
 	}
 	
+	@Override
+	public String toString() {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(baos);
+		print(out);
+		out.close();
+		return baos.toString();
+	}
+	
 	public Token nextToken() {
 		Token result = null;
 		
-		while (result==null && i<text.length) {
-			switch (text[i]) {
+		while (result==null && i < len) {
+			switch (input.charAt(i)) {
 				case ' ': case '\r': case '\n': case '\t':
 					i+=1;
 					break;
@@ -72,22 +84,29 @@ public class Lexer {
 					i+=1;
 					break;
 				default:
-					result = definition();
-					if (result == null) result = numeric();
-					if (result == null) result = identifier();
-					if (result == null) {
-						result = new Token(TokenType.INVALID, ""+text[i]);
-						i+=1;
+					try {
+						result = definition();
+						if (result == null) result = numeric();
+						if (result == null) result = identifier();
+						if (result == null) {
+							result = new Token(TokenType.INVALID, ""+input.charAt(i));
+							i += 1;
+						}
+					}
+					catch (IndexOutOfBoundsException e) {
+						String s  = input.substring(i);
+						result = new Token(TokenType.INVALID, s);
+						i += s.length();
 					}
 			}
 		}
 		
-		return result == null ? new Token(TokenType.EOF, "EOF") : result;
+		return (result == null) ? new Token(TokenType.EOF, "EOF") : result;
 	}
 	
 	private Token definition() {
 		Token result = null;
-		if (i+2 < text.length && text[i] == 'd' && text[i+1] == 'e' && text[i+2] == 'f') {
+		if (input.startsWith("def", i)) {
 			result = new Token(TokenType.DEF, "def");
 			i+=3;
 		}
@@ -98,35 +117,59 @@ public class Lexer {
 		Token result = null;
 		int start = i;
 		
-		if (i   < text.length && text[i] == '.' &&
-			i+1 < text.length && '0' <= text[i+1] && text[i+1] <= '9') {
-			
-			i+=2;
-			while (i < text.length && '0' <= text[i] && text[i] <= '9') {
-				i+=1;
+		char c = input.charAt(i);
+		
+		if (c == '.') {
+			if (i+1 >= len) {
+				return null;
 			}
+			
+			c = input.charAt(i+1);
+			if (!('0' <= c && c <= '9')) {
+				return null;
+			}
+					
+			i += 2;
+			while (i < len) {
+				c = input.charAt(i);
+				if (!('0' <= c && c <= '9')) {
+					break;
+				}
+				i += 1;
+			}
+			
 		}
 		else {
-			if (i < text.length && text[i] == '0') {
+			if (c == '0') { /* Must immediately be followed by dot */
 				i+=1;
 			}
-			else if (i < text.length && '1' <= text[i] && text[i] <= '9') {
-				i+=1;
-				while (i < text.length && '0' <= text[i] && text[i] <= '9') {
-					i+=1;
+			else if ('1' <= c && c <= '9') { /* Can contain more digits before dot */
+				
+				i += 1;
+				while (i < len) {
+					c = input.charAt(i);
+					if (!('0' <= c && c <= '9')) {
+						break;
+					}
+					i += 1;
 				}
+				
 			}
 			
-			if (i > start && i < text.length && text[i] == '.') {
-				i+=1;
-				while (i < text.length && '0' <= text[i] && text[i] <= '9') {
-					i+=1;
+			if (i > start && i < len && input.charAt(i) == '.') {
+				i += 1;
+				while (i < len) {
+					c = input.charAt(i);
+					if (!('0' <= c && c <= '9')) {
+						break;
+					}
+					i += 1;
 				}
 			}
 		}
 		
 		if (i > start) {
-			result = new Token(TokenType.NUM, new String(text, start, i-start));
+			result = new Token(TokenType.NUM, input.substring(start, i));
 		}
 		
 		return result;
@@ -134,14 +177,16 @@ public class Lexer {
 	
 	private Token identifier() {
 		Token result = null;
+		char c;
 		int start = i;
 		
-		if (i < text.length && isIdentifierStart(text[i])) {
+		c = input.charAt(i);
+		if (isIdentifierStart(c)) {
 			i+=1;
-			while (i < text.length && isIdentifier(text[i])) {
+			while (i < len && isIdentifier(input.charAt(i))) {
 				i+=1;
 			}
-			result = new Token(TokenType.ID, new String(text, start, i-start));
+			result = new Token(TokenType.ID, input.substring(start, i));
 		}
 		
 		return result;

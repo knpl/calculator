@@ -65,6 +65,7 @@ public class PlotView extends View {
 	
 	@Override
 	protected void onDraw(Canvas c) {
+		setBackgroundColor(Color.WHITE);
 		super.onDraw(c);
 		
 		final float screenwidth  = getWidth(),
@@ -86,11 +87,10 @@ public class PlotView extends View {
 		ctm.preTranslate(-x.min, -y.min);
 		
 		drawAxes(c, ctm, x, y);
-		
-		c.concat(ctm);
 
 		float[] data = new float[512];
 		RectF window = new RectF(x.min, y.min, x.max, y.max);
+		ctm.mapRect(window);
 		
 		for (Pair<Mapper, Integer> pair : mappers) {
 			Mapper mapper = pair.getFirst();
@@ -99,6 +99,8 @@ public class PlotView extends View {
 			mapper.map(data, x, y);
 			x.modelToView(data, 0, 2);
 			y.modelToView(data, 1, 2);
+			
+			ctm.mapPoints(data);
 			
 			standardPaint.setColor(color);
 			c.drawPath(trace(data, window), standardPaint);
@@ -113,18 +115,16 @@ public class PlotView extends View {
 				 Float.isInfinite(x) || Float.isInfinite(y));
 	}
 	
-
-	private enum State {
-		DRAW, SKIP;
-	}
+	private static final int DRAW = 0,
+							 SKIP = 1;
 	
 	private Path trace(float[] data, RectF window) {
 		Path path = new Path();
 		
-		State state = State.SKIP;
+		int state = SKIP;
 		if (ok(data[0], data[1]) && window.contains(data[0], data[1])) {
 			path.moveTo(data[0], data[1]);
-			state = State.DRAW;
+			state = DRAW;
 		}
 		
 		for (int i = 2; i < data.length; i+=2) {
@@ -146,9 +146,10 @@ public class PlotView extends View {
 						path.moveTo(data[i], data[i+1]);
 					}
 					else {
-						path.moveTo(data[i], data[i+1]);
+						path.moveTo(data[i-2], data[i-1]);
+						path.lineTo(data[i], data[i+1]);
 					}
-					state = State.DRAW;
+					state = DRAW;
 				}
 				break;
 				
@@ -156,14 +157,12 @@ public class PlotView extends View {
 				
 				if (ok(data[i], data[i+1])) {
 					if (!window.contains(data[i], data[i+1])) {
-						state = State.SKIP;
+						state = SKIP;
 					}
-					else {
-						path.lineTo(data[i], data[i+1]);
-					}
+					path.lineTo(data[i], data[i+1]);
 				}
 				else {
-					state = State.SKIP;
+					state = SKIP;
 				}
 				break;
 				

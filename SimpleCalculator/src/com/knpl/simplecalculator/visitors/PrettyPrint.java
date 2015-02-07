@@ -36,7 +36,7 @@ public class PrettyPrint extends Visitor {
 	
 	@Override
 	public Node visit(Func node) throws Exception {
-		out.print("!"+node.getName()+"(");
+		out.print(node.getName()+"(");
 		List<Expr> args = node.getArguments();
 		for (int i = 0; i < args.size()-1; ++i) {
 			args.get(i).accept(this);

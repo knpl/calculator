@@ -36,7 +36,7 @@ import android.widget.TextView;
 public class SimpleCalculatorActivity extends ActionBarActivity
 	implements PlotOptionsFragment.OptionsListener,
 			   PlotMenuFragment.PlotListener,
-			   PlotFuncDialog.PlotFuncDialogListener
+			   PlotEntryDialog.PlotEntryDialogListener
 {
 	
 	public static final int MAIN_FRAGMENT_POSITION = 0,
@@ -192,7 +192,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     
     public void enter(View view) {
     	EditText input = (EditText) findViewById(R.id.input);
-    	Parser parser = new Parser(new Lexer(input.getText().toString().toCharArray()));
+    	Parser parser = new Parser(new Lexer(input.getText().toString()));
     	if (!parser.start()) {
     		print("Syntax error");
     		return;
@@ -240,7 +240,17 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	}
 
 	@Override
-	public void addPlotEntry(PlotEntry plotEntry) {
-		plotmenuFragment.addPlotEntry(plotEntry);
+	public void addPlotEntry(PlotEntry entry) {
+		plotmenuFragment.addPlotEntry(entry);
+	}
+	
+	@Override
+	public void setPlotEntry(int position, PlotEntry entry) {
+		plotmenuFragment.setPlotEntry(position, entry);
+	}
+
+	@Override
+	public void removePlotEntry(int position) {
+		plotmenuFragment.removePlotEntry(position);
 	}
 }

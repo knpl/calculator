@@ -26,27 +26,20 @@ public class FuncDefNode extends Node {
 	
 	@Override
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
-		Resolve resolve = new Resolve();
-		accept(resolve);
-		
-		UserFuncDef ufd = new UserFuncDef(sig, expression);
-		ufd.compile();
-		
 		GlobalDefinitions defs = GlobalDefinitions.getInstance();
-		if(!defs.putUserFuncDef(ufd)) {
+		if (defs.getFunctionDefinition(sig.getName()) != null) {
 			throw new Exception("Function \""+sig+"\" already defined");
 		}
 		
+		Resolve resolve = new Resolve();
+		accept(resolve);
+		UserFuncDef ufd = new UserFuncDef(sig, expression);
+		ufd.compile();
+		
+		defs.putUserFuncDef(ufd);
+		
 		calculator.print("Defined function \""+sig+"\"");
 	}
-	
-//	public String getName() {
-//		return sig.getName();
-//	}
-//	
-//	public List<Var> getParameters() {
-//		return sig.getParameters();
-//	}
 	
 	public Signature getSignature() {
 		return sig;
