@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.knpl.simplecalculator.UserFuncDef;
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
+import com.knpl.simplecalculator.util.UserFuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserFunc extends Func {

@@ -9,6 +9,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Axis;
 import com.knpl.simplecalculator.plot.Mapper;
+import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.res.Configuration;

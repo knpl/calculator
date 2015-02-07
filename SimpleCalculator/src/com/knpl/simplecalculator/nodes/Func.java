@@ -2,7 +2,7 @@ package com.knpl.simplecalculator.nodes;
 
 import java.util.List;
 
-import com.knpl.simplecalculator.FunctionDefinition;
+import com.knpl.simplecalculator.util.FunctionDefinition;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class Func extends Expr {

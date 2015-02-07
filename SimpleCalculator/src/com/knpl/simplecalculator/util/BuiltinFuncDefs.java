@@ -1,4 +1,4 @@
-package com.knpl.simplecalculator;
+package com.knpl.simplecalculator.util;
 
 import java.util.Arrays;
 import java.util.List;

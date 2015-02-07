@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knpl.simplecalculator.ByteCodes;
-import com.knpl.simplecalculator.Program;
-import com.knpl.simplecalculator.UserFuncDef;
 import com.knpl.simplecalculator.nodes.Builtins.*;
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.util.ByteCodes;
+import com.knpl.simplecalculator.util.Program;
+import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class Compile extends Visitor {
 	

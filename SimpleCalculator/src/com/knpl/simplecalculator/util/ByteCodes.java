@@ -1,4 +1,4 @@
-package com.knpl.simplecalculator;
+package com.knpl.simplecalculator.util;
 
 public class ByteCodes {
 	public static final int

@@ -1,4 +1,4 @@
-package com.knpl.simplecalculator;
+package com.knpl.simplecalculator.util;
 
 import com.knpl.simplecalculator.nodes.Call;
 import com.knpl.simplecalculator.nodes.Func;

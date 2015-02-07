@@ -3,10 +3,10 @@ package com.knpl.simplecalculator.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.knpl.simplecalculator.Program;
 import com.knpl.simplecalculator.nodes.Builtins.*;
-import com.knpl.simplecalculator.UserFuncDef;
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.util.Program;
+import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class Evaluate extends Visitor {
 	

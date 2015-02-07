@@ -1,4 +1,4 @@
-package com.knpl.simplecalculator;
+package com.knpl.simplecalculator.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class Program implements Serializable {
 	

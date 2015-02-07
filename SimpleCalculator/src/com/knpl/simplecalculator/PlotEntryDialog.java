@@ -9,6 +9,8 @@ import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.nodes.Var;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
+import com.knpl.simplecalculator.util.GlobalDefinitions;
+import com.knpl.simplecalculator.util.UserFuncDef;
 import com.knpl.simplecalculator.visitors.Resolve;
 
 import afzkl.development.colorpickerview.dialog.ColorPickerDialog;

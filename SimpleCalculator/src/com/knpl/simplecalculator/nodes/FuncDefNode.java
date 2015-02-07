@@ -2,9 +2,9 @@ package com.knpl.simplecalculator.nodes;
 
 import java.util.List;
 
-import com.knpl.simplecalculator.GlobalDefinitions;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
-import com.knpl.simplecalculator.UserFuncDef;
+import com.knpl.simplecalculator.util.GlobalDefinitions;
+import com.knpl.simplecalculator.util.UserFuncDef;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 

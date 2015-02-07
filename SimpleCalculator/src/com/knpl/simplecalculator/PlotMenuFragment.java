@@ -15,6 +15,8 @@ import com.knpl.simplecalculator.PlotEntryDialog.PlotEntryDialogListener;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
 import com.knpl.simplecalculator.util.Pair;
+import com.knpl.simplecalculator.util.Program;
+import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class PlotMenuFragment extends ListFragment implements PlotEntryDialogListener {
 	

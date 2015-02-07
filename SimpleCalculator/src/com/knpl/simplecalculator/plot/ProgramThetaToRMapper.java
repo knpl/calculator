@@ -1,6 +1,6 @@
 package com.knpl.simplecalculator.plot;
 
-import com.knpl.simplecalculator.Program;
+import com.knpl.simplecalculator.util.Program;
 
 public class ProgramThetaToRMapper implements Mapper {
 

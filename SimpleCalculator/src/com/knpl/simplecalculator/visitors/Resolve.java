@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knpl.simplecalculator.GlobalDefinitions;
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.util.GlobalDefinitions;
 
 public class Resolve extends Visitor {
 	

@@ -1,6 +1,6 @@
 package com.knpl.simplecalculator.plot;
 
-import com.knpl.simplecalculator.Program;
+import com.knpl.simplecalculator.util.Program;
 
 public class ProgramYtoXMapper implements Mapper {
 	private static final long serialVersionUID = 2595871216194630358L;
