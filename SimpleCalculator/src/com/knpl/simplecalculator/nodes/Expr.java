@@ -2,13 +2,12 @@ package com.knpl.simplecalculator.nodes;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
@@ -24,7 +23,7 @@ public abstract class Expr extends Node {
 		Resolve resolve = new Resolve();
 		Expr node = (Expr) accept(resolve);
 		
-		Collection<Var> freeVariables = resolve.getFreeVarMap().values();
+		Map<String, Var> freeVariables = resolve.getFreeVarMap();
 		
 		int n = freeVariables.size();
 		if (n == 0) {
@@ -32,9 +31,8 @@ public abstract class Expr extends Node {
 			calculator.print(Double.toString((Double)node.accept(v)));
 		}
 		else if (n == 1) {
-			List<Var> params = new ArrayList<Var>(1);
-			params.add(freeVariables.iterator().next());
-			FuncDefNode def = new FuncDefNode("expression", params, node);
+			Var var = freeVariables.values().iterator().next();
+			FuncDefNode def = new FuncDefNode(new Signature("expression", Arrays.asList(var)), node);
 			Compile compile = new Compile();
 			def.accept(compile);
 			

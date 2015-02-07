@@ -11,6 +11,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.UserFuncDef;
+import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 
 import afzkl.development.colorpickerview.dialog.ColorPickerDialog;
@@ -57,7 +58,7 @@ public class PlotEntryDialog extends DialogFragment implements View.OnClickListe
 		
 		Bundle args = new Bundle();
 		args.putString("title", ""+entry.getUserFuncDef().getSignature().getName());
-		args.putString("description", entry.getDescription());
+		args.putString("description", entry.getUserFuncDef().getDescription());
 		args.putInt("color", entry.getColor());
 		args.putInt("position", position);
         dialog.setArguments(args);
@@ -73,7 +74,7 @@ public class PlotEntryDialog extends DialogFragment implements View.OnClickListe
 			listener = (PlotEntryDialogListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet DialogFragment.PlotFuncDialogListener");
+					+ " must implement DialogFragment.PlotFuncDialogListener");
 		}
 	}
 
@@ -252,8 +253,21 @@ public class PlotEntryDialog extends DialogFragment implements View.OnClickListe
 			displayMessage("Resolve error: undeclared variables " + vars);
 			return;
 		}
+		
+		Signature s = new Signature(name, Arrays.asList(var));
+		String d;
+		try {
+			PrettyPrint prettyPrint = new PrettyPrint();
+			e.accept(prettyPrint);
+			d = prettyPrint.toString();
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			displayMessage("Error: "+ex.getMessage());
+			return;
+		}
 			
-		UserFuncDef ufd = new UserFuncDef(new Signature(name, Arrays.asList(var)), e);
+		UserFuncDef ufd = new UserFuncDef(s, d, e);
 		try {
 			ufd.compile();
 		}
@@ -266,10 +280,10 @@ public class PlotEntryDialog extends DialogFragment implements View.OnClickListe
 		defs.putUserFuncDef(ufd);
 		if (edit) {
 			int position = getArguments().getInt("position");
-			listener.setPlotEntry(position, new PlotEntry(ufd, expr, color));
+			listener.setPlotEntry(position, new PlotEntry(ufd, color));
 		}
 		else {
-			listener.addPlotEntry(new PlotEntry(ufd, expr, color));
+			listener.addPlotEntry(new PlotEntry(ufd, color));
 		}
 		
 		dismiss();

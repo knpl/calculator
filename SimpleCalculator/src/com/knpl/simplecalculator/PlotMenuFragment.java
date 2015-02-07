@@ -22,21 +22,15 @@ public class PlotMenuFragment extends ListFragment implements PlotEntryDialogLis
 	
 	public static class PlotEntry {
 		private final UserFuncDef userFuncDef;
-		private final String description;
 		private final int color;
 		
-		public PlotEntry(UserFuncDef userFuncDef, String description, int color) {
+		public PlotEntry(UserFuncDef userFuncDef, int color) {
 			this.userFuncDef = userFuncDef;
-			this.description = description;
 			this.color = color;
 		}
 		
 		public UserFuncDef getUserFuncDef() {
 			return userFuncDef;
-		}
-		
-		public String getDescription() {
-			return description;
 		}
 		
 		public int getColor() {
@@ -45,7 +39,7 @@ public class PlotMenuFragment extends ListFragment implements PlotEntryDialogLis
 		
 		@Override
 		public String toString() {
-			return userFuncDef.getSignature().toString() + " = " + description;
+			return userFuncDef.toString();
 		}
 	}
 	

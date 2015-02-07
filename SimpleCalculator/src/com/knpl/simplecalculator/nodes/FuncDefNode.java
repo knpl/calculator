@@ -1,10 +1,9 @@
 package com.knpl.simplecalculator.nodes;
 
-import java.util.List;
-
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.UserFuncDef;
+import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
@@ -13,11 +12,6 @@ public class FuncDefNode extends Node {
 	private Expr expression;
 	
 	private Signature sig;
-	
-	public FuncDefNode(String name, List<Var> parameters, Expr expression) {
-		this.sig = new Signature(name, parameters);
-		this.expression = expression;
-	}
 	
 	public FuncDefNode(Signature sig, Expr expression) {
 		this.sig = sig;
@@ -33,7 +27,11 @@ public class FuncDefNode extends Node {
 		
 		Resolve resolve = new Resolve();
 		accept(resolve);
-		UserFuncDef ufd = new UserFuncDef(sig, expression);
+		
+		PrettyPrint prettyPrint = new PrettyPrint();
+		expression.accept(prettyPrint);
+		
+		UserFuncDef ufd = new UserFuncDef(sig, prettyPrint.toString(), expression);
 		ufd.compile();
 		
 		defs.putUserFuncDef(ufd);

@@ -43,7 +43,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	public static final int MAIN_FRAGMENT_POSITION = 0,
 							OPTIONS_FRAGMENT_POSITION = 1,
 							PLOT_FRAGMENT_POSITION = 2,
-							PLOTMENU_FRAGMENT_POSITION = 3;
+							PLOTMENU_FRAGMENT_POSITION = 3,
+							FUNCDEF_FRAGMENT_POSITION = 4;
 	
 	public static final String EXTRA_MESSAGE = "com.knpl.simplecalculator.EXTRA_MESSAGE";
 	public static final Axis DEFAULT_AXIS = new Axis(-5, 5);
@@ -51,6 +52,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	private static MainFragment mainFragment = new MainFragment();
 	private static PlotOptionsFragment optionsFragment = new PlotOptionsFragment();
 	private static PlotMenuFragment plotmenuFragment = new PlotMenuFragment();
+	private static FuncDefFragment funcdefFragment = new FuncDefFragment();
 	private static Axis xaxis = DEFAULT_AXIS,
 						yaxis = DEFAULT_AXIS;
 	
@@ -58,7 +60,6 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 			PlotFragment.createPlotFragment(new ArrayList<Pair<Mapper, Integer>>(), xaxis, yaxis);
 	
 	private static int currentFragmentPosition;
-	
 	
 	private String[] items;
 	private DrawerLayout drawerLayout;
@@ -152,6 +153,9 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 				break;
 			case PLOTMENU_FRAGMENT_POSITION:
 				fragment = plotmenuFragment;
+				break;
+			case FUNCDEF_FRAGMENT_POSITION:
+				fragment = funcdefFragment;
 				break;
 			default:
 				fragment = mainFragment;
