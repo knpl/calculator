@@ -24,10 +24,13 @@ public class PlotEntryAdapter extends ArrayAdapter<PlotEntry> {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.row_layout, parent, false);
-		TextView tv = (TextView) view.findViewById(R.id.name);
+		if (convertView == null) {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = inflater.inflate(R.layout.row_layout, parent, false);	
+		}
+		
+		TextView tv = (TextView) convertView.findViewById(R.id.name);
 		tv.setText(""+plotEntries.get(position));
-		return view;
+		return convertView;
 	}
 }

@@ -20,7 +20,6 @@
     <string-array name="listitems">
         <item>Main</item>
         <item>Plot options</item>
-        <item>Plot</item>
         <item>Plot menu</item>
         <item>Function definitions</item>
     </string-array>

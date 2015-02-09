@@ -3,17 +3,14 @@ package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
 
-import com.knpl.simplecalculator.PlotMenuFragment.PlotEntry;
 import com.knpl.simplecalculator.nodes.Node;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Axis;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.res.Configuration;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,31 +33,26 @@ import android.widget.TextView;
 
 public class SimpleCalculatorActivity extends ActionBarActivity
 	implements PlotOptionsFragment.OptionsListener,
-			   PlotMenuFragment.PlotListener,
-			   PlotEntryDialog.PlotEntryDialogListener
+			   PlotMenuFragment.PlotListener
 {
+	
+	public static final String packagePrefix = "com.knpl.simplecalculator.";
 	
 	public static final int MAIN_FRAGMENT_POSITION = 0,
 							OPTIONS_FRAGMENT_POSITION = 1,
-							PLOT_FRAGMENT_POSITION = 2,
-							PLOTMENU_FRAGMENT_POSITION = 3,
-							FUNCDEF_FRAGMENT_POSITION = 4;
+							PLOTMENU_FRAGMENT_POSITION = 2,
+							FUNCDEF_FRAGMENT_POSITION = 3;
 	
-	public static final String EXTRA_MESSAGE = "com.knpl.simplecalculator.EXTRA_MESSAGE";
+	public static final String EXTRA_MESSAGE = packagePrefix+"EXTRA_MESSAGE";
 	public static final Axis DEFAULT_AXIS = new Axis(-5, 5);
 	
-	private static MainFragment mainFragment = new MainFragment();
-	private static PlotOptionsFragment optionsFragment = new PlotOptionsFragment();
-	private static PlotMenuFragment plotmenuFragment = new PlotMenuFragment();
-	private static FuncDefFragment funcdefFragment = new FuncDefFragment();
 	private static Axis xaxis = DEFAULT_AXIS,
 						yaxis = DEFAULT_AXIS;
 	
-	private static PlotFragment plotFragment = 
-			PlotFragment.createPlotFragment(new ArrayList<Pair<Mapper, Integer>>(), xaxis, yaxis);
-	
-	private static int currentFragmentPosition;
-	
+	private String[] drawerFrags = {packagePrefix+"MainFragment",
+									packagePrefix+"PlotOptionsFragment",
+									packagePrefix+"PlotMenuFragment",
+									packagePrefix+"FuncDefFragment"};
 	private String[] items;
 	private DrawerLayout drawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
@@ -70,6 +62,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
+        
+        setFragment(Fragment.instantiate(this, drawerFrags[MAIN_FRAGMENT_POSITION]), false);
             
         items = getResources().getStringArray(R.array.listitems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -80,7 +74,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         	@Override
         	public void onDrawerClosed(View v) {
         		super.onDrawerClosed(v);
-        		getSupportActionBar().setTitle(items[currentFragmentPosition]);
+        		getSupportActionBar().setTitle("Calculator");
         	}
         	
         	@Override
@@ -102,14 +96,12 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         drawerList.setOnItemClickListener( new ListView.OnItemClickListener() {
         	@Override
     		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    			drawerListClick(parent, view, position, id);
+        		setFragment(Fragment.instantiate(SimpleCalculatorActivity.this, 
+        					drawerFrags[position]), false);
+        		drawerList.setItemChecked(position, true);
+        		drawerLayout.closeDrawer(drawerList);
     		}
         });
-        
-        if (savedInstanceState == null) {
-	        GlobalDefinitions.getInstance();
-	        setFragment(MAIN_FRAGMENT_POSITION, false);
-        }
     }
     
     @Override
@@ -123,6 +115,12 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     		}
     		return true;
     	}
+    	else if (keyCode == KeyEvent.KEYCODE_BACK) {
+    		if (drawerLayout.isDrawerOpen(drawerList)) {
+    			drawerLayout.closeDrawer(drawerList);
+    			return true;
+    		}
+    	}
     	return super.onKeyDown(keyCode, event);
     }
     
@@ -132,38 +130,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     	inflater.inflate(R.menu.simple_calculator_actions, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-
-	private void drawerListClick(AdapterView<?> parent, View view, int position, long id) {
-    	setFragment(position, true);
-		drawerList.setItemChecked(position, true);
-		drawerLayout.closeDrawer(drawerList);
-    }
     
-    private void setFragment(int position, boolean addToBackStack) {
-    	Fragment fragment;
-		switch (position) {
-			case MAIN_FRAGMENT_POSITION:
-				fragment = mainFragment;
-				break;
-			case OPTIONS_FRAGMENT_POSITION:
-				fragment = optionsFragment;
-				break;
-			case PLOT_FRAGMENT_POSITION:
-				fragment = plotFragment;
-				break;
-			case PLOTMENU_FRAGMENT_POSITION:
-				fragment = plotmenuFragment;
-				break;
-			case FUNCDEF_FRAGMENT_POSITION:
-				fragment = funcdefFragment;
-				break;
-			default:
-				fragment = mainFragment;
-				position = MAIN_FRAGMENT_POSITION;
-		}
-		currentFragmentPosition = position;
-		getSupportActionBar().setTitle(items[position]);
-		
+    private void setFragment(Fragment fragment, boolean addToBackStack) {
 		FragmentManager fm = getSupportFragmentManager();
     	FragmentTransaction ft = fm.beginTransaction();
     	ft.replace(R.id.content_frame, fragment);
@@ -215,8 +183,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     }
     
     public void plot(ArrayList<Pair<Mapper, Integer>> mappers) {
-    	plotFragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
-    	setFragment(PLOT_FRAGMENT_POSITION, true);
+    	PlotFragment fragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
+    	setFragment(fragment, true);
     }
    
     public void print(String s) {
@@ -242,20 +210,5 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	@Override
 	public Axis getYAxis() {
 		return yaxis;
-	}
-
-	@Override
-	public void addPlotEntry(PlotEntry entry) {
-		plotmenuFragment.addPlotEntry(entry);
-	}
-	
-	@Override
-	public void setPlotEntry(int position, PlotEntry entry) {
-		plotmenuFragment.setPlotEntry(position, entry);
-	}
-
-	@Override
-	public void removePlotEntry(int position) {
-		plotmenuFragment.removePlotEntry(position);
 	}
 }

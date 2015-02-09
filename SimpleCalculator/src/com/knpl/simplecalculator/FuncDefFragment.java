@@ -2,7 +2,6 @@ package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
 
-import com.knpl.simplecalculator.PlotMenuFragment.PlotEntry;
 import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.UserFuncDef;
 
@@ -31,14 +30,12 @@ public class FuncDefFragment extends ListFragment {
 						android.R.layout.simple_list_item_1, funcdefs);
 		setListAdapter(adapter);
 		
+		
 		return inflater.inflate(R.layout.fragment_funcdef, container, false);
 	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {	
-//		PlotEntry entry = (PlotEntry) getListAdapter().getItem(position);
-//		showDialog(entry, position);
-//		
 		super.onListItemClick(l, v, position, id);
 	}
 }
