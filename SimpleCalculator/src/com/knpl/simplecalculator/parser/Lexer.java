@@ -114,7 +114,6 @@ public class Lexer {
 	}
 	
 	private Token numeric() {
-		Token result = null;
 		int start = i;
 		
 		char c = input.charAt(i);
@@ -168,11 +167,42 @@ public class Lexer {
 			}
 		}
 		
-		if (i > start) {
-			result = new Token(TokenType.NUM, input.substring(start, i));
+		if (i == start) {
+			return null;
 		}
 		
-		return result;
+		if (i + 1 < len) {
+			c = input.charAt(i);
+			if (c == 'e' || c == 'E') {
+				c = input.charAt(i+1);
+				if (c == '-') {
+					if (i + 2 >= len) {
+						return null;
+					}
+					c = input.charAt(i+2);
+					if (!('0' <= c && c <= '9')) {
+						return null;
+					}
+					i += 2;
+				}
+				else if ('0' <= c && c <= '9') {
+					i += 1;
+				}
+				else {
+					return null;
+				}
+				
+				while (i < len) {
+					c = input.charAt(i);
+					if (!('0' <= c && c <= '9')) {
+						break;
+					}
+					i += 1;
+				}
+			}
+		}
+		
+		return new Token(TokenType.NUM, input.substring(start, i));
 	}
 	
 	private Token identifier() {

@@ -107,19 +107,6 @@ public class Parser {
 		return true;
 	}
 	
-//	public boolean term() {
-//		if (!factor()) return false;
-//		
-//		boolean mul = false;
-//		while ((mul = match(TokenType.MUL)) || match(TokenType.DIV)) {
-//			nextToken();
-//			Expr last = (Expr) result;
-//			if(!factor()) return false;
-//			result = mul ? new Mul(last, (Expr) result) : new Div(last, (Expr) result);
-//		}
-//		return true;
-//	}
-	
 	public boolean term() {
 		if (!factor()) return false;
 		
