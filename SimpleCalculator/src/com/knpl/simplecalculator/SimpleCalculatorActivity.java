@@ -49,10 +49,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	private static Axis xaxis = DEFAULT_AXIS,
 						yaxis = DEFAULT_AXIS;
 	
-	private String[] drawerFrags = {packagePrefix+"MainFragment",
-									packagePrefix+"PlotOptionsFragment",
-									packagePrefix+"PlotMenuFragment",
-									packagePrefix+"FuncDefFragment"};
+	private Fragment[] drawerFragments;
 	private String[] items;
 	private DrawerLayout drawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
@@ -60,11 +57,10 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	android.util.Log.d("mytag", "Activity: onCreate "+((savedInstanceState==null)? "(null)" : "(!null)"));
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
         
-        setFragment(Fragment.instantiate(this, drawerFrags[MAIN_FRAGMENT_POSITION]), false);
-            
         items = getResources().getStringArray(R.array.listitems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(
@@ -96,12 +92,28 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         drawerList.setOnItemClickListener( new ListView.OnItemClickListener() {
         	@Override
     		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        		setFragment(Fragment.instantiate(SimpleCalculatorActivity.this, 
-        					drawerFrags[position]), false);
+        		setFragment(drawerFragments[position], false);
         		drawerList.setItemChecked(position, true);
         		drawerLayout.closeDrawer(drawerList);
     		}
         });
+        
+        drawerFragments = new Fragment[] {
+        		new MainFragment(),
+        		new PlotOptionsFragment(),
+        		new PlotMenuFragment(),
+        		new FuncDefFragment()
+        };
+        
+        if (savedInstanceState == null) {	
+        	setFragment(drawerFragments[MAIN_FRAGMENT_POSITION], false);
+        }
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	android.util.Log.d("mytag", "Activity: onSaveInstanceState");
+    	super.onSaveInstanceState(outState);
     }
     
     @Override

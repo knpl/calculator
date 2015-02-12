@@ -107,52 +107,89 @@ public class Parser {
 		return true;
 	}
 	
+//	public boolean term() {
+//		if (!factor()) return false;
+//		
+//		boolean mul = false;
+//		while ((mul = match(TokenType.MUL)) || match(TokenType.DIV)) {
+//			nextToken();
+//			Expr last = (Expr) result;
+//			if(!factor()) return false;
+//			result = mul ? new Mul(last, (Expr) result) : new Div(last, (Expr) result);
+//		}
+//		return true;
+//	}
+	
 	public boolean term() {
 		if (!factor()) return false;
 		
-		boolean mul;
-		while ((mul = match(TokenType.MUL)) || match(TokenType.DIV)) {
-			nextToken();
+		while (true) {
 			Expr last = (Expr) result;
-			if(!factor()) return false;
-			result = mul ? new Mul(last, (Expr) result) : new Div(last, (Expr) result);
+			if (match(TokenType.MUL)){
+				nextToken();
+				if	(!factor()) return false;
+				result = new Mul(last, (Expr) result);
+			}
+			else if (match(TokenType.DIV)) {
+				nextToken();
+				if	(!factor()) return false;
+				result = new Div(last, (Expr) result);
+			}
+			else if (noMinusFactor()) {
+				result = new Mul(last, (Expr) result);
+			}
+			else {
+				return true;
+			}
+		}
+	}
+	
+	public boolean factor() {
+		boolean minus = false;
+		if (minus = match(TokenType.MIN)) {
+			nextToken();
+		}
+		
+		if (!terminal()) {
+			return false;
+		}
+		if (!match(TokenType.POW)){
+			if (minus) {
+				result = new Minus((Expr)result);
+			}
+			return true;
+		}
+		nextToken();
+		
+		Expr lhs = (Expr)result;
+		if (!factor()) {
+			return false;
+		}
+		result = (Node)new Pow(lhs, (Expr)result);
+		if (minus) {
+			result = new Minus((Expr)result);
 		}
 		return true;
 	}
 
-	public boolean factor() {
-		BinOp first = null, last = null, cur = null;
-		
-		if (!power()) {
+	public boolean noMinusFactor() {
+		if (!terminal()) {
 			return false;
 		}
-		
-		while (match(TokenType.POW)){
-			nextToken();
-			
-			cur = new Pow((Expr) result, null);
-			if (last == null) {
-				first = cur;
-			}
-			else {
-				last.setRHS(cur);
-			}
-			last = cur;
-			
-			if (!power()) {
-				return false;
-			}
+		if (!match(TokenType.POW)){
+			return true;
 		}
+		nextToken();
 		
-		if (last != null) {
-			last.setRHS((Expr) result);
-			result = first;
+		Expr lhs = (Expr)result;
+		if (!factor()) {
+			return false;
 		}
-		
+		result = (Node)new Pow(lhs, (Expr)result);
 		return true;
 	}
 	 	
-	public boolean power() {
+	public boolean terminal() {
 		if (match(TokenType.NUM)) {
 			result = new Num(Double.parseDouble(tok.toString()));
 			nextToken();
@@ -191,12 +228,6 @@ public class Parser {
 			if (!expr()) return false;
 			if (!match(TokenType.RPAR)) return false;
 			nextToken();
-			return true;
-		}
-		else if (match(TokenType.MIN)) {
-			nextToken();
-			if (!power()) return false;
-			result = new Minus((Expr) result);
 			return true;
 		}
 		else {

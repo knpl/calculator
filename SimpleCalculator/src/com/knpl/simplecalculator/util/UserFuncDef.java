@@ -6,13 +6,13 @@ import com.knpl.simplecalculator.visitors.Compile;
 public class UserFuncDef implements FunctionDefinition {
 	
 	private final Signature sig;
-	private final String description;
+	private final String source;
 	private final Expr expression;
 	private Program program;
 	
-	public UserFuncDef(Signature sig, String description, Expr expression) {
+	public UserFuncDef(Signature sig, String source, Expr expression) {
 		this.sig = sig;
-		this.description = description;
+		this.source = source;
 		this.expression = expression;
 		this.program = null;
 	}
@@ -28,8 +28,8 @@ public class UserFuncDef implements FunctionDefinition {
 		return new UserFunc(this, call.getArguments());
 	}
 	
-	public String getDescription() {
-		return description;
+	public String getSource() {
+		return source;
 	}
 	
 	public Expr getExpression() {
@@ -59,6 +59,6 @@ public class UserFuncDef implements FunctionDefinition {
 	
 	@Override
 	public String toString() {
-		return sig.toString()+" = "+description;
+		return source;
 	}
 }

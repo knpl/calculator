@@ -65,6 +65,7 @@ public class PlotMenuFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		android.util.Log.d("mytag", "PlotMenuFragment: onCreateView");
 		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.fragment_plotmenu, container, false);
 	}
@@ -205,7 +206,7 @@ public class PlotMenuFragment extends ListFragment {
 			if (plotEntry != null) {
 				nameEditText.setText(plotEntry.userFuncDef.getSignature().getName());
 				nameEditText.setEnabled(false);
-				exprEditText.setText(plotEntry.userFuncDef.getDescription());
+				exprEditText.setText(plotEntry.userFuncDef.getSource());
 				selectedColorIndicator.setBackgroundColor(plotEntry.color);
 				colorPickerDialog = createColorPickerDialog(plotEntry.color);
 			}
