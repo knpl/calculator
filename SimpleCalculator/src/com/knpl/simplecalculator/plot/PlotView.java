@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -20,20 +19,20 @@ public class PlotView extends View {
 	private static final DecimalFormat EFMT = new DecimalFormat("0.###E0");
 	private static final DecimalFormat FMT = new DecimalFormat("0.###");
 	
-	private static final Paint standardPaint;
+	private static final Paint linePaint;
 	
-	public static final float leftmargin 	= .5f,
-							  topmargin 	= .5f,
-							  rightmargin 	= .5f,
-							  bottommargin 	= .5f;
+	public static final float leftPadding 	= .5f,
+							  topPadding 	= .5f,
+							  rightPadding 	= .5f,
+							  bottomPadding = .5f;
 
 	static {
-		standardPaint = new Paint();
-		standardPaint.setAntiAlias(true);
-		standardPaint.setColor(Color.BLACK);
-		standardPaint.setStyle(Paint.Style.STROKE);
-		standardPaint.setStrokeWidth(0f);
-		standardPaint.setTextSize(16f);
+		linePaint = new Paint();
+		linePaint.setAntiAlias(true);
+		linePaint.setColor(Color.BLACK);
+		linePaint.setStyle(Paint.Style.STROKE);
+		linePaint.setStrokeWidth(2f);
+		linePaint.setTextSize(16f);
 	}
 	
 	private List<Pair<Mapper, Integer>> mappers;
@@ -41,7 +40,13 @@ public class PlotView extends View {
 	private Axis xaxis,
 				 yaxis;
 	
-	private Matrix ctm;
+	private float[] translate,
+					scalecenter;
+	private float   scalefactor;
+	
+	private Matrix ctm,
+				   modelToScreen,
+				   screenToModel;
 	
 	public PlotView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -51,129 +56,129 @@ public class PlotView extends View {
 		xaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
 		yaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
 		
+		translate = new float[]{0f,0f};
+		scalecenter = new float[]{0f,0f};
+		scalefactor = 1f;
+		
 		ctm = new Matrix();
+		modelToScreen = new Matrix();
+		screenToModel = new Matrix();
 	}
 	
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		
+		final float screenwidth  = w,
+					screenheight = h,
+					plotwidth    = screenwidth - (leftPadding + rightPadding),
+					plotheight   = screenheight - (topPadding + bottomPadding);
+		
+		if (plotwidth > plotheight) {
+			xaxis = xaxis.extend(plotwidth/plotheight);
+		}
+		else {
+			yaxis = yaxis.extend(plotheight/plotwidth);
+		}
+		
+		modelToScreen.reset();
+		modelToScreen.preTranslate(leftPadding, topPadding);
+		modelToScreen.preTranslate(0, plotheight);
+		modelToScreen.preScale(plotwidth, -plotheight);
+		modelToScreen.preScale(1f/(float)xaxis.len(), 1f/(float)yaxis.len());
+		modelToScreen.preTranslate(-xaxis.min, -yaxis.min);
+		
+		modelToScreen.invert(screenToModel);
+	}
+
 	public PlotView init(List<Pair<Mapper, Integer>> paths, Axis x, Axis y) {
 		this.mappers = paths;
 		this.xaxis = x;
 		this.yaxis = y;
 		
+		setOnTouchListener(PlotStates.staticState);
+		
 		return this;
 	}
 	
+	public void setTranslatePreview(float x, float y) {
+		translate[0] = x;
+		translate[1] = y;
+	}
+	
+	public void translate(float x, float y) {
+		float[] dv = new float[]{x,y};
+		
+		screenToModel.mapVectors(dv);
+		
+		xaxis = new Axis(xaxis.min - dv[0], xaxis.max - dv[0]);
+		yaxis = new Axis(yaxis.min - dv[1], yaxis.max - dv[1]);
+		
+		modelToScreen.postTranslate(x, y);
+		modelToScreen.invert(screenToModel);
+	}
+	
+
+	public void setScalePreview(float cx, float cy, float f) {
+		scalecenter[0] = cx;
+		scalecenter[1] = cy;
+		scalefactor = f;
+	}
+	
+	public void scale(float cx, float cy, float f) {
+		
+		Matrix scale = new Matrix();
+		scale.preTranslate(cx, cy);
+		scale.preScale(f, f);
+		scale.preTranslate(-cx, -cy);
+		
+		Matrix scaleInverse = new Matrix();
+		scale.invert(scaleInverse);
+		
+		float[] pts = new float[]{xaxis.min, yaxis.min, xaxis.max, yaxis.max};
+		modelToScreen.mapPoints(pts);
+		scaleInverse.mapPoints(pts);
+		screenToModel.mapPoints(pts);
+		
+		xaxis = new Axis(pts[0], pts[2]);
+		yaxis = new Axis(pts[1], pts[3]);
+		
+		modelToScreen.postConcat(scale);
+		modelToScreen.invert(screenToModel);
+	}
 	
 	@Override
 	protected void onDraw(Canvas c) {
 		setBackgroundColor(Color.WHITE);
 		super.onDraw(c);
 		
-		final float screenwidth  = getWidth(),
-					screenheight = getHeight(),
-					plotwidth    = screenwidth - (leftmargin + rightmargin),
-					plotheight   = screenheight - (topmargin + bottommargin);
-		
-		Axis x = xaxis, y = yaxis;
-		if (plotwidth > plotheight)
-			x = xaxis.extend(plotwidth/plotheight);
-		else
-			y = yaxis.extend(plotheight/plotwidth);
-
 		ctm.reset();
-		ctm.preTranslate(leftmargin, topmargin);
-		ctm.preTranslate(0, plotheight);
-		ctm.preScale(plotwidth, -plotheight);
-		ctm.preScale(1f/(float)x.len(), 1f/(float)y.len());
-		ctm.preTranslate(-x.min, -y.min);
+		ctm.preTranslate(translate[0], translate[1]);
+		ctm.preTranslate(scalecenter[0], scalecenter[1]);
+		ctm.preScale(scalefactor, scalefactor);
+		ctm.preTranslate(-scalecenter[0], -scalecenter[1]);
+		ctm.preConcat(modelToScreen);
 		
-		drawAxes(c, ctm, x, y);
+		drawAxes(c, ctm, xaxis, yaxis);
 
 		float[] data = new float[512];
-		RectF window = new RectF(x.min, y.min, x.max, y.max);
-		ctm.mapRect(window);
+		Pair<Axis, Axis> axisPair = Axis.map(xaxis, yaxis, ctm);
 		
 		for (Pair<Mapper, Integer> pair : mappers) {
 			Mapper mapper = pair.getFirst();
 			int color = pair.getLast();
 			
-			mapper.map(data, x, y);
-			x.modelToView(data, 0, 2);
-			y.modelToView(data, 1, 2);
+			mapper.map(data, xaxis, yaxis);
+			xaxis.modelToView(data, 0, 2);
+			yaxis.modelToView(data, 1, 2);
 			
 			ctm.mapPoints(data);
 			
-			standardPaint.setColor(color);
-			c.drawPath(trace(data, window), standardPaint);
+			linePaint.setColor(color);
+			c.drawPath(trace(data, axisPair.getFirst(), axisPair.getLast()), linePaint);
 		}
-		standardPaint.setColor(Color.BLACK);
+		linePaint.setColor(Color.BLACK);
 	}
-	
-
-	
-	private static boolean ok(float x, float y) {
-		return !(Float.isNaN(x) || Float.isNaN(y) ||
-				 Float.isInfinite(x) || Float.isInfinite(y));
-	}
-	
-	private static final int DRAW = 0,
-							 SKIP = 1;
-	
-	private Path trace(float[] data, RectF window) {
-		Path path = new Path();
-		
-		int state = SKIP;
-		if (ok(data[0], data[1]) && window.contains(data[0], data[1])) {
-			path.moveTo(data[0], data[1]);
-			state = DRAW;
-		}
-		
-		for (int i = 2; i < data.length; i+=2) {
-			
-			switch (state) {
-			
-			case SKIP:
-				
-				if (ok(data[i], data[i+1]) && window.contains(data[i], data[i+1])) {
-					if (data[i-1] == Float.POSITIVE_INFINITY) {
-						path.moveTo(data[i], window.bottom);
-						path.lineTo(data[i], data[i+1]);
-					}
-					else if (data[i-1] == Float.NEGATIVE_INFINITY) {
-						path.moveTo(data[i], window.top);
-						path.lineTo(data[i], data[i+1]);
-					}
-					else if (Float.isNaN(data[i-1])) {
-						path.moveTo(data[i], data[i+1]);
-					}
-					else {
-						path.moveTo(data[i-2], data[i-1]);
-						path.lineTo(data[i], data[i+1]);
-					}
-					state = DRAW;
-				}
-				break;
-				
-			case DRAW:
-				
-				if (ok(data[i], data[i+1])) {
-					if (!window.contains(data[i], data[i+1])) {
-						state = SKIP;
-					}
-					path.lineTo(data[i], data[i+1]);
-				}
-				else {
-					state = SKIP;
-				}
-				break;
-				
-			default:
-				return path;
-			}
-		}
-		
-		return path;
-	}
-	
 
 	private void fill(float[] dst, int index, int step, float fill, int n) {
 		for (int i = index; i < step*n; i += step) {
@@ -209,7 +214,7 @@ public class PlotView extends View {
 		p.moveTo(yaxisx, y.min);
 		p.lineTo(yaxisx, y.max);
 		p.transform(ctm);
-		c.drawPath(p, standardPaint);
+		c.drawPath(p, linePaint);
 		p.rewind();
 		
 		// Draw markers on x axis
@@ -222,13 +227,13 @@ public class PlotView extends View {
 			p.moveTo(markers[2*i], markers[2*i+1]);
 			p.rLineTo(0, -10);
 		}
-		c.drawPath(p, standardPaint);
+		c.drawPath(p, linePaint);
 		p.rewind();
 		
 		// Draw labels on x axis
-		standardPaint.setTextAlign(Paint.Align.CENTER);
+		linePaint.setTextAlign(Paint.Align.CENTER);
 		for (i = 0; i < n; ++i) {
-			c.drawText(labels[i], markers[2*i], markers[2*i+1] + standardPaint.ascent(), standardPaint);
+			c.drawText(labels[i], markers[2*i], markers[2*i+1] + linePaint.ascent(), linePaint);
 		}
 		
 		// Draw markers on y axis
@@ -241,13 +246,88 @@ public class PlotView extends View {
 			p.moveTo(markers[2*i], markers[2*i+1]);
 			p.rLineTo(10, 0);
 		}
-		c.drawPath(p, standardPaint);
+		c.drawPath(p, linePaint);
 		p.rewind();
 
 		// Draw labels on y axis
-		standardPaint.setTextAlign(Paint.Align.LEFT);
+		linePaint.setTextAlign(Paint.Align.LEFT);
 		for (i = 0; i < n; ++i) {
-			c.drawText(labels[i], markers[2*i] + 15, markers[2*i+1], standardPaint);
+			c.drawText(labels[i], markers[2*i] + 15, markers[2*i+1], linePaint);
 		}
 	}
+	
+	private static boolean ok(float x, float y) {
+		return !(Float.isNaN(x) || Float.isNaN(y) ||
+				 Float.isInfinite(x) || Float.isInfinite(y));
+	}
+	
+	private static final int DRAW = 0,
+							 SKIP = 1;
+	
+	private Path trace(float[] data, Axis xaxis, Axis yaxis) {
+		Path path = new Path();
+		float x, y, lastx, lasty;
+		
+		int state = SKIP;
+		x = data[0]; y = data[1];
+		if (ok(x, y) && xaxis.contains(x) && yaxis.contains(y)) {
+			path.moveTo(x, y);
+			state = DRAW;
+		}
+		lastx = x; lasty = y;
+		
+		for (int i = 2; i < data.length; i+=2) {
+			x = data[i]; y = data[i+1];
+			switch (state) {
+			
+			case SKIP:
+				
+				if (ok(x, y) && xaxis.contains(x) && yaxis.contains(y)) {
+					if (lasty == Float.POSITIVE_INFINITY) {
+						path.moveTo(x, yaxis.max);
+						path.lineTo(x, y);
+					}
+					else if (lasty == Float.NEGATIVE_INFINITY) {
+						path.moveTo(x, yaxis.min);
+						path.lineTo(x, y);
+					}
+					else if (Float.isNaN(lasty)) {
+						path.moveTo(x, y);
+					}
+					else {
+						path.moveTo(lastx, lasty);
+						path.lineTo(x, y);
+					}
+					state = DRAW;
+				}
+				break;
+				
+			case DRAW:
+				
+				if (ok(x, y)) {
+					if (!(xaxis.contains(x) && yaxis.contains(y))) {
+						state = SKIP;
+					}
+					path.lineTo(x, y);
+				}
+				else {
+					state = SKIP;
+				}
+				break;
+				
+			default:
+				return path;
+			}
+			
+			lastx = x; lasty = y;
+		}
+		
+		return path;
+	}
+
+	@Override
+	public boolean performClick() {
+		return super.performClick();
+	}
+
 }

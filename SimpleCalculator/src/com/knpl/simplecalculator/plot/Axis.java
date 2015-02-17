@@ -2,6 +2,10 @@ package com.knpl.simplecalculator.plot;
 
 import java.io.Serializable;
 
+import com.knpl.simplecalculator.util.Pair;
+
+import android.graphics.Matrix;
+
 public class Axis implements Serializable {
 	private static final long serialVersionUID = 4451726311629241145L;
 	
@@ -15,6 +19,10 @@ public class Axis implements Serializable {
 	
 	public Axis(Axis old) {
 		this(old.min, old.max);
+	}
+	
+	public boolean contains(float x) {
+		return min <= x && x <= max;
 	}
 	
 	public Axis extend(float factor) {
@@ -81,5 +89,17 @@ public class Axis implements Serializable {
 	public static void modelToView(float[] v, Axis x, Axis y) {
 		x.modelToView(v, 0, 2);
 		y.modelToView(v, 1, 2);
+	}
+	
+	@Override 
+	public String toString() {
+		return "["+min+", "+max+"]";
+	}
+	
+	public static Pair<Axis, Axis> map(Axis x, Axis y, Matrix ctm) {
+		float[] pts = new float[] {x.min, y.min, x.max, y.max};
+		ctm.mapPoints(pts);
+		return new Pair<Axis, Axis>(
+					new Axis(pts[0], pts[2]), new Axis(pts[3], pts[1]));
 	}
 }
