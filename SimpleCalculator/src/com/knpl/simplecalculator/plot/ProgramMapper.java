@@ -2,13 +2,13 @@ package com.knpl.simplecalculator.plot;
 
 import com.knpl.simplecalculator.util.Program;
 
-public class ProgramXtoYMapper implements Mapper {
+public class ProgramMapper implements Mapper {
 
 	private static final long serialVersionUID = 2595871216194630358L;
 	
 	private Program program;
 	
-	public ProgramXtoYMapper(Program program) {
+	public ProgramMapper(Program program) {
 		this.program = program;
 	}
 	

@@ -10,7 +10,7 @@ import java.util.Map;
 import android.graphics.Color;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
+import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.Evaluate;
@@ -39,7 +39,7 @@ public abstract class Expr extends Node {
 			ArrayList<Pair<Mapper, Integer>> mappers = new ArrayList<Pair<Mapper, Integer>>(1);
 			mappers.add(
 				new Pair<Mapper, Integer>(
-					new ProgramXtoYMapper(compile.getProgram()), Color.BLUE
+					new ProgramMapper(compile.getProgram()), Color.BLUE
 				)
 			);
 			

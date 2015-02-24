@@ -33,7 +33,7 @@ import com.knpl.simplecalculator.nodes.Var;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.plot.ProgramXtoYMapper;
+import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.util.Program;
@@ -130,7 +130,7 @@ public class PlotMenuFragment extends ListFragment {
 			try {
 				p = entry.userFuncDef.getProgram();
 				mappers.add(new Pair<Mapper, Integer>(
-						new ProgramXtoYMapper(p), entry.color));
+						new ProgramMapper(p), entry.color));
 			}
 			catch (Exception e) {
 	    		e.printStackTrace();

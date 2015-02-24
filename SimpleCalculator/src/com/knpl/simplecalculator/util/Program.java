@@ -68,8 +68,9 @@ public class Program implements Serializable {
 		
 		float[] stacks = new float[n * (stackSize + parameterCount)];
 		for (int i = 0; i < parameterCount; ++i) {
+			int row = i*n;
 			for (int j = 0; j < n; ++j) {
-				stacks[i*n + j] = src[j*sstep + sindex];
+				stacks[row + j] = src[j*sstep + sindex];
 			}
 		}
 		

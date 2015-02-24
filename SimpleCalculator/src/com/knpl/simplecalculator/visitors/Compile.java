@@ -102,11 +102,7 @@ public class Compile extends Visitor {
 		node.getExpression().accept(this);
 		write(ByteCodes.RET);
 		write(parameters.size());
-		
 		pop();
-		if (curStackSize != 0) {
-			throw new Exception("Imbalanced stack (function "+sig.getName()+"): "+curStackSize+" words left on stack");
-		}
 		
 		ArrayList<UserFunc> newFunctions = new ArrayList<UserFunc>(newFunctionMap.size());
 		clear(newFunctions, newFunctionMap.size());
@@ -132,11 +128,7 @@ public class Compile extends Visitor {
 				ufd.getExpression().accept(this);
 				write(ByteCodes.RET);
 				write(parameters.size());
-				
 				pop();
-				if (curStackSize != 0) {
-					throw new Exception("Imbalanced stack (function "+sig.getName()+"): "+curStackSize+" words left on stack");
-				}
 			}
 			parameters = oldParameters;
 			
