@@ -23,6 +23,11 @@ public class UserFunc extends Func {
 	}
 	
 	@Override
+	public UserFuncDef getDefinition() {
+		return (UserFuncDef) definition;
+	}
+	
+	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visit(this);
 	}

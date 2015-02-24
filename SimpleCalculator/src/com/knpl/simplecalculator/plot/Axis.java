@@ -21,6 +21,10 @@ public class Axis implements Serializable {
 		this(old.min, old.max);
 	}
 	
+	public Axis create(float min, float max) {
+		return new Axis(min, max);
+	}
+	
 	public boolean contains(float x) {
 		return min <= x && x <= max;
 	}
@@ -101,5 +105,9 @@ public class Axis implements Serializable {
 		ctm.mapPoints(pts);
 		return new Pair<Axis, Axis>(
 					new Axis(pts[0], pts[2]), new Axis(pts[3], pts[1]));
+	}
+
+	public float viewToModel(float v) {
+		return v;
 	}
 }

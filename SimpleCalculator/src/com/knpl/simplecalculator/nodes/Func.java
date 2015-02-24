@@ -16,7 +16,6 @@ public abstract class Func extends Expr {
 	
 	public abstract Expr getArg(int i);
 	
-
 	public FunctionDefinition getDefinition() {
 		return definition;
 	}

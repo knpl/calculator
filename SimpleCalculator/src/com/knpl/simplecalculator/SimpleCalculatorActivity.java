@@ -57,7 +57,6 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	android.util.Log.d("mytag", "Activity: onCreate "+((savedInstanceState==null)? "(null)" : "(!null)"));
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
         
@@ -112,7 +111,6 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-    	android.util.Log.d("mytag", "Activity: onSaveInstanceState");
     	super.onSaveInstanceState(outState);
     }
     
@@ -171,7 +169,6 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         if (drawerToggle.onOptionsItemSelected(item)) {
         	return true;
         }
-        
         return super.onOptionsItemSelected(item);
     }
     

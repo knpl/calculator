@@ -13,6 +13,11 @@ public class LogAxis extends Axis {
 	}
 	
 	@Override
+	public LogAxis create(float min, float max) {
+		return new LogAxis(min, max);
+	}
+	
+	@Override
 	public LogAxis extend(float factor) {
 		float tmp = .5f * (factor - 1);
 		float newmin = (float)(min * Math.pow((max / min),   - tmp));
@@ -58,6 +63,7 @@ public class LogAxis extends Axis {
 		return (float) (min + (max-min) * (Math.log(v/min) / Math.log(max/min)));
 	}
 	
+	@Override
 	public float viewToModel(float v) {
 		return (float) (min * Math.pow((max/min), (v-min) / (max-min)));
 	}

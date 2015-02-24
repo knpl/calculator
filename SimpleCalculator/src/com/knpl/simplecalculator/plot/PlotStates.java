@@ -13,7 +13,9 @@ public class PlotStates {
 	public static final ZoomState zoomState = new ZoomState();
 	public static final InvalidState invalidState = new InvalidState();
 	
-	public static final long DOUBLE_TAP_MILLIS = 500;
+	public static enum PlotState {STATIC, EXPLORE, DRAGGING, ZOOMING, INVALID};
+	
+	public static final long DOUBLE_TAP_MILLIS = 250;
 	
 	public static class StaticState implements OnTouchListener {
 		
@@ -34,17 +36,12 @@ public class PlotStates {
 			case MotionEvent.ACTION_UP:
 				v.performClick();
 				
-				// Check for double tap
 				now = System.currentTimeMillis();
 				if (now - then <= DOUBLE_TAP_MILLIS) {
-					android.util.Log.d("mytag", "(static) double tap");
-					plotView.setOnTouchListener(exploreState);
+					plotView.setState(PlotState.EXPLORE);
 					break;
 				}
 				then = now;
-				
-				// Single tap
-				
 				break;
 				
 			default:
@@ -56,9 +53,6 @@ public class PlotStates {
 	
 	public static class ExploreState implements OnTouchListener {
 		
-		public ExploreState() {
-		}
-
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			final PlotView plotView = (PlotView) v;
@@ -67,6 +61,7 @@ public class PlotStates {
 			
 			case MotionEvent.ACTION_DOWN:
 				downAction(plotView, event);
+				plotView.setState(PlotState.DRAGGING);
 				break;
 			
 			case MotionEvent.ACTION_UP:
@@ -74,21 +69,17 @@ public class PlotStates {
 				break;
 				
 			case MotionEvent.ACTION_CANCEL:
-				android.util.Log.d("mytag", "(explore) cancel (explore)");
 				break;
 				
 			default:
-				android.util.Log.d("mytag", "(explore) -> (invalid)");
-				plotView.setOnTouchListener(invalidState);
+				plotView.setState(PlotState.INVALID);
 			}
 			
 			return true;
 		}
 		
 		public void downAction(PlotView plotView, MotionEvent event) {
-			android.util.Log.d("mytag", "(explore) down (drag)");
 			dragState.setStart(event.getX(0), event.getY(0));
-			plotView.setOnTouchListener(dragState);
 		}
 	}
 	
@@ -117,7 +108,7 @@ public class PlotStates {
 				
 			case MotionEvent.ACTION_POINTER_DOWN:
 				actionPointerDown(plotView, event);
-				plotView.setOnTouchListener(zoomState);
+				plotView.setState(PlotState.ZOOMING);
 				break;
 			
 			case MotionEvent.ACTION_UP:
@@ -127,13 +118,11 @@ public class PlotStates {
 				
 				now = System.currentTimeMillis();
 				if (now - then <= DOUBLE_TAP_MILLIS) {
-					android.util.Log.d("mytag", "(explore) double tap (static)");
-					plotView.setOnTouchListener(staticState);
+					plotView.setState(PlotState.STATIC);
 				}
 				else {
 					then = now;
-					android.util.Log.d("mytag", "(drag) up (explore)");
-					plotView.setOnTouchListener(exploreState);
+					plotView.setState(PlotState.EXPLORE);
 				}
 				break;
 				
@@ -142,13 +131,11 @@ public class PlotStates {
 				break;
 				
 			case MotionEvent.ACTION_CANCEL:
-				android.util.Log.d("mytag", "(drag) cancel (explore)");
-				plotView.setOnTouchListener(exploreState);
+				plotView.setState(PlotState.EXPLORE);
 				break;
 				
 			default:
-				android.util.Log.d("mytag", "(drag) -> (invalid)");
-				plotView.setOnTouchListener(invalidState);
+				plotView.setState(PlotState.INVALID);
 			}
 			
 			return true;
@@ -158,7 +145,6 @@ public class PlotStates {
 			float x1 = event.getX(0),
 				  y1 = event.getY(0);
 			plotView.setTranslatePreview(x1-x0, y1-y0);
-			plotView.invalidate();
 		}
 		
 		public void actionUp(PlotView plotView, MotionEvent event) {
@@ -166,7 +152,6 @@ public class PlotStates {
 				  y1 = event.getY(0);
 			plotView.setTranslatePreview(0, 0);
 			plotView.translate(x1-x0, y1-y0);
-			plotView.invalidate();
 		}
 		
 		public void actionPointerDown(PlotView plotView, MotionEvent event) {
@@ -201,8 +186,6 @@ public class PlotStates {
 			this.cx = cx;
 			this.cy = cy;
 			this.cr = cr;
-			
-			android.util.Log.d("mytag", "c: "+cx+", "+cy+" r:"+cr);
 		}
 		
 		@Override
@@ -218,8 +201,7 @@ public class PlotStates {
 				
 			case MotionEvent.ACTION_POINTER_UP:
 				actionPointerUp(plotView, event);
-				android.util.Log.d("mytag", "(zoom) pointer up (drag)");
-				plotView.setOnTouchListener(dragState);
+				plotView.setState(PlotState.DRAGGING);
 				break;
 				
 			case MotionEvent.ACTION_MOVE:
@@ -227,13 +209,11 @@ public class PlotStates {
 				break;
 				
 			case MotionEvent.ACTION_CANCEL:
-				android.util.Log.d("mytag", "(zoom) cancel (explore)");
-				plotView.setOnTouchListener(exploreState);
+				plotView.setState(PlotState.EXPLORE);
 				break;
 				
 			default:
-				android.util.Log.d("mytag", "(zoom) -> (invalid)");
-				plotView.setOnTouchListener(invalidState);
+				plotView.setState(PlotState.INVALID);
 			}
 			
 			return true;
@@ -254,8 +234,6 @@ public class PlotStates {
 			
 			PointerCoords notReleased =  (1 - event.getActionIndex() == 0) ? p0 : p1;
 			dragState.setStart(notReleased.x, notReleased.y);
-			
-			plotView.invalidate();
 		}
 
 		private void actionMove(PlotView plotView, MotionEvent event) {
@@ -269,14 +247,13 @@ public class PlotStates {
 				  r  = (float)Math.sqrt(dx*dx+dy*dy)/2f;
 			
 			plotView.setScalePreview(cx, cy, r/cr);
-			plotView.invalidate();
 		}
 	}
 	
 	public static class InvalidState implements OnTouchListener {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			android.util.Log.d("mytag", "(invalid)");
+			v.performClick();
 			return true;
 		}
 	}

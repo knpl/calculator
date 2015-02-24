@@ -36,7 +36,7 @@ public class FuncDefNode extends Node {
 		
 		defs.putUserFuncDef(ufd);
 		
-		calculator.print("Defined function \""+sig+"\"");
+		calculator.print(""+ufd.getProgram());
 	}
 	
 	public Signature getSignature() {

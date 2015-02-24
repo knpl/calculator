@@ -18,6 +18,9 @@ public class Compile extends Visitor {
 	private ByteArrayOutputStream code;
 	private int nbytes;
 	
+	private int maxStackSize;
+	private int curStackSize;
+	
 	private List<Var> parameters;
 	
 	private Map<Double,Integer> constantMap;
@@ -35,6 +38,8 @@ public class Compile extends Visitor {
 		functionMap = new HashMap<UserFunc, Integer>();
 		newFunctionMap = new HashMap<UserFunc, Integer>();
 		program = null;
+		
+		maxStackSize = curStackSize = 0;
 	}
 	
 	public Compile() {
@@ -45,6 +50,8 @@ public class Compile extends Visitor {
 		functionMap = new HashMap<UserFunc, Integer>();
 		newFunctionMap = new HashMap<UserFunc, Integer>();
 		program = null;
+		
+		maxStackSize = curStackSize = 0;
 	}
 	
 	public Program getProgram() {
@@ -54,6 +61,28 @@ public class Compile extends Visitor {
 	private void write(int b) {
 		code.write(b);
 		nbytes+=1;
+	}
+	
+	private void push() {
+		curStackSize += 1;
+		if (curStackSize > maxStackSize) {
+			maxStackSize = curStackSize;
+		}
+	}
+	
+	private void push(int s) {
+		curStackSize += s;
+		if (curStackSize > maxStackSize) {
+			maxStackSize = curStackSize;
+		}
+	}
+	
+	private void pop() {
+		curStackSize -= 1;
+	}
+	
+	private void pop(int s) {
+		curStackSize -= s;
 	}
 	
 	private void clear(ArrayList<UserFunc> list, int size) {
@@ -73,6 +102,11 @@ public class Compile extends Visitor {
 		node.getExpression().accept(this);
 		write(ByteCodes.RET);
 		write(parameters.size());
+		
+		pop();
+		if (curStackSize != 0) {
+			throw new Exception("Imbalanced stack (function "+sig.getName()+"): "+curStackSize+" words left on stack");
+		}
 		
 		ArrayList<UserFunc> newFunctions = new ArrayList<UserFunc>(newFunctionMap.size());
 		clear(newFunctions, newFunctionMap.size());
@@ -94,9 +128,15 @@ public class Compile extends Visitor {
 				UserFuncDef ufd = (UserFuncDef) f.getDefinition();
 				parameters = ufd.getSignature().getParameters();
 				offsets.add(nbytes);
+				
 				ufd.getExpression().accept(this);
 				write(ByteCodes.RET);
 				write(parameters.size());
+				
+				pop();
+				if (curStackSize != 0) {
+					throw new Exception("Imbalanced stack (function "+sig.getName()+"): "+curStackSize+" words left on stack");
+				}
 			}
 			parameters = oldParameters;
 			
@@ -110,7 +150,7 @@ public class Compile extends Visitor {
 			constants.set(e.getValue(), e.getKey());
 		}
 		
-		program = new Program(sig.getName(), code.toByteArray(), constants, offsets, parameters.size());
+		program = new Program(sig.getName(), code.toByteArray(), constants, offsets, parameters.size(), maxStackSize);
 		
 		return node;
 	}
@@ -126,6 +166,7 @@ public class Compile extends Visitor {
 	public Node visit(Add node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.ADD);
+		pop();
 		return node;
 	}
 
@@ -133,6 +174,7 @@ public class Compile extends Visitor {
 	public Node visit(Sub node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.SUB);
+		pop();
 		return node;
 	}
 
@@ -140,6 +182,7 @@ public class Compile extends Visitor {
 	public Node visit(Mul node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.MUL);
+		pop();
 		return node;
 	}
 
@@ -147,6 +190,7 @@ public class Compile extends Visitor {
 	public Node visit(Div node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.DIV);
+		pop();
 		return node;
 	}
 
@@ -154,6 +198,7 @@ public class Compile extends Visitor {
 	public Node visit(Pow node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.POW);
+		pop();
 		return node;
 	}
 	
@@ -175,6 +220,8 @@ public class Compile extends Visitor {
 		Double val = node.getValue();
 		
 		write(ByteCodes.LOADC);
+		push();
+		
 		Integer index = constantMap.get(val);
 		if (index == null) {
 			index = (Integer) constantMap.size();
@@ -188,12 +235,15 @@ public class Compile extends Visitor {
 	@Override
 	public Node visit(Var node) throws Exception {
 		String name = node.getName();
-		write(ByteCodes.LOADA);
 		
-		for (int i = 0; i < parameters.size(); ++i) {
+		write(ByteCodes.LOADA);
+		push();
+		
+		int n = parameters.size();
+		for (int i = 0; i < n; ++i) {
 			Var param = parameters.get(i);
 			if (name.equals(param.getName())) {
-				write(i);
+				write(n - i);
 				return node;
 			}
 		}
@@ -207,6 +257,7 @@ public class Compile extends Visitor {
 		for (Expr arg : args) {
 			arg.accept(this);
 		}
+		
 		return node;
 	}
 	
@@ -214,7 +265,14 @@ public class Compile extends Visitor {
 	public Node visit(UserFunc node) throws Exception {
 		visit((Func)node);
 		
+		UserFuncDef definition = node.getDefinition();
+		
 		write(ByteCodes.CALL);
+		int pStackSize = definition.getProgram().getStackSize();
+		int nargs = definition.getSignature().getParameters().size();
+		push(pStackSize);
+		pop(pStackSize + nargs - 1);
+		
 		Integer offset = functionMap.get(this);
 		if (offset == null) {
 			offset = newFunctionMap.get(this);
@@ -232,6 +290,7 @@ public class Compile extends Visitor {
 	public Node visit(Min node) throws Exception {
 		visit((Func)node);
 		write(ByteCodes.MIN);
+		pop();
 		return node;
 	}
 	
@@ -239,6 +298,7 @@ public class Compile extends Visitor {
 	public Node visit(Max node) throws Exception {
 		visit((Func)node);
 		write(ByteCodes.MAX);
+		pop();
 		return node;
 	}
 	

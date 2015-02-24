@@ -3,6 +3,7 @@ package com.knpl.simplecalculator.plot;
 import java.text.DecimalFormat;
 import java.util.List;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
+import com.knpl.simplecalculator.plot.PlotStates.PlotState;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.Context;
@@ -16,8 +17,7 @@ import android.view.View;
 
 public class PlotView extends View {
 	
-	private static final DecimalFormat EFMT = new DecimalFormat("0.###E0");
-	private static final DecimalFormat FMT = new DecimalFormat("0.###");
+	private static final DecimalFormat FMT = new DecimalFormat("0.######");
 	
 	private static final Paint linePaint;
 	
@@ -31,7 +31,7 @@ public class PlotView extends View {
 		linePaint.setAntiAlias(true);
 		linePaint.setColor(Color.BLACK);
 		linePaint.setStyle(Paint.Style.STROKE);
-		linePaint.setStrokeWidth(2f);
+		linePaint.setStrokeWidth(0f);
 		linePaint.setTextSize(16f);
 	}
 	
@@ -43,6 +43,8 @@ public class PlotView extends View {
 	private float[] translate,
 					scalecenter;
 	private float   scalefactor;
+	
+	private PlotState plotState;
 	
 	private Matrix ctm,
 				   modelToScreen,
@@ -59,6 +61,8 @@ public class PlotView extends View {
 		translate = new float[]{0f,0f};
 		scalecenter = new float[]{0f,0f};
 		scalefactor = 1f;
+		
+		plotState = PlotState.STATIC;
 		
 		ctm = new Matrix();
 		modelToScreen = new Matrix();
@@ -96,37 +100,52 @@ public class PlotView extends View {
 		this.xaxis = x;
 		this.yaxis = y;
 		
-		setOnTouchListener(PlotStates.staticState);
+		setState(PlotState.STATIC);
 		
 		return this;
+	}
+	
+	public void setState(PlotState plotState) {
+		this.plotState = plotState;
+		OnTouchListener l = PlotStates.invalidState;
+		switch (plotState) {
+		case DRAGGING:	l = PlotStates.dragState;		break;
+		case EXPLORE:	l = PlotStates.exploreState;	break;
+		case INVALID:	l = PlotStates.invalidState;	break;
+		case STATIC:	l = PlotStates.staticState;		break;
+		case ZOOMING:	l = PlotStates.zoomState;		break;
+		}
+		setOnTouchListener(l);
 	}
 	
 	public void setTranslatePreview(float x, float y) {
 		translate[0] = x;
 		translate[1] = y;
+		
+		invalidate();
 	}
 	
 	public void translate(float x, float y) {
 		float[] dv = new float[]{x,y};
-		
 		screenToModel.mapVectors(dv);
 		
-		xaxis = new Axis(xaxis.min - dv[0], xaxis.max - dv[0]);
-		yaxis = new Axis(yaxis.min - dv[1], yaxis.max - dv[1]);
+		xaxis = xaxis.create(xaxis.min - dv[0], xaxis.max - dv[0]);
+		yaxis = yaxis.create(yaxis.min - dv[1], yaxis.max - dv[1]);
 		
 		modelToScreen.postTranslate(x, y);
 		modelToScreen.invert(screenToModel);
+		
+		invalidate();
 	}
-	
-
 	public void setScalePreview(float cx, float cy, float f) {
 		scalecenter[0] = cx;
 		scalecenter[1] = cy;
 		scalefactor = f;
+		
+		invalidate();
 	}
 	
 	public void scale(float cx, float cy, float f) {
-		
 		Matrix scale = new Matrix();
 		scale.preTranslate(cx, cy);
 		scale.preScale(f, f);
@@ -145,6 +164,8 @@ public class PlotView extends View {
 		
 		modelToScreen.postConcat(scale);
 		modelToScreen.invert(screenToModel);
+		
+		invalidate();
 	}
 	
 	@Override
@@ -153,10 +174,17 @@ public class PlotView extends View {
 		super.onDraw(c);
 		
 		ctm.reset();
-		ctm.preTranslate(translate[0], translate[1]);
-		ctm.preTranslate(scalecenter[0], scalecenter[1]);
-		ctm.preScale(scalefactor, scalefactor);
-		ctm.preTranslate(-scalecenter[0], -scalecenter[1]);
+		switch (plotState) {
+		case DRAGGING:
+			ctm.preTranslate(translate[0], translate[1]);
+			break;
+		case ZOOMING:
+			ctm.preTranslate(scalecenter[0], scalecenter[1]);
+			ctm.preScale(scalefactor, scalefactor);
+			ctm.preTranslate(-scalecenter[0], -scalecenter[1]);
+			break;
+		default:
+		}
 		ctm.preConcat(modelToScreen);
 		
 		drawAxes(c, ctm, xaxis, yaxis);
@@ -189,13 +217,10 @@ public class PlotView extends View {
 	private void generateLabels(String[] labels, float[] values, int n, int index, int step) {
 		int i,j;
 		for (j = 0, i = index; i < n*step; i += step, j++) {
-			if ((values[i] + 0.0) == 0) {
+			if ((values[i] + 0.0) == 0)
 				labels[j] = "";
-			}
-			else {
-				labels[j] = (-100 <= values[i] && values[i] <= 100) ? FMT.format(0.0 + values[i])
-																	: EFMT.format(values[i]); 
-			}
+			else
+				labels[j] = FMT.format(0.0 + values[i]);
 		}
 	}
 
@@ -205,9 +230,28 @@ public class PlotView extends View {
 		String[] labels = new String[20];
 		int i, n;
 		
-		final float xaxisy = (y.min <= 0f && 0f <= y.max) ? 0f : y.min,
-			        yaxisx = (x.min <= 0f && 0f <= x.max) ? 0f : x.min; 
-	
+		float xaxisy = 0,
+			  xlabeloff = linePaint.ascent();
+		if (y.min >= 0) {
+			xaxisy = y.min;
+		}
+		else if (y.max <= 0) {
+			xlabeloff = 10 -linePaint.ascent();
+			xaxisy = y.max;
+		} 
+		
+		float yaxisx = 0,
+			  ylabeloff = 15;
+		boolean alignleft = true;
+		if (x.min >= 0) {
+			yaxisx = x.min;
+		}
+		else if (x.max <= 0) {
+			alignleft = false;
+			ylabeloff = -15;
+			yaxisx = x.max;
+		}
+		
 		// Draw axes
 		p.moveTo(x.min, xaxisy);
 		p.lineTo(x.max, xaxisy);
@@ -224,7 +268,7 @@ public class PlotView extends View {
 		Axis.modelToView(markers, x, y);
 		ctm.mapPoints(markers);
 		for (i = 0; i < n; ++i) {
-			p.moveTo(markers[2*i], markers[2*i+1]);
+			p.moveTo(markers[2*i], markers[2*i+1] + 5);
 			p.rLineTo(0, -10);
 		}
 		c.drawPath(p, linePaint);
@@ -233,7 +277,7 @@ public class PlotView extends View {
 		// Draw labels on x axis
 		linePaint.setTextAlign(Paint.Align.CENTER);
 		for (i = 0; i < n; ++i) {
-			c.drawText(labels[i], markers[2*i], markers[2*i+1] + linePaint.ascent(), linePaint);
+			c.drawText(labels[i], markers[2*i], markers[2*i+1] + xlabeloff, linePaint);
 		}
 		
 		// Draw markers on y axis
@@ -243,16 +287,19 @@ public class PlotView extends View {
 		Axis.modelToView(markers, x, y);
 		ctm.mapPoints(markers);
 		for (i = 0; i < n; ++i) {
-			p.moveTo(markers[2*i], markers[2*i+1]);
+			p.moveTo(markers[2*i] - 5, markers[2*i+1]);
 			p.rLineTo(10, 0);
 		}
 		c.drawPath(p, linePaint);
 		p.rewind();
 
 		// Draw labels on y axis
-		linePaint.setTextAlign(Paint.Align.LEFT);
+		if (alignleft)
+			linePaint.setTextAlign(Paint.Align.LEFT);
+		else
+			linePaint.setTextAlign(Paint.Align.RIGHT);
 		for (i = 0; i < n; ++i) {
-			c.drawText(labels[i], markers[2*i] + 15, markers[2*i+1], linePaint);
+			c.drawText(labels[i], markers[2*i] + ylabeloff, markers[2*i+1], linePaint);
 		}
 	}
 	

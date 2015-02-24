@@ -43,7 +43,8 @@ public abstract class Expr extends Node {
 				)
 			);
 			
-			calculator.plot(mappers);
+			calculator.print(""+compile.getProgram());
+			//calculator.plot(mappers);
 		}
 		else {
 			calculator.print("Can't plot expression with more than one free variable");
