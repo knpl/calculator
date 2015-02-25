@@ -208,154 +208,154 @@ public class Program implements Serializable {
 		}
 	}
 	
-	public void simdMinus(float[] stacks, int n, int sp) {
+	private void simdMinus(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = -stacks[i];
 		}
 	}
 	
-	public void simdAdd(float[] stacks, int n, int sp) {
+	private void simdAdd(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] += stacks[i + n];
 		}
 	}
 	
-	public void simdSub(float[] stacks, int n, int sp) {
+	private void simdSub(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] -= stacks[i + n];
 		}
 	}
 	
-	public void simdMul(float[] stacks, int n, int sp) {
+	private void simdMul(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] *= stacks[i + n];
 		}
 	}
 	
-	public void simdDiv(float[] stacks, int n, int sp) {
+	private void simdDiv(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] /= stacks[i + n];
 		}
 	}
 	
-	public void simdPow(float[] stacks, int n, int sp) {
+	private void simdPow(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.pow(stacks[i], stacks[i + n]);
 		}
 	}
 	
-	public void simdAbs(float[] stacks, int n, int sp) {
+	private void simdAbs(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = Math.abs(stacks[i]);
 		}
 	}
 	
-	public void simdMin(float[] stacks, int n, int sp) {
+	private void simdMin(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = Math.min(stacks[i], stacks[i + n]);
 		}
 	}
 	
-	public void simdMax(float[] stacks, int n, int sp) {
+	private void simdMax(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = Math.max(stacks[i], stacks[i + n]);
 		}
 	}
 	
-	public void simdSqrt(float[] stacks, int n, int sp) {
+	private void simdSqrt(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.sqrt(stacks[i]);
 		}
 	}
 	
-	public void simdExp(float[] stacks, int n, int sp) {
+	private void simdExp(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.exp(stacks[i]);
 		}
 	}
 	
-	public void simdLog(float[] stacks, int n, int sp) {
+	private void simdLog(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.log(stacks[i]);
 		}
 	}
 	
-	public void simdSinh(float[] stacks, int n, int sp) {
+	private void simdSinh(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.sinh(stacks[i]);
 		}
 	}
 	
-	public void simdCosh(float[] stacks, int n, int sp) {
+	private void simdCosh(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.cosh(stacks[i]);
 		}
 	}
 	
-	public void simdSin(float[] stacks, int n, int sp) {
+	private void simdSin(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.sin(stacks[i]);
 		}
 	}
 	
-	public void simdCos(float[] stacks, int n, int sp) {
+	private void simdCos(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.cos(stacks[i]);
 		}
 	}
 	
-	public void simdTan(float[] stacks, int n, int sp) {
+	private void simdTan(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.tan(stacks[i]);
 		}
 	}
 	
-	public void simdAsin(float[] stacks, int n, int sp) {
+	private void simdAsin(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.asin(stacks[i]);
 		}
 	}
 	
-	public void simdAcos(float[] stacks, int n, int sp) {
+	private void simdAcos(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.acos(stacks[i]);
 		}
 	}
 	
-	public void simdAtan(float[] stacks, int n, int sp) {
+	private void simdAtan(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.atan(stacks[i]);
 		}
 	}
 	
-	public void simdLoadc(float[] stacks, int n, int sp, float constant) {
+	private void simdLoadc(float[] stacks, int n, int sp, float constant) {
 		int index = n * sp;
 		for (int i = index; i < index + n; i += 1) {
 			stacks[i] = constant;
 		}
 	}
 	
-	public void simdLoada(float[] stacks, int n, int sp, int oldsp, int paramIndex) {
+	private void simdLoada(float[] stacks, int n, int sp, int oldsp, int paramIndex) {
 		int srcIndex = n * (oldsp - paramIndex);
 		int dstIndex = n * sp;
 		
@@ -366,7 +366,7 @@ public class Program implements Serializable {
 		}
 	}
 	
-	public void simdRet(float[] stacks, int n, int sp, int nargs) {
+	private void simdRet(float[] stacks, int n, int sp, int nargs) {
 		int srcIndex = n * (sp - 1);
 		int dstIndex = n * (sp - 1 - nargs);
 		
@@ -377,7 +377,7 @@ public class Program implements Serializable {
 		}
 	}
 	
-	public int simd(float[] stacks, int n, int pc, int sp) {
+	private int simd(float[] stacks, int n, int pc, int sp) {
 		int oldsp = sp;
 		
 		while (true) {
