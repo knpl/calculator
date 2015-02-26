@@ -312,7 +312,7 @@ public class PlotMenuFragment extends ListFragment {
 			Resolve visitor = new Resolve(boundedVarMap);
 				
 			try {	
-				e = (Expr) e.accept(visitor);
+				e = (Expr) e.accept(visitor, null);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
@@ -330,7 +330,7 @@ public class PlotMenuFragment extends ListFragment {
 			String d;
 			try {
 				PrettyPrint prettyPrint = new PrettyPrint();
-				e.accept(prettyPrint);
+				e.accept(prettyPrint, null);
 				d = prettyPrint.toString();
 			}
 			catch (Exception ex) {

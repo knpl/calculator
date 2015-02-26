@@ -21,7 +21,7 @@ public abstract class MonOp extends Expr {
 	public abstract String getOpString();
 	
 	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+	public Object accept(Visitor v, Object info) throws Exception {
+		return v.visit(this, info);
 	}
 }

@@ -91,7 +91,7 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Node visit(FuncDefNode node) throws Exception {
+	public Node visit(FuncDefNode node, Object info) throws Exception {
 		if (nbytes != 0) {
 			throw new Exception("Recursive function definition encountered");
 		}
@@ -99,7 +99,7 @@ public class Compile extends Visitor {
 		Signature sig = node.getSignature();
 		parameters = sig.getParameters();
 		
-		node.getExpression().accept(this);
+		node.getExpression().accept(this, info);
 		write(ByteCodes.RET);
 		write(parameters.size());
 		pop();
@@ -125,7 +125,7 @@ public class Compile extends Visitor {
 				parameters = ufd.getSignature().getParameters();
 				offsets.add(nbytes);
 				
-				ufd.getExpression().accept(this);
+				ufd.getExpression().accept(this, info);
 				write(ByteCodes.RET);
 				write(parameters.size());
 				pop();
@@ -148,67 +148,67 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Node visit(BinOp node) throws Exception {
-		node.getLHS().accept(this);
-		node.getRHS().accept(this);
+	public Node visit(BinOp node, Object info) throws Exception {
+		node.getLHS().accept(this, info);
+		node.getRHS().accept(this, info);
 		return node;
 	}
 
 	@Override
-	public Node visit(Add node) throws Exception {
-		visit((BinOp)node);
+	public Node visit(Add node, Object info) throws Exception {
+		visit((BinOp)node, info);
 		write(ByteCodes.ADD);
 		pop();
 		return node;
 	}
 
 	@Override
-	public Node visit(Sub node) throws Exception {
-		visit((BinOp)node);
+	public Node visit(Sub node, Object info) throws Exception {
+		visit((BinOp)node, info);
 		write(ByteCodes.SUB);
 		pop();
 		return node;
 	}
 
 	@Override
-	public Node visit(Mul node) throws Exception {
-		visit((BinOp)node);
+	public Node visit(Mul node, Object info) throws Exception {
+		visit((BinOp)node, info);
 		write(ByteCodes.MUL);
 		pop();
 		return node;
 	}
 
 	@Override
-	public Node visit(Div node) throws Exception {
-		visit((BinOp)node);
+	public Node visit(Div node, Object info) throws Exception {
+		visit((BinOp)node, info);
 		write(ByteCodes.DIV);
 		pop();
 		return node;
 	}
 
 	@Override
-	public Node visit(Pow node) throws Exception {
-		visit((BinOp)node);
+	public Node visit(Pow node, Object info) throws Exception {
+		visit((BinOp)node, info);
 		write(ByteCodes.POW);
 		pop();
 		return node;
 	}
 	
 	@Override
-	public Node visit(MonOp node) throws Exception {
-		node.getOp().accept(this);
+	public Node visit(MonOp node, Object info) throws Exception {
+		node.getOp().accept(this, info);
 		return node;
 	}
 
 	@Override
-	public Node visit(Minus node) throws Exception {
-		visit((MonOp)node);
+	public Node visit(Minus node, Object info) throws Exception {
+		visit((MonOp)node, info);
 		write(ByteCodes.MINUS);
 		return node;
 	}
 
 	@Override
-	public Node visit(Num node) throws Exception {
+	public Node visit(Num node, Object info) throws Exception {
 		Double val = node.getValue();
 		
 		write(ByteCodes.LOADC);
@@ -225,7 +225,7 @@ public class Compile extends Visitor {
 	}
 
 	@Override
-	public Node visit(Var node) throws Exception {
+	public Node visit(Var node, Object info) throws Exception {
 		String name = node.getName();
 		
 		write(ByteCodes.LOADA);
@@ -244,18 +244,18 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Func node) throws Exception {
+	public Node visit(Func node, Object info) throws Exception {
 		List<Expr> args = node.getArguments();
 		for (Expr arg : args) {
-			arg.accept(this);
+			arg.accept(this, info);
 		}
 		
 		return node;
 	}
 	
 	@Override
-	public Node visit(UserFunc node) throws Exception {
-		visit((Func)node);
+	public Node visit(UserFunc node, Object info) throws Exception {
+		visit((Func)node, null);
 		
 		UserFuncDef definition = node.getDefinition();
 		
@@ -279,100 +279,100 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Min node) throws Exception {
-		visit((Func)node);
+	public Node visit(Min node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.MIN);
 		pop();
 		return node;
 	}
 	
 	@Override
-	public Node visit(Max node) throws Exception {
-		visit((Func)node);
+	public Node visit(Max node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.MAX);
 		pop();
 		return node;
 	}
 	
 	@Override
-	public Node visit(Sqrt node) throws Exception {
-		visit((Func)node);
+	public Node visit(Sqrt node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.SQRT);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Abs node) throws Exception {
-		visit((Func)node);
+	public Node visit(Abs node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.ABS);
 		return node;	}
 	
 	@Override
-	public Node visit(Log node) throws Exception {
-		visit((Func)node);
+	public Node visit(Log node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.LOG);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Exp node) throws Exception {
-		visit((Func)node);
+	public Node visit(Exp node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.EXP);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Sinh node) throws Exception {
-		visit((Func)node);
+	public Node visit(Sinh node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.SINH);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Cosh node) throws Exception {
-		visit((Func)node);
+	public Node visit(Cosh node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.COSH);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Sin node) throws Exception {
-		visit((Func)node);
+	public Node visit(Sin node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.SIN);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Cos node) throws Exception {
-		visit((Func)node);
+	public Node visit(Cos node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.COS);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Tan node) throws Exception {
-		visit((Func)node);
+	public Node visit(Tan node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.TAN);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Asin node) throws Exception {
-		visit((Func)node);
+	public Node visit(Asin node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.ASIN);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Acos node) throws Exception {
-		visit((Func)node);
+	public Node visit(Acos node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.ACOS);
 		return node;
 	}
 	
 	@Override
-	public Node visit(Atan node) throws Exception {
-		visit((Func)node);
+	public Node visit(Atan node, Object info) throws Exception {
+		visit((Func)node, null);
 		write(ByteCodes.ATAN);
 		return node;
 	}

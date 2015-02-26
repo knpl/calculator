@@ -1,5 +1,6 @@
 package com.knpl.simplecalculator.nodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class Signature extends Node {
 	
 	public Signature(String name, List<Var> parameters) {
 		this.name = name;
-		this.parameters = Collections.unmodifiableList(parameters);
+		this.parameters = Collections.unmodifiableList(new ArrayList<Var>(parameters));
 	}
 	
 	public String getName() {
@@ -23,8 +24,8 @@ public class Signature extends Node {
 	}
 	
 	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+	public Object accept(Visitor v, Object info) throws Exception {
+		return v.visit(this, info);
 	}
 	
 	@Override

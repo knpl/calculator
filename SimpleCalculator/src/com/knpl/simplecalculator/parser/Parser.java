@@ -53,7 +53,6 @@ public class Parser {
 		if (!expr()) return false;
 		
 		result = new FuncDefNode(sig, (Expr)result);
-		
 		return true;
 	}
 	

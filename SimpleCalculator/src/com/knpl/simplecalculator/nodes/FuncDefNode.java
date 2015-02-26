@@ -26,10 +26,10 @@ public class FuncDefNode extends Node {
 		}
 		
 		Resolve resolve = new Resolve();
-		accept(resolve);
+		accept(resolve, null);
 		
 		PrettyPrint prettyPrint = new PrettyPrint();
-		expression.accept(prettyPrint);
+		expression.accept(prettyPrint, null);
 		
 		UserFuncDef ufd = new UserFuncDef(sig, prettyPrint.toString(), expression);
 		ufd.compile();
@@ -52,7 +52,7 @@ public class FuncDefNode extends Node {
 	}
 	
 	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+	public Object accept(Visitor v, Object info) throws Exception {
+		return v.visit(this, info);
 	}
 }

@@ -14,7 +14,7 @@ public class Sub extends BinOp {
 	}
 	
 	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+	public Object accept(Visitor v, Object info) throws Exception {
+		return v.visit(this, info);
 	}
 }

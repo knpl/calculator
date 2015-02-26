@@ -193,7 +193,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     
     public void plot(ArrayList<Pair<Mapper, Integer>> mappers) {
     	PlotFragment fragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
-    	setFragment(fragment, true);
+    	setFragment(fragment, false);
     }
    
     public void print(String s) {

@@ -514,7 +514,7 @@ public class Program implements Serializable {
 		out.println();
 		out.println("Constants:");
 		for (int i = 0; i < constants.length; ++i) {
-			out.printf(" %d:\t%.6f\n", i, constants[i]);
+			out.printf(" %d:\t%f\n", i, constants[i]);
 		}
 		
 		out.println();

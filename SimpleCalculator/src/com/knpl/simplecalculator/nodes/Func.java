@@ -9,7 +9,7 @@ public abstract class Func extends Expr {
 	protected FunctionDefinition definition;
 	
 	public abstract List<Expr> getArguments();
-	
+
 	public String getName() {
 		return definition.getSignature().getName();
 	}
@@ -21,7 +21,7 @@ public abstract class Func extends Expr {
 	}
 	
 	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+	public Object accept(Visitor v, Object info) throws Exception {
+		return v.visit(this, null);
 	}
 }

@@ -44,7 +44,7 @@ public class UserFuncDef implements FunctionDefinition {
 	public Program compile() throws Exception {
 		if (program == null) {
 			Compile c = new Compile();
-			(new FuncDefNode(sig, expression)).accept(c);
+			(new FuncDefNode(sig, expression)).accept(c, null);
 			program = c.getProgram();
 		}
 		return program;

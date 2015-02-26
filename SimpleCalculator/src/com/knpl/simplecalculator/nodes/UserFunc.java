@@ -1,7 +1,6 @@
 package com.knpl.simplecalculator.nodes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.knpl.simplecalculator.nodes.Expr;
@@ -14,7 +13,7 @@ public class UserFunc extends Func {
 	
 	public UserFunc(UserFuncDef definition, List<Expr> arguments) {
 		this.definition = definition;
-		this.arguments = Collections.unmodifiableList(new ArrayList<Expr>(arguments));
+		this.arguments = new ArrayList<Expr>(arguments);
 	}
 
 	@Override
@@ -28,8 +27,8 @@ public class UserFunc extends Func {
 	}
 	
 	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+	public Object accept(Visitor v, Object info) throws Exception {
+		return v.visit(this, info);
 	}
 
 	@Override
