@@ -32,6 +32,7 @@ public class Parser {
 		return true;
 	}
 	
+	
 	public boolean statement() {
 		if (match(TokenType.DEF)) {
 			nextToken();
@@ -40,6 +41,7 @@ public class Parser {
 		else if (!expr()) return false;
 		return true;
 	}
+	
 	
 	public boolean definition() {
 		if (!signature()) return false;
@@ -55,17 +57,18 @@ public class Parser {
 		return true;
 	}
 	
+	
 	public boolean signature() {
-		if (!match(TokenType.ID)) return false;
+		if (!match(TokenType.ID)) 
+			return false;
 		
 		String id = tok.toString();
 		nextToken();
 		
 		ArrayList<Var> params; 
 		
-		if (!match(TokenType.LPAR)) {
+		if (!match(TokenType.LPAR))
 			return false;
-		}
 		nextToken();
 		
 		params = new ArrayList<Var>();
@@ -79,6 +82,7 @@ public class Parser {
 				nextToken();
 				if (match(TokenType.RPAR)) {
 					nextToken();
+					break;
 				}
 				else if (match(TokenType.COMMA)) {
 					nextToken();
@@ -94,36 +98,39 @@ public class Parser {
 		return true;
 	}
 	
+	
 	public boolean expr() {
-		if (!term()) return false;
+		if (!term())
+			return false;
 		
 		boolean plus;
 		while ((plus = match(TokenType.PLUS)) || match(TokenType.MIN)) {
 			nextToken();
 			Expr last = (Expr) result;
-			if (!term()) return false;
+			if (!term()) 
+				return false;
 			result = plus ? new Add(last, (Expr)result) : new Sub(last, (Expr)result);
 		}
 		return true;
 	}
 	
 	public boolean term() {
-		if (!factor()) return false;
+		if (!prefix())
+			return false;
 		
 		while (true) {
 			Expr last = (Expr) result;
 			if (match(TokenType.MUL)){
 				nextToken();
-				if	(!factor()) return false;
+				if	(!prefix())
+					return false;
 				result = new Mul(last, (Expr) result);
 			}
 			else if (match(TokenType.DIV)) {
 				nextToken();
-				if	(!factor()) return false;
+				if	(!prefix())
+					return false;
 				result = new Div(last, (Expr) result);
-			}
-			else if (noMinusFactor()) {
-				result = new Mul(last, (Expr) result);
 			}
 			else {
 				return true;
@@ -131,51 +138,35 @@ public class Parser {
 		}
 	}
 	
-	public boolean factor() {
+	public boolean prefix() {
 		boolean minus = false;
-		if (minus = match(TokenType.MIN)) {
+		if (match(TokenType.MIN)) {
 			nextToken();
+			minus = true;
 		}
-		
-		if (!terminal()) {
+		if (!factor())
 			return false;
-		}
-		if (!match(TokenType.POW)){
-			if (minus) {
-				result = new Minus((Expr)result);
-			}
-			return true;
-		}
-		nextToken();
-		
-		Expr lhs = (Expr)result;
-		if (!factor()) {
-			return false;
-		}
-		result = (Node)new Pow(lhs, (Expr)result);
-		if (minus) {
+		if (minus) 
 			result = new Minus((Expr)result);
-		}
 		return true;
 	}
-
-	public boolean noMinusFactor() {
-		if (!terminal()) {
+	
+	public boolean factor() {		
+		if (!terminal())
 			return false;
-		}
-		if (!match(TokenType.POW)){
-			return true;
-		}
-		nextToken();
 		
-		Expr lhs = (Expr)result;
-		if (!factor()) {
-			return false;
+		if (match(TokenType.POW)){
+			nextToken();
+			
+			Expr lhs = (Expr) result;
+			if (!prefix())
+				return false;
+			result = (Node) new Pow(lhs, (Expr) result);
 		}
-		result = (Node)new Pow(lhs, (Expr)result);
+		
 		return true;
 	}
-	 	
+	
 	public boolean terminal() {
 		if (match(TokenType.NUM)) {
 			result = new Num(Double.parseDouble(tok.toString()));

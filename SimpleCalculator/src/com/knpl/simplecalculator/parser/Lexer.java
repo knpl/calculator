@@ -94,48 +94,55 @@ public class Lexer {
 				i+=1;
 				break;
 			default:
-				
-				if (!matcher.find(i)) {
-					result = new Token(TokenType.INVALID, input.substring(i));
-					i += 1;
-					continue;
-				}
-				
-				boolean match = false;
-				String token;
-				for (int group = 1; group <= matcher.groupCount(); ++group) {
-					token = matcher.group(group);
-					if (token != null) { /* found a match */
-						match = true;
-						
-						switch (group) {
-						case 1:
-							result = new Token(TokenType.DEF, token);
-							break;
-						case 2:
-							result = new Token(TokenType.ID, token);
-							break;
-						case 3:
-							result = new Token(TokenType.NUM, token);
-							break;
-						default:
-							result = new Token(TokenType.INVALID, token);
-						}
-						
-						i += token.length();
-						
-						break;
-					}
-				}
-				
-				if (!match) {
-					token = matcher.group(0);
-					result = new Token(TokenType.INVALID, token);
-					i += token.length();
-				}
+				result = patternToken();
 			}
 		}
 		
 		return (result == null) ? new Token(TokenType.EOF, "EOF") : result;
+	}
+	
+	private Token patternToken() {
+		Token result = null;
+		
+		if (!matcher.find(i)) {
+			result = new Token(TokenType.INVALID, input.substring(i));
+			i += 1;
+			return result;
+		}
+		
+		boolean match = false;
+		String token;
+		for (int group = 1; group <= matcher.groupCount(); ++group) {
+			token = matcher.group(group);
+			if (token != null) { /* found a match */
+				match = true;
+				
+				switch (group) {
+				case 1:
+					result = new Token(TokenType.DEF, token);
+					break;
+				case 2:
+					result = new Token(TokenType.ID, token);
+					break;
+				case 3:
+					result = new Token(TokenType.NUM, token);
+					break;
+				default:
+					result = new Token(TokenType.INVALID, token);
+				}
+				
+				i += token.length();
+				
+				break;
+			}
+		}
+		
+		if (!match) {
+			token = matcher.group(0);
+			result = new Token(TokenType.INVALID, token);
+			i += token.length();
+		}
+		
+		return result;
 	}
 }

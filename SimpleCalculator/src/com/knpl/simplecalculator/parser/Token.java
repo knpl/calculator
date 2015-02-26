@@ -1,9 +1,8 @@
 package com.knpl.simplecalculator.parser;
 
-
 public class Token {
-	private TokenType type;
-	private String token;
+	private final TokenType type;
+	private final String token;
 	
 	public Token(TokenType type, String token) {
 		this.type = type;
