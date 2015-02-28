@@ -32,7 +32,6 @@ public class Parser {
 		return true;
 	}
 	
-	
 	public boolean statement() {
 		if (match(TokenType.DEF)) {
 			nextToken();

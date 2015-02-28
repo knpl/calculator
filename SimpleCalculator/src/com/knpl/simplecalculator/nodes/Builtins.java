@@ -30,7 +30,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -59,10 +59,10 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
+		
 		@Override
 		public Expr getArg(int i) {
 			return arguments[i];
@@ -85,7 +85,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -113,7 +113,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -141,7 +141,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -169,7 +169,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -197,7 +197,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -225,7 +225,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -253,7 +253,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -281,7 +281,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -309,7 +309,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -337,7 +337,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -365,7 +365,7 @@ public class Builtins {
 		}
 		
 		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
 
@@ -391,17 +391,17 @@ public class Builtins {
 			al.add(argument);
 			return al;
 		}
-		
-		@Override
-		public Object accept(Visitor v, Object info) throws Exception {
-			return v.visit(this, info);
-		}
 
 		@Override
 		public Expr getArg(int i) {
 			if (i != 0)
 				throw new IndexOutOfBoundsException();
 			return argument;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
 		}
 	}
 }

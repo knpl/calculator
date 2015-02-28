@@ -9,7 +9,7 @@ public abstract class Node {
 		throw new Exception("Node doesn't implement execute");
 	}
 	
-	public Object accept(Visitor v, Object info) throws Exception {
-		return v.visit(this, null);
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+		return v.visit(this, info);
 	}
 }

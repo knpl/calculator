@@ -1,12 +1,16 @@
 package com.knpl.simplecalculator.nodes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public class Signature extends Node {
+public class Signature extends Node implements Serializable {
+	
+	private static final long serialVersionUID = 9021859215633531622L;
+	
 	private final String name;
 	private final List<Var> parameters;
 	
@@ -24,7 +28,7 @@ public class Signature extends Node {
 	}
 	
 	@Override
-	public Object accept(Visitor v, Object info) throws Exception {
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 		return v.visit(this, info);
 	}
 	

@@ -1,5 +1,8 @@
 package com.knpl.simplecalculator.nodes;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.util.GlobalDefinitions;
 import com.knpl.simplecalculator.util.UserFuncDef;
@@ -39,6 +42,22 @@ public class FuncDefNode extends Node {
 		calculator.print(""+ufd.getProgram());
 	}
 	
+	public UserFuncDef createUserFuncDef() throws Exception {
+		Resolve resolve = new Resolve();
+		accept(resolve, null);
+		
+		Map<String, Var> freeVars = resolve.getFreeVarMap();
+		if (!freeVars.isEmpty()) {
+			String vars = Arrays.toString(resolve.getFreeVarMap().keySet().toArray());
+			throw new Exception("Resolve error: undeclared variables "+vars);
+		}
+		
+		PrettyPrint prettyPrint = new PrettyPrint();
+		accept(prettyPrint, null);
+		
+		return new UserFuncDef(sig, prettyPrint.toString(), expression);
+	}
+	
 	public Signature getSignature() {
 		return sig;
 	}
@@ -52,7 +71,7 @@ public class FuncDefNode extends Node {
 	}
 	
 	@Override
-	public Object accept(Visitor v, Object info) throws Exception {
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 		return v.visit(this, info);
 	}
 }

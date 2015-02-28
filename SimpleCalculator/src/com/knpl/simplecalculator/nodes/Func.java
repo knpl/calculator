@@ -21,7 +21,7 @@ public abstract class Func extends Expr {
 	}
 	
 	@Override
-	public Object accept(Visitor v, Object info) throws Exception {
-		return v.visit(this, null);
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+		return v.visit(this, info);
 	}
 }

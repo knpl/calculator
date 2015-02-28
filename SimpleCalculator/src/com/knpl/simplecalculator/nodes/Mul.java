@@ -14,7 +14,7 @@ public class Mul extends BinOp {
 	}
 	
 	@Override
-	public Object accept(Visitor v, Object info) throws Exception {
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 		return v.visit(this, info);
 	}
 }

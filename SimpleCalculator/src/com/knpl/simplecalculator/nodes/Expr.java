@@ -50,7 +50,7 @@ public abstract class Expr extends Node {
 	}
 	
 	@Override
-	public Object accept(Visitor v, Object info) throws Exception {
-		return v.visit(this, null);
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+		return v.visit(this, info);
 	}
 }
