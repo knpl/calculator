@@ -6,11 +6,83 @@ import java.util.List;
 
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
+import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.util.FunctionDefinition;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class Builtins {
+	
+	/* Constants */
+	public static class Pi extends Constant {
+		
+		@Override
+		public String getName() {
+			return "pi";
+		}
 
+		@Override
+		public double getDouble() {
+			return Math.PI;
+		}
+
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Complex getComplex() {
+			return new Complex(Math.PI, 0);
+		}
+	}
+	
+	public static class Euler extends Constant {
+
+		@Override
+		public String getName() {
+			return "e";
+		}
+
+		@Override
+		public double getDouble() {
+			return Math.E;
+		}
+
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Complex getComplex() {
+			return new Complex(Math.E, 0);
+		}
+	}
+	
+	public static class Im extends Constant {
+
+		@Override
+		public String getName() {
+			return "i";
+		}
+
+		@Override
+		public double getDouble() {
+			return Double.NaN;
+		}
+
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Complex getComplex() {
+			return new Complex(0, 1);
+		}
+	}
+	
+	/* Functions */
 	public static class Min extends Func {
 		private Expr arguments[];
 		

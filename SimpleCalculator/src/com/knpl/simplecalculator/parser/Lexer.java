@@ -30,7 +30,7 @@ public class Lexer {
 		TokenType type;
 		do { 
 			cur = nextToken();
-			type = cur.getType();
+			type = cur.type;
 			out.printf("(%s,\"%s\") ", type, cur);
 		}
 		while (type != TokenType.EOF && type != TokenType.INVALID);

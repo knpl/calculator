@@ -131,4 +131,24 @@ public class Visitor<O, I> {
 	public O visit(Atan node, I info) throws Exception {
 		return visit((Func) node, info);
 	}
+	
+	public O visit(Constant node, I info) throws Exception {
+		return visit((Expr) node, info);
+	}
+	
+	public O visit(Pi node, I info) throws Exception {
+		return visit((Constant) node, info);
+	}
+	
+	public O visit(Euler node, I info) throws Exception {
+		return visit((Constant) node, info);
+	}
+	
+	public O visit(Im node, I info) throws Exception {
+		return visit((Constant) node, info);
+	}
+	
+	public O visit(ConstDefNode node, I info) throws Exception {
+		return visit((Node) node, info);
+	}
 }

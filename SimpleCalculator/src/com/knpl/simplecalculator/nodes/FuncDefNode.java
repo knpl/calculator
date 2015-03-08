@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
-import com.knpl.simplecalculator.util.GlobalDefinitions;
+import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.util.UserFuncDef;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
@@ -23,7 +23,7 @@ public class FuncDefNode extends Node {
 	
 	@Override
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
-		GlobalDefinitions defs = GlobalDefinitions.getInstance();
+		Globals defs = Globals.getInstance();
 		if (defs.getFunctionDefinition(sig.getName()) != null) {
 			throw new Exception("Function \""+sig+"\" already defined");
 		}

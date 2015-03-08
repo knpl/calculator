@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.util.GlobalDefinitions;
+import com.knpl.simplecalculator.util.Globals;
 
 public class Resolve extends Visitor<Node, Void> {
 	
@@ -36,6 +36,12 @@ public class Resolve extends Visitor<Node, Void> {
 		node.getSignature().accept(this, info);
 		node.setExpression((Expr) node.getExpression().accept(this, info));
 		
+		return node;
+	}
+	
+	@Override
+	public Node visit(ConstDefNode node, Void info) throws Exception {
+		node.setExpression((Expr) node.getExpression().accept(this, info));
 		return node;
 	}
 	
@@ -77,7 +83,7 @@ public class Resolve extends Visitor<Node, Void> {
 		if (variable != null)
 			return variable;
 		
-		Num constant = GlobalDefinitions.getInstance().getConstant(name);
+		Constant constant = Globals.getInstance().getConstant(name);
 		if (constant != null)
 			return constant;
 		
@@ -92,7 +98,7 @@ public class Resolve extends Visitor<Node, Void> {
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this, info));
 		}
-		return GlobalDefinitions.getInstance().createFunction(node);
+		return Globals.getInstance().createFunction(node);
 	}
 	
 	@Override

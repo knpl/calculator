@@ -19,12 +19,21 @@ public class Signature extends Node implements Serializable {
 		this.parameters = Collections.unmodifiableList(new ArrayList<Var>(parameters));
 	}
 	
+	public Signature(String name) {
+		this.name = name;
+		this.parameters = Collections.unmodifiableList(new ArrayList<Var>());
+	}
+	
 	public String getName() {
 		return name;
 	}
 	
 	public List<Var> getParameters() {
 		return parameters;
+	}
+	
+	public boolean match(Signature sig) {
+		return name.equals(sig.name) && parameters.size() == sig.parameters.size(); 
 	}
 	
 	@Override

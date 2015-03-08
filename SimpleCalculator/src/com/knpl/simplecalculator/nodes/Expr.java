@@ -7,10 +7,12 @@ import java.util.Map;
 
 import android.graphics.Color;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
+import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.visitors.Compile;
+import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.Evaluate;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
@@ -21,13 +23,20 @@ public abstract class Expr extends Node {
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
 		Resolve resolve = new Resolve();
 		Expr node = (Expr) accept(resolve, null);
-		
 		Map<String, Var> freeVariables = resolve.getFreeVarMap();
 		
 		int n = freeVariables.size();
 		if (n == 0) {
-			Evaluate v = new Evaluate();
-			calculator.print(Double.toString((Double)node.accept(v, null)));
+			ComplexEvaluate v = new ComplexEvaluate();
+			Complex result = node.accept(v, null);
+			double im = result.im();
+			double re = result.re();
+			if (im == 0) {
+				calculator.print(re);
+			}
+			else {
+				calculator.print(result);
+			}
 		}
 		else if (n == 1) {
 			Var var = freeVariables.values().iterator().next();
@@ -37,9 +46,7 @@ public abstract class Expr extends Node {
 			
 			ArrayList<Pair<Mapper, Integer>> mappers = new ArrayList<Pair<Mapper, Integer>>(1);
 			mappers.add(
-				new Pair<Mapper, Integer>(
-					new ProgramMapper(compile.getProgram()), Color.BLUE
-				)
+				new Pair<Mapper, Integer>(new ProgramMapper(compile.getProgram()), Color.BLUE)
 			);
 			
 			calculator.plot(mappers);

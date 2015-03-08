@@ -4,10 +4,12 @@ package com.knpl.simplecalculator;
 import java.util.ArrayList;
 
 import com.knpl.simplecalculator.nodes.Node;
+import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Axis;
 import com.knpl.simplecalculator.plot.Mapper;
+import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.res.Configuration;
@@ -24,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -42,6 +45,9 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 							OPTIONS_FRAGMENT_POSITION = 1,
 							PLOTMENU_FRAGMENT_POSITION = 2,
 							FUNCDEF_FRAGMENT_POSITION = 3;
+	
+	public static final int N_DECIMALS = 10,
+							BASE = 10;
 	
 	public static final String EXTRA_MESSAGE = packagePrefix+"EXTRA_MESSAGE";
 	public static final Axis DEFAULT_AXIS = new Axis(-5, 5);
@@ -117,6 +123,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
     	if (keyCode == KeyEvent.KEYCODE_MENU) {
+    		closeSoftInput();
     		if (drawerLayout.isDrawerOpen(drawerList)) {
     			drawerLayout.closeDrawer(drawerList);
     		}
@@ -132,6 +139,14 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     		}
     	}
     	return super.onKeyDown(keyCode, event);
+    }
+    
+    public void closeSoftInput() {
+    	View v = getCurrentFocus();
+		if (v != null) {
+			InputMethodManager input = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			input.hideSoftInputFromWindow(v.getWindowToken(), 0);
+		}
     }
     
     @Override
@@ -200,6 +215,17 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     	TextView output = (TextView) findViewById(R.id.output);
     	output.setText(s);
     }
+    
+    public void print(Complex z) {
+    	TextView output = (TextView) findViewById(R.id.output);
+    	output.setText(FormatUtils.format(z, N_DECIMALS, BASE));
+    }
+    
+    public void print(double d) {
+    	TextView output = (TextView) findViewById(R.id.output);
+    	output.setText(FormatUtils.format(d, N_DECIMALS, BASE));
+    }
+    
 
 	@Override
 	public void setXAxis(Axis x) {

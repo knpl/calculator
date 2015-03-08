@@ -23,6 +23,10 @@ public class Call extends Expr {
 		return arguments;
 	}
 	
+	public boolean match(Signature sig) {
+		return name.equals(sig.getName()) && sig.getParameters().size() == arguments.size();
+	}
+	
 	@Override
 	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 		return v.visit(this, info);

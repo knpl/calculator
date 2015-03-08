@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knpl.simplecalculator.nodes.*;
+import static com.knpl.simplecalculator.parser.TokenType.*;
 
 public class Parser {
 	private Lexer lex;
@@ -11,10 +12,18 @@ public class Parser {
 	
 	private Node result;
 	
+	private List<Object> mem;
+	
 	public Parser(Lexer lex) {
 		this.lex = lex;
 		nextToken();
 		this.result = Null.NULL;
+		this.mem = new ArrayList<Object>();
+	}
+	
+	private boolean push(Object node) {
+		mem.add(node);
+		return true;
 	}
 	
 	public Token nextToken() {
@@ -22,67 +31,76 @@ public class Parser {
 	}
 	
 	public boolean match(TokenType t) {
-		return t == tok.getType();
+		return t == tok.type;
+	}
+	
+	public boolean token(TokenType t) {
+		if (t == tok.type) {
+			tok = lex.nextToken();
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean start() {
-		if (match(TokenType.EOF)) return true;
-		if (!statement()) return false;
-		if (!match(TokenType.EOF)) return false;
-		return true;
+		if (token(EOF)) {
+			return true;
+		}
+		else {
+			return statement() && token(EOF);
+		}
 	}
 	
 	public boolean statement() {
-		if (match(TokenType.DEF)) {
-			nextToken();
-			if (!definition()) return false;
-		}
-		else if (!expr()) return false;
-		return true;
-	}
-	
-	
-	public boolean definition() {
-		if (!signature()) return false;
-		Signature sig = (Signature) result;
-		
-		if (!match(TokenType.EQ)) return false;
-		nextToken();
-		
-		if (!expr()) return false;
-		
-		result = new FuncDefNode(sig, (Expr)result);
-		return true;
-	}
-	
-	
-	public boolean signature() {
-		if (!match(TokenType.ID)) 
-			return false;
-		
-		String id = tok.toString();
-		nextToken();
-		
-		ArrayList<Var> params; 
-		
-		if (!match(TokenType.LPAR))
-			return false;
-		nextToken();
-		
-		params = new ArrayList<Var>();
-		
-		if (match(TokenType.RPAR)) {
-			nextToken();
+		if (token(DEF)) {
+			return definition();
 		}
 		else {
-			while (match(TokenType.ID)) {
+			return expr();
+		}
+	}
+	
+	private boolean identifier() {
+		push(tok.token);
+		return token(ID);
+	}
+	
+	public boolean def() {
+		return identifier() && params() && token(EQ) && expr(); 
+	}
+	
+	public boolean params() {
+		return token(LPAR) && token(ID) && idlist() && token(RPAR); 
+	}
+	
+	public boolean idlist() {
+		if (token(COMMA)) {
+			return token(ID) && idlist();
+		}
+		return true;
+	}
+
+	public boolean definition() {
+		if (!match(ID))
+			return false;
+		
+		String id = tok.token;
+		nextToken();
+		
+		Signature sig = null;
+		if (match(LPAR)) {
+			nextToken();
+			
+			List<Var> params = new ArrayList<Var>();
+			while (match(ID)) {
 				params.add(new Var(tok.toString()));
 				nextToken();
-				if (match(TokenType.RPAR)) {
+				if (match(RPAR)) {
 					nextToken();
+					sig = new Signature(id, params);
 					break;
 				}
-				else if (match(TokenType.COMMA)) {
+				else if (match(COMMA)) {
 					nextToken();
 				}
 				else {
@@ -91,18 +109,66 @@ public class Parser {
 			}
 		}
 		
-		result = new Signature(id, params);
+		if (!match(EQ))
+			return false;
+		nextToken();
+		
+		if (!expr())
+			return false;
+		
+		result = (sig == null) ? new ConstDefNode(id, (Expr) result) 
+							   : new FuncDefNode(sig, (Expr) result);
 		
 		return true;
 	}
 	
+	public boolean functionDefinition() {
+		if (!match(ID))
+			return false;
+		
+		String id = tok.toString();
+		nextToken();
+		
+		Signature sig = null;
+		if (!match(LPAR))
+			return false;
+		nextToken();
+			
+		List<Var> params = new ArrayList<Var>();
+		while (match(ID)) {
+			params.add(new Var(tok.toString()));
+			nextToken();
+			if (match(RPAR)) {
+				nextToken();
+				sig = new Signature(id, params);
+				break;
+			}
+			else if (match(COMMA)) {
+				nextToken();
+			}
+			else {
+				return false;
+			}
+		}
+		
+		if (!match(EQ))
+			return false;
+		nextToken();
+		
+		if (!expr())
+			return false;
+		
+		result = new FuncDefNode(sig, (Expr) result);
+		
+		return true;
+	}
 	
 	public boolean expr() {
 		if (!term())
 			return false;
 		
 		boolean plus;
-		while ((plus = match(TokenType.PLUS)) || match(TokenType.MIN)) {
+		while ((plus = match(PLUS)) || match(MIN)) {
 			nextToken();
 			Expr last = (Expr) result;
 			if (!term()) 
@@ -118,13 +184,13 @@ public class Parser {
 		
 		while (true) {
 			Expr last = (Expr) result;
-			if (match(TokenType.MUL)){
+			if (match(MUL)){
 				nextToken();
 				if	(!prefix())
 					return false;
 				result = new Mul(last, (Expr) result);
 			}
-			else if (match(TokenType.DIV)) {
+			else if (match(DIV)) {
 				nextToken();
 				if	(!prefix())
 					return false;
@@ -138,7 +204,7 @@ public class Parser {
 	
 	public boolean prefix() {
 		boolean minus = false;
-		if (match(TokenType.MIN)) {
+		if (match(MIN)) {
 			nextToken();
 			minus = true;
 		}
@@ -153,7 +219,7 @@ public class Parser {
 		if (!terminal())
 			return false;
 		
-		if (match(TokenType.POW)){
+		if (match(POW)){
 			nextToken();
 			
 			Expr lhs = (Expr) result;
@@ -166,15 +232,15 @@ public class Parser {
 	}
 	
 	public boolean terminal() {
-		if (match(TokenType.NUM)) {
+		if (match(NUM)) {
 			result = new Num(Double.parseDouble(tok.toString()));
 			nextToken();
 			return true;
 		}
-		else if (match(TokenType.ID)) {
+		else if (match(ID)) {
 			String id = tok.toString();
 			nextToken();
-			if (!match(TokenType.LPAR)) {
+			if (!match(LPAR)) {
 				result = new Var(id);
 				return true;
 			}
@@ -184,12 +250,12 @@ public class Parser {
 			
 			while (expr()) {
 				args.add((Expr) result);
-				if (match(TokenType.RPAR)) {
+				if (match(RPAR)) {
 					nextToken();
 					result = new Call(id, args);
 					return true;
 				}
-				else if (match(TokenType.COMMA)) {
+				else if (match(COMMA)) {
 					nextToken();
 				}
 				else {
@@ -199,10 +265,10 @@ public class Parser {
 
 			return false;
 		}
-		else if (match(TokenType.LPAR)){
+		else if (match(LPAR)){
 			nextToken();
 			if (!expr()) return false;
-			if (!match(TokenType.RPAR)) return false;
+			if (!match(RPAR)) return false;
 			nextToken();
 			return true;
 		}

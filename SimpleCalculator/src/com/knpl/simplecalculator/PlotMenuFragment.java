@@ -34,7 +34,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
-import com.knpl.simplecalculator.util.GlobalDefinitions;
+import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.util.UserFuncDef;
@@ -196,7 +196,7 @@ public class PlotMenuFragment extends ListFragment {
 		}
 
 		private String getUnusedFunctionName() {
-			GlobalDefinitions defs = GlobalDefinitions.getInstance();
+			Globals defs = Globals.getInstance();
 			for (char c = 'f'; c < 'z'; ++c) {
 				String name = String.valueOf(c);
 				if (defs.getFunctionDefinition(name) == null) {
@@ -282,7 +282,7 @@ public class PlotMenuFragment extends ListFragment {
 		
 		private void onNegative() {
 			if (position != -1) {
-				GlobalDefinitions.getInstance().removeUserFuncDef(name);
+				Globals.getInstance().removeUserFuncDef(name);
 				plotEntries.remove(position);
 			}
 			dismiss();
@@ -293,7 +293,7 @@ public class PlotMenuFragment extends ListFragment {
 			int color = colorPickerDialog.getColor();
 		
 			Parser parser = new Parser(new Lexer(expr));
-			if (!parser.definition()) {
+			if (!parser.functionDefinition()) {
 				displayMessage("Syntax error: "+expr);
 				return;
 			}
@@ -323,7 +323,7 @@ public class PlotMenuFragment extends ListFragment {
 				return;
 			}
 			
-			GlobalDefinitions defs = GlobalDefinitions.getInstance();
+			Globals defs = Globals.getInstance();
 			defs.putUserFuncDef(userFuncDef);
 			if (position != -1)
 				plotEntries.set(position, new PlotEntry(userFuncDef, color));

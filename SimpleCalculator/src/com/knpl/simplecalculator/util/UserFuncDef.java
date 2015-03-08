@@ -1,5 +1,7 @@
 package com.knpl.simplecalculator.util;
 
+import java.util.List;
+
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.visitors.Compile;
 
@@ -19,13 +21,17 @@ public class UserFuncDef implements FunctionDefinition {
 
 	@Override
 	public Func createFunction(Call call) throws Exception {
-		if (!call.getName().equals(sig.getName())) {
-			throw new Exception("Function name mismatch");
-		}
-		if (call.getArguments().size() != sig.getParameters().size()) {
-			throw new Exception("Argument mismatch");
-		}
+		if (!call.match(sig))
+			throw new Exception("Signature mismatch");
 		return new UserFunc(this, call.getArguments());
+	}
+	
+	@Override
+	public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		if (!this.sig.match(sig)) {
+			throw new Exception("Signature mismatch");
+		}
+		return new UserFunc(this, args);
 	}
 	
 	public String getSource() {
@@ -61,4 +67,5 @@ public class UserFuncDef implements FunctionDefinition {
 	public String toString() {
 		return source;
 	}
+
 }

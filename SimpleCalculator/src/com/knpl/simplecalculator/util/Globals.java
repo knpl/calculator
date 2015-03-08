@@ -6,35 +6,43 @@ import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.Func;
 import com.knpl.simplecalculator.nodes.Call;
-import com.knpl.simplecalculator.nodes.Num;
+import com.knpl.simplecalculator.nodes.Constant;
+import com.knpl.simplecalculator.nodes.UserConst;
 
-public class GlobalDefinitions {
-	private static GlobalDefinitions instance = null;
+import com.knpl.simplecalculator.nodes.Builtins.Pi;
+import com.knpl.simplecalculator.nodes.Builtins.Euler;
+import com.knpl.simplecalculator.nodes.Builtins.Im;
+
+public class Globals {
+	private static Globals instance = null;
 	
 	private Map<String, FunctionDefinition> builtinFuncDefMap;
 	private Map<String, UserFuncDef> userFuncDefMap;
-	private Map<String, Num> constDefMap;
+	private Map<String, Constant> constDefMap;
+	private Map<String, UserConst> userConstDefMap;
 	
-	private GlobalDefinitions() {
+	private Globals() {
 		builtinFuncDefMap = new HashMap<String, FunctionDefinition>();
 		userFuncDefMap = new HashMap<String, UserFuncDef>();
-		constDefMap = new HashMap<String, Num>();
+		constDefMap = new HashMap<String, Constant>();
+		userConstDefMap = new HashMap<String, UserConst>();
 		
 		FunctionDefinition defs[] = BuiltinFuncDefs.builtinFunctions;
 		for (int i = 0; i < defs.length; i++) {
 			builtinFuncDefMap.put(defs[i].getSignature().getName(), defs[i]);
 		}
 		
-		constDefMap.put("pi", new Num(Math.PI));
-		constDefMap.put("e", new Num(Math.E));
+		constDefMap.put("pi", new Pi());
+		constDefMap.put("e", new Euler());
+		constDefMap.put("i", new Im());
 	}
 	
 	private static void createInstance() {
 		if (instance == null)
-			instance = new GlobalDefinitions();
+			instance = new Globals();
 	}
 	
-	public static GlobalDefinitions getInstance() {
+	public static Globals getInstance() {
 		if (instance == null) {
 			createInstance();
 		}
@@ -57,13 +65,16 @@ public class GlobalDefinitions {
 		throw new Exception("Function \"" + call.getName() + "\" undefined");
 	}
 	
-	public Num getConstant(String id) {
-		return constDefMap.get(id);
+	public Constant getConstant(String id) {
+		Constant constant = constDefMap.get(id);
+		if (constant != null) {
+			return constant;
+		}
+		return userConstDefMap.get(id);
 	}
 	
 	public FunctionDefinition getFunctionDefinition(String id) {
-		FunctionDefinition fd;
-		fd = builtinFuncDefMap.get(id);
+		FunctionDefinition fd = builtinFuncDefMap.get(id);
 		if (fd != null) {
 			return fd;
 		}
@@ -86,11 +97,10 @@ public class GlobalDefinitions {
 		return userFuncDefMap.values();
 	}
 	
-	public boolean putConstant(String id, Num constant) {
+	public boolean putUserConstDef(String id, UserConst userConstDef) {
 		boolean result = false;
-		Num c = constDefMap.get(id);
-		if (c == null) {
-			constDefMap.put(id, constant);
+		if (userConstDefMap.get(id) == null) {
+			userConstDefMap.put(id, userConstDef);
 			result = true;
 		}
 		return result;

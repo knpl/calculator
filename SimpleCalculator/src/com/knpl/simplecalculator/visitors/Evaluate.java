@@ -1,7 +1,9 @@
 package com.knpl.simplecalculator.visitors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.Builtins.*;
 import com.knpl.simplecalculator.nodes.*;
@@ -9,6 +11,16 @@ import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class Evaluate extends Visitor<Double, Void> {
+	
+	private Map<String, Double> map;
+	
+	public Evaluate() {
+		map = new HashMap<String, Double>();
+	}
+	
+	public Evaluate(Map<String, Double> map) {
+		this.map = map;
+	}
 	
 	@Override
 	public Double visit(Add node, Void info) throws Exception {
@@ -48,6 +60,15 @@ public class Evaluate extends Visitor<Double, Void> {
 	@Override
 	public Double visit(Num node, Void info) throws Exception {
 		return node.getValue();
+	}
+	
+	@Override
+	public Double visit(Var node, Void info) throws Exception {
+		Double result = map.get(node.getName());
+		if (result == null) {
+			throw new Exception("No mapping for variable "+node.getName());
+		}
+		return result;
 	}
 
 	@Override
@@ -130,5 +151,10 @@ public class Evaluate extends Visitor<Double, Void> {
 	@Override
 	public Double visit(Atan node, Void info) throws Exception {
 		return Math.atan((Double)node.getArg(0).accept(this, info));
+	}
+	
+	@Override
+	public Double visit(Constant node, Void info) throws Exception {
+		return node.getDouble();
 	}
 }

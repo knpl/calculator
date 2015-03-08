@@ -226,6 +226,23 @@ public class Compile extends Visitor<Void, Void> {
 	}
 
 	@Override
+	public Void visit(Constant node, Void info) throws Exception {
+		double val = node.getDouble();
+		
+		write(ByteCodes.LOADC);
+		push();
+		
+		Integer index = constantMap.get(val);
+		if (index == null) {
+			index = (Integer) constantMap.size();
+			constantMap.put(val, index);
+		}
+		write(index);
+		
+		return null;
+	}
+
+	@Override
 	public Void visit(Var node, Void info) throws Exception {
 		String name = node.getName();
 		

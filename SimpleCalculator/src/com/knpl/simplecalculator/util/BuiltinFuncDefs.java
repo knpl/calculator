@@ -39,12 +39,8 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("min")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 2) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			List<Expr> args = call.getArguments();
 			return new Min(this, args.get(0), args.get(1));
 		}
@@ -52,6 +48,13 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Min(this, args.get(0), args.get(1));
 		}
 	}
 	
@@ -64,12 +67,8 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("max")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 2) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			List<Expr> args = call.getArguments();
 			return new Max(this, args.get(0), args.get(1));
 		}
@@ -77,6 +76,13 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Max(this, args.get(0), args.get(1));
 		}
 	}
 	
@@ -94,13 +100,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("sqrt")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Sqrt(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Sqrt(this, args.get(0));
 		}
 	}
 	
@@ -118,13 +127,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("abs")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Abs(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Abs(this, args.get(0));
 		}
 	}
 	
@@ -142,13 +154,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("log")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Log(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Log(this, args.get(0));
 		}
 	}
 	
@@ -165,13 +180,16 @@ public class BuiltinFuncDefs {
 		}
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("exp")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Exp(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Exp(this, args.get(0));
 		}
 	}
 	
@@ -188,13 +206,16 @@ public class BuiltinFuncDefs {
 		}
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("sinh")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Sinh(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Sinh(this, args.get(0));
 		}
 	}
 	
@@ -212,13 +233,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("cosh")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Cosh(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Cosh(this, args.get(0));
 		}
 	}
 	
@@ -236,13 +260,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("sin")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Sin(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Sin(this, args.get(0));
 		}
 	}
 	
@@ -260,13 +287,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("cos")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Cos(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Cos(this, args.get(0));
 		}
 	}
 	
@@ -284,13 +314,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("tan")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Tan(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Tan(this, args.get(0));
 		}
 	}
 	
@@ -308,13 +341,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("asin")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Asin(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Asin(this, args.get(0));
 		}
 	}
 	
@@ -332,13 +368,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("acos")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Acos(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Acos(this, args.get(0));
 		}
 	}
 	
@@ -356,13 +395,16 @@ public class BuiltinFuncDefs {
 		
 		@Override
 		public Func createFunction(Call call) throws Exception {
-			if (!call.getName().equals("atan")) {
-				throw new Exception("Function name mismatch");
-			}
-			if (call.getArguments().size() != 1) {
-				throw new Exception("Argument mismatch");
-			}
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
 			return new Atan(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Atan(this, args.get(0));
 		}
 	}
 }

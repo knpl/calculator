@@ -150,6 +150,12 @@ public class PrettyPrint extends Visitor<Void, Info> {
 		
 		return null;
 	}
+	
+	@Override
+	public Void visit(Constant node, Info info) throws Exception {
+		out.print(node.getName());
+		return null;
+	}
 
 	@Override
 	public Void visit(Var node, Info info) throws Exception {
@@ -161,6 +167,13 @@ public class PrettyPrint extends Visitor<Void, Info> {
 	public Void visit(FuncDefNode node, Info info) throws Exception {
 		node.getSignature().accept(this, null);
 		out.print(" = ");
+		node.getExpression().accept(this, null);
+		return null;
+	}
+	
+	@Override
+	public Void visit(ConstDefNode node, Info info) throws Exception {
+		out.print(node.getName() + " = ");
 		node.getExpression().accept(this, null);
 		return null;
 	}

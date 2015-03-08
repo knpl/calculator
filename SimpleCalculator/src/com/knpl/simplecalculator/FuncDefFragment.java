@@ -2,7 +2,7 @@ package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
 
-import com.knpl.simplecalculator.util.GlobalDefinitions;
+import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.util.UserFuncDef;
 
 import android.os.Bundle;
@@ -22,7 +22,7 @@ public class FuncDefFragment extends ListFragment {
 			Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
 		
-		GlobalDefinitions defs = GlobalDefinitions.getInstance();
+		Globals defs = Globals.getInstance();
 		funcdefs = new ArrayList<UserFuncDef>(defs.getUserFuncDefs());
 		
 		ArrayAdapter<UserFuncDef> adapter= 
