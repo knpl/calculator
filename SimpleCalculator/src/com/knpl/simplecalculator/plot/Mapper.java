@@ -2,6 +2,9 @@ package com.knpl.simplecalculator.plot;
 
 import java.io.Serializable;
 
+import android.graphics.Matrix;
+import android.graphics.Path;
+
 public interface Mapper extends Serializable {
-	public void map(float[] data, Axis x, Axis y);
+	public Path map(Matrix ctm, Range xrange, Range yrange);
 }

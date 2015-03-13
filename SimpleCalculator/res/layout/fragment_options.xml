@@ -16,19 +16,19 @@
 	    android:paddingTop="@dimen/activity_vertical_margin"
 	    tools:context="com.knpl.simplecalculator.SimpleCalculatorActivity" >   
 	    
-	    <!-- X axis section -->    
-	    <View
-	        style="@style/Divider"/>
-	    
+	    <!-- X axis section -->
 	    <TextView 
 	   	    android:layout_width="wrap_content"
 	   	    android:layout_height="wrap_content"
-	   	    android:text="x axis"/>
+	   	    android:textSize="20dp"
+	   	    android:text="x-axis"/>
 	    
 	    <Spinner
-		        android:id="@+id/xType"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content" />
+	        android:id="@+id/xType"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10dp"
+	         />
 	        
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -41,6 +41,7 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:layout_margin="10dp"
 				android:hint="xmin"
 				android:inputType="textNoSuggestions" />
 	       	
@@ -49,25 +50,26 @@
 	       	    android:layout_width="0dp"
 	       	    android:layout_height="wrap_content"
 	       	    android:layout_weight="1"
+	       	    android:layout_margin="10dp"
 	       	    android:hint="xmax"
 	       	    android:inputType="textNoSuggestions" />
 	        
 	    </LinearLayout>
 	    <!-- End X axis section -->
 	    
-	    <View
-	        style="@style/Divider"/>
-	    
 	    <TextView 
 	   	    android:layout_width="wrap_content"
 	   	    android:layout_height="wrap_content"
-	   	    android:text="y axis"/>
+	   	    android:textSize="20dp"
+	   	    android:text="y-axis"/>
 	    
 	    <!-- Y axis section -->
 	    <Spinner
 		        android:id="@+id/yType"
 		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content" />
+		        android:layout_height="wrap_content"
+		        android:layout_margin="10dp"
+		         />
 	    
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -79,6 +81,7 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:layout_margin="10dp"
 				android:hint="ymin"
 				android:inputType="textNoSuggestions" />
 	       	
@@ -87,6 +90,7 @@
 	       	    android:layout_width="0dp"
 	       	    android:layout_height="wrap_content"
 	       	    android:layout_weight="1"
+	       	    android:layout_margin="10dp"
 	       	    android:hint="ymax"
 	       	    android:inputType="textNoSuggestions" />
 	        

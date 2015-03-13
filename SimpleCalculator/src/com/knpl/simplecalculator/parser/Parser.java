@@ -109,11 +109,7 @@ public class Parser {
 			}
 		}
 		
-		if (!match(EQ))
-			return false;
-		nextToken();
-		
-		if (!expr())
+		if (!(token(EQ) && expr()))
 			return false;
 		
 		result = (sig == null) ? new ConstDefNode(id, (Expr) result) 
@@ -130,16 +126,14 @@ public class Parser {
 		nextToken();
 		
 		Signature sig = null;
-		if (!match(LPAR))
+		if (!token(LPAR))
 			return false;
-		nextToken();
 			
 		List<Var> params = new ArrayList<Var>();
 		while (match(ID)) {
 			params.add(new Var(tok.toString()));
 			nextToken();
-			if (match(RPAR)) {
-				nextToken();
+			if (token(RPAR)) {
 				sig = new Signature(id, params);
 				break;
 			}
@@ -151,11 +145,7 @@ public class Parser {
 			}
 		}
 		
-		if (!match(EQ))
-			return false;
-		nextToken();
-		
-		if (!expr())
+		if (!(token(EQ) && expr()))
 			return false;
 		
 		result = new FuncDefNode(sig, (Expr) result);
@@ -204,8 +194,7 @@ public class Parser {
 	
 	public boolean prefix() {
 		boolean minus = false;
-		if (match(MIN)) {
-			nextToken();
+		if (token(MIN)) {
 			minus = true;
 		}
 		if (!factor())
@@ -219,9 +208,7 @@ public class Parser {
 		if (!terminal())
 			return false;
 		
-		if (match(POW)){
-			nextToken();
-			
+		if (token(POW)){
 			Expr lhs = (Expr) result;
 			if (!prefix())
 				return false;
@@ -232,12 +219,14 @@ public class Parser {
 	}
 	
 	public boolean terminal() {
-		if (match(NUM)) {
-			result = new Num(Double.parseDouble(tok.toString()));
+		switch (tok.type) {
+			
+		case NUM:
+			result = new Num(tok.toString());
 			nextToken();
 			return true;
-		}
-		else if (match(ID)) {
+		
+		case ID:
 			String id = tok.toString();
 			nextToken();
 			if (!match(LPAR)) {
@@ -247,32 +236,23 @@ public class Parser {
 			nextToken();
 			
 			List<Expr> args = new ArrayList<Expr>();
-			
 			while (expr()) {
 				args.add((Expr) result);
-				if (match(RPAR)) {
-					nextToken();
+				if (token(RPAR)) {
 					result = new Call(id, args);
 					return true;
 				}
-				else if (match(COMMA)) {
-					nextToken();
-				}
-				else {
+				if (!token(COMMA))
 					return false;
-				}
 			}
 
 			return false;
-		}
-		else if (match(LPAR)){
+		
+		case LPAR:
 			nextToken();
-			if (!expr()) return false;
-			if (!match(RPAR)) return false;
-			nextToken();
-			return true;
-		}
-		else {
+			return expr() && token(RPAR);
+		
+		default:
 			return false;
 		}
 	}

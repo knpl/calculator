@@ -22,6 +22,32 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 	}
 	
 	@Override
+	public Complex visit(Min node, Void info) throws Exception {
+		Complex a = node.getArg(0).accept(this, info);
+		if (a.im() != 0.0) {
+			throw new Exception("min only defined for real numbers");
+		}
+		Complex b = node.getArg(1).accept(this, info);
+		if (b.im() != 0.0) {
+			throw new Exception("min only defined for real numbers");
+		}
+		return (b.re() < a.re()) ? b : a;
+	}
+	
+	@Override
+	public Complex visit(Max node, Void info) throws Exception {
+		Complex a = node.getArg(0).accept(this, info);
+		if (a.im() != 0.0) {
+			throw new Exception("max only defined for real numbers");
+		}
+		Complex b = node.getArg(1).accept(this, info);
+		if (b.im() != 0.0) {
+			throw new Exception("max only defined for real numbers");
+		}
+		return (b.re() > a.re()) ? b : a;
+	}
+	
+	@Override
 	public Complex visit(Add node, Void info) throws Exception {
 		Complex w = node.getLHS().accept(this, info);
 		Complex z = node.getRHS().accept(this, info);
@@ -70,7 +96,7 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 
 	@Override
 	public Complex visit(Num node, Void info) throws Exception {
-		return new Complex(node.getValue(), 0.0);
+		return new Complex(node.getDouble(), 0.0);
 	}
 	
 	@Override
@@ -94,13 +120,23 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 	@Override
 	public Complex visit(Sqrt node, Void info) throws Exception {
 		Complex z = node.getArg(0).accept(this, info);
-		return (z.re() >= 0.0 && z.im() == 0.0) ? z.setRe(Math.sqrt(z.re()))
-							   				    : z.sqrt();
+		if (z.im() == 0.0) {
+			double re = z.re();
+			if (re < 0.0) {
+				z.setRe(0.0);
+				z.setIm(Math.sqrt(-re));
+			}
+			else {
+				z.setRe(Math.sqrt(re));
+			}
+			return z;
+		}
+		return z.sqrt();
 	}
 
 	@Override
 	public Complex visit(Abs node, Void info) throws Exception {
-		return new Complex(node.getArg(0).accept(this, info).abs(), 0);
+		return new Complex(node.getArg(0).accept(this, info).abs(), 0.0);
 	}
 
 	@Override

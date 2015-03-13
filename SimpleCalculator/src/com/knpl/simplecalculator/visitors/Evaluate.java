@@ -59,7 +59,7 @@ public class Evaluate extends Visitor<Double, Void> {
 
 	@Override
 	public Double visit(Num node, Void info) throws Exception {
-		return node.getValue();
+		return node.getDouble();
 	}
 	
 	@Override

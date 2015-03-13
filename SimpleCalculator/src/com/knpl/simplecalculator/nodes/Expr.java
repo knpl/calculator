@@ -7,13 +7,11 @@ import java.util.Map;
 
 import android.graphics.Color;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
-import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
-import com.knpl.simplecalculator.visitors.Evaluate;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
@@ -28,15 +26,7 @@ public abstract class Expr extends Node {
 		int n = freeVariables.size();
 		if (n == 0) {
 			ComplexEvaluate v = new ComplexEvaluate();
-			Complex result = node.accept(v, null);
-			double im = result.im();
-			double re = result.re();
-			if (im == 0) {
-				calculator.print(re);
-			}
-			else {
-				calculator.print(result);
-			}
+			calculator.print(node.accept(v, null));
 		}
 		else if (n == 1) {
 			Var var = freeVariables.values().iterator().next();

@@ -34,7 +34,6 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
-import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.util.UserFuncDef;
@@ -194,17 +193,6 @@ public class PlotMenuFragment extends ListFragment {
 			
 			return colorDialog;
 		}
-
-		private String getUnusedFunctionName() {
-			Globals defs = Globals.getInstance();
-			for (char c = 'f'; c < 'z'; ++c) {
-				String name = String.valueOf(c);
-				if (defs.getFunctionDefinition(name) == null) {
-					return name;
-				}
-			}
-			return "";
-		}
 		
 		private void init(View view) {
 			exprEditText = (EditText) view.findViewById(R.id.dialog_expression);
@@ -223,7 +211,7 @@ public class PlotMenuFragment extends ListFragment {
 			
 			source = args.getString("source");
 			if (source == null)
-				source = getUnusedFunctionName() + "(x) = ";
+				source = "f(x) = ";
 			
 			exprEditText.setText(source);
 			colorIndicator.getBackground().setColorFilter(color, Mode.MULTIPLY);
@@ -281,10 +269,8 @@ public class PlotMenuFragment extends ListFragment {
 		}
 		
 		private void onNegative() {
-			if (position != -1) {
-				Globals.getInstance().removeUserFuncDef(name);
+			if (position != -1)
 				plotEntries.remove(position);
-			}
 			dismiss();
 		}
 		
@@ -323,8 +309,6 @@ public class PlotMenuFragment extends ListFragment {
 				return;
 			}
 			
-			Globals defs = Globals.getInstance();
-			defs.putUserFuncDef(userFuncDef);
 			if (position != -1)
 				plotEntries.set(position, new PlotEntry(userFuncDef, color));
 			else

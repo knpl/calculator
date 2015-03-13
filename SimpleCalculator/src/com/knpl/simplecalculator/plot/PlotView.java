@@ -37,7 +37,7 @@ public class PlotView extends View {
 	
 	private List<Pair<Mapper, Integer>> mappers;
 	
-	private Axis xaxis,
+	private Range xaxis,
 				 yaxis;
 	
 	private float[] translate,
@@ -47,8 +47,10 @@ public class PlotView extends View {
 	private PlotState plotState;
 	
 	private Matrix ctm,
-				   modelToScreen,
-				   screenToModel;
+				   viewToNormal,
+				   normalToView,
+				   normalToScreen,
+				   screenToNormal;
 	
 	public PlotView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -65,8 +67,12 @@ public class PlotView extends View {
 		plotState = PlotState.STATIC;
 		
 		ctm = new Matrix();
-		modelToScreen = new Matrix();
-		screenToModel = new Matrix();
+		
+		viewToNormal = new Matrix();
+		normalToView = new Matrix();
+		
+		normalToScreen = new Matrix();
+		screenToNormal = new Matrix();
 	}
 	
 	@Override
@@ -85,17 +91,19 @@ public class PlotView extends View {
 			yaxis = yaxis.extend(plotheight/plotwidth);
 		}
 		
-		modelToScreen.reset();
-		modelToScreen.preTranslate(leftPadding, topPadding);
-		modelToScreen.preTranslate(0, plotheight);
-		modelToScreen.preScale(plotwidth, -plotheight);
-		modelToScreen.preScale(1f/(float)xaxis.len(), 1f/(float)yaxis.len());
-		modelToScreen.preTranslate(-xaxis.min, -yaxis.min);
+		normalToScreen.reset();
+		normalToScreen.preTranslate(leftPadding, topPadding);
+		normalToScreen.preTranslate(0, plotheight);
+		normalToScreen.preScale(plotwidth, -plotheight);
+		normalToScreen.invert(screenToNormal);
 		
-		modelToScreen.invert(screenToModel);
+		viewToNormal.reset();
+		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
+		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
+		viewToNormal.invert(normalToView);
 	}
 
-	public PlotView init(List<Pair<Mapper, Integer>> paths, Axis x, Axis y) {
+	public PlotView init(List<Pair<Mapper, Integer>> paths, Range x, Range y) {
 		this.mappers = paths;
 		this.xaxis = x;
 		this.yaxis = y;
@@ -127,16 +135,22 @@ public class PlotView extends View {
 	
 	public void translate(float x, float y) {
 		float[] dv = new float[]{x,y};
-		screenToModel.mapVectors(dv);
+		screenToNormal.mapVectors(dv);
+		normalToView.mapVectors(dv);
 		
-		xaxis = xaxis.create(xaxis.min - dv[0], xaxis.max - dv[0]);
-		yaxis = yaxis.create(yaxis.min - dv[1], yaxis.max - dv[1]);
+		xaxis = xaxis.create(xaxis.viewToModel(xaxis.min - dv[0]),
+									  xaxis.viewToModel(xaxis.max - dv[0]));
+		yaxis = yaxis.create(yaxis.viewToModel(yaxis.min - dv[1]),
+									  yaxis.viewToModel(yaxis.max - dv[1]));
 		
-		modelToScreen.postTranslate(x, y);
-		modelToScreen.invert(screenToModel);
+		viewToNormal.reset();
+		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
+		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
+		viewToNormal.invert(normalToView);
 		
 		invalidate();
 	}
+	
 	public void setScalePreview(float cx, float cy, float f) {
 		scalecenter[0] = cx;
 		scalecenter[1] = cy;
@@ -146,24 +160,19 @@ public class PlotView extends View {
 	}
 	
 	public void scale(float cx, float cy, float f) {
-		Matrix scale = new Matrix();
-		scale.preTranslate(cx, cy);
-		scale.preScale(f, f);
-		scale.preTranslate(-cx, -cy);
+		float[] center = new float[]{cx,cy};
+		screenToNormal.mapPoints(center);
+		normalToView.mapPoints(center);
 		
-		Matrix scaleInverse = new Matrix();
-		scale.invert(scaleInverse);
+		xaxis = xaxis.create(xaxis.viewToModel(center[0] + (xaxis.min - center[0])/f), 
+							 xaxis.viewToModel(center[0] + (xaxis.max - center[0])/f));
+		yaxis = yaxis.create(yaxis.viewToModel(center[1] + (yaxis.min - center[1])/f), 
+							 yaxis.viewToModel(center[1] + (yaxis.max - center[1])/f));
 		
-		float[] pts = new float[]{xaxis.min, yaxis.min, xaxis.max, yaxis.max};
-		modelToScreen.mapPoints(pts);
-		scaleInverse.mapPoints(pts);
-		screenToModel.mapPoints(pts);
-		
-		xaxis = new Axis(pts[0], pts[2]);
-		yaxis = new Axis(pts[1], pts[3]);
-		
-		modelToScreen.postConcat(scale);
-		modelToScreen.invert(screenToModel);
+		viewToNormal.reset();
+		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
+		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
+		viewToNormal.invert(normalToView);
 		
 		invalidate();
 	}
@@ -174,36 +183,54 @@ public class PlotView extends View {
 		super.onDraw(c);
 		
 		ctm.reset();
+		ctm.preConcat(normalToScreen);
+		
+		Range xrange, yrange;
+		float[] viewTranslate;
 		switch (plotState) {
-		case DRAGGING:
-			ctm.preTranslate(translate[0], translate[1]);
-			break;
-		case ZOOMING:
-			ctm.preTranslate(scalecenter[0], scalecenter[1]);
-			ctm.preScale(scalefactor, scalefactor);
-			ctm.preTranslate(-scalecenter[0], -scalecenter[1]);
-			break;
-		default:
-		}
-		ctm.preConcat(modelToScreen);
-		
-		drawAxes(c, ctm, xaxis, yaxis);
 
-		float[] data = new float[512];
-		Pair<Axis, Axis> axisPair = Axis.map(xaxis, yaxis, ctm);
+		case DRAGGING:
+			viewTranslate = new float[2];
+			screenToNormal.mapVectors(viewTranslate, translate);
+			normalToView.mapVectors(viewTranslate);
+			
+			xrange = xaxis.create(xaxis.viewToModel(xaxis.min - viewTranslate[0]),
+								  xaxis.viewToModel(xaxis.max - viewTranslate[0]));
+			yrange = yaxis.create(yaxis.viewToModel(yaxis.min - viewTranslate[1]),
+								  yaxis.viewToModel(yaxis.max - viewTranslate[1]));
+			
+			ctm.preScale(1/xrange.len(), 1/yrange.len());
+			ctm.preTranslate(-xrange.min, -yrange.min);
+			break;
+			
+		case ZOOMING:
+			viewTranslate = new float[2];
+			screenToNormal.mapPoints(viewTranslate, scalecenter);
+			normalToView.mapPoints(viewTranslate);
+			
+			xrange = xaxis.create(xaxis.viewToModel(viewTranslate[0] + (xaxis.min - viewTranslate[0])/scalefactor), 
+								  xaxis.viewToModel(viewTranslate[0] + (xaxis.max - viewTranslate[0])/scalefactor));
+			yrange = yaxis.create(yaxis.viewToModel(viewTranslate[1] + (yaxis.min - viewTranslate[1])/scalefactor), 
+								  yaxis.viewToModel(viewTranslate[1] + (yaxis.max - viewTranslate[1])/scalefactor));
+			
+			ctm.preScale(1/xrange.len(), 1/yrange.len());
+			ctm.preTranslate(-xrange.min, -yrange.min);
+			break;
+			
+		default:
+			xrange = xaxis;
+			yrange = yaxis;
+			ctm.preConcat(viewToNormal);
+		}
 		
+		drawAxes(c, ctm, xrange, yrange);
+
 		for (Pair<Mapper, Integer> pair : mappers) {
 			Mapper mapper = pair.getFirst();
 			int color = pair.getLast();
-			
-			mapper.map(data, xaxis, yaxis);
-			xaxis.modelToView(data, 0, 2);
-			yaxis.modelToView(data, 1, 2);
-			
-			ctm.mapPoints(data);
-			
+
 			linePaint.setColor(color);
-			c.drawPath(trace(data, axisPair.getFirst(), axisPair.getLast()), linePaint);
+			c.drawPath(mapper.map(ctm, xrange, yrange), linePaint);
 		}
 		linePaint.setColor(Color.BLACK);
 	}
@@ -224,7 +251,7 @@ public class PlotView extends View {
 		}
 	}
 
-	public void drawAxes(Canvas c, Matrix ctm, Axis x, Axis y) {
+	public void drawAxes(Canvas c, Matrix ctm, Range x, Range y) {
 		Path p = new Path();
 		float[] markers = new float[40];
 		String[] labels = new String[20];
@@ -265,7 +292,7 @@ public class PlotView extends View {
 		n = x.generateMarkers(markers, 0, 2);
 		generateLabels(labels, markers, n, 0, 2);
 		fill(markers, 1, 2, xaxisy, n);
-		Axis.modelToView(markers, x, y);
+		Range.modelToView(markers, x, y);
 		ctm.mapPoints(markers);
 		for (i = 0; i < n; ++i) {
 			p.moveTo(markers[2*i], markers[2*i+1] + 5);
@@ -284,7 +311,7 @@ public class PlotView extends View {
 		n = y.generateMarkers(markers, 1, 2);
 		generateLabels(labels, markers, n, 1, 2);
 		fill(markers, 0, 2, yaxisx, n);
-		Axis.modelToView(markers, x, y);
+		Range.modelToView(markers, x, y);
 		ctm.mapPoints(markers);
 		for (i = 0; i < n; ++i) {
 			p.moveTo(markers[2*i] - 5, markers[2*i+1]);
@@ -301,75 +328,6 @@ public class PlotView extends View {
 		for (i = 0; i < n; ++i) {
 			c.drawText(labels[i], markers[2*i] + ylabeloff, markers[2*i+1], linePaint);
 		}
-	}
-	
-	private static boolean ok(float x, float y) {
-		return !(Float.isNaN(x) || Float.isNaN(y) ||
-				 Float.isInfinite(x) || Float.isInfinite(y));
-	}
-	
-	private static final int DRAW = 0,
-							 SKIP = 1;
-	
-	private Path trace(float[] data, Axis xaxis, Axis yaxis) {
-		Path path = new Path();
-		float x, y, lastx, lasty;
-		
-		int state = SKIP;
-		x = data[0]; y = data[1];
-		if (ok(x, y) && xaxis.contains(x) && yaxis.contains(y)) {
-			path.moveTo(x, y);
-			state = DRAW;
-		}
-		lastx = x; lasty = y;
-		
-		for (int i = 2; i < data.length; i+=2) {
-			x = data[i]; y = data[i+1];
-			switch (state) {
-			
-			case SKIP:
-				
-				if (ok(x, y) && xaxis.contains(x) && yaxis.contains(y)) {
-					if (lasty == Float.POSITIVE_INFINITY) {
-						path.moveTo(x, yaxis.max);
-						path.lineTo(x, y);
-					}
-					else if (lasty == Float.NEGATIVE_INFINITY) {
-						path.moveTo(x, yaxis.min);
-						path.lineTo(x, y);
-					}
-					else if (Float.isNaN(lasty)) {
-						path.moveTo(x, y);
-					}
-					else {
-						path.moveTo(lastx, lasty);
-						path.lineTo(x, y);
-					}
-					state = DRAW;
-				}
-				break;
-				
-			case DRAW:
-				
-				if (ok(x, y)) {
-					if (!(xaxis.contains(x) && yaxis.contains(y))) {
-						state = SKIP;
-					}
-					path.lineTo(x, y);
-				}
-				else {
-					state = SKIP;
-				}
-				break;
-				
-			default:
-				return path;
-			}
-			
-			lastx = x; lasty = y;
-		}
-		
-		return path;
 	}
 
 	@Override

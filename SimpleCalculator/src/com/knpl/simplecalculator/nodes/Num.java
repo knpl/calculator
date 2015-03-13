@@ -3,22 +3,14 @@ package com.knpl.simplecalculator.nodes;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class Num extends Expr {
-	private double val;
+	private String token;
 	
-	public Num() {
-		val = Double.NaN;
-	}
-	
-	public Num(double val) {
-		this.val = val;
+	public Num(String token) {
+		this.token = token;
 	}
 
-	public double getValue() {
-		return val;
-	}
-
-	public void setValue(double newVal) {
-		val = newVal;
+	public double getDouble() {
+		return Double.parseDouble(token);
 	}
 
 	@Override

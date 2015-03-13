@@ -1,28 +1,28 @@
 package com.knpl.simplecalculator.plot;
 
-public class LogAxis extends Axis {
+public class LogRange extends Range {
 
 	private static final long serialVersionUID = 3457489932408306624L;
 	
-	public LogAxis(float min, float max) {
+	public LogRange(float min, float max) {
 		super(min, max);
 	}
 	
-	public LogAxis(LogAxis old) {
+	public LogRange(LogRange old) {
 		this(old.min, old.max);
 	}
 	
 	@Override
-	public LogAxis create(float min, float max) {
-		return new LogAxis(min, max);
+	public LogRange create(float min, float max) {
+		return new LogRange(min, max);
 	}
 	
 	@Override
-	public LogAxis extend(float factor) {
+	public LogRange extend(float factor) {
 		float tmp = .5f * (factor - 1);
 		float newmin = (float)(min * Math.pow((max / min),   - tmp));
 		float newmax = (float)(min * Math.pow((max / min), 1 + tmp));
-		return new LogAxis(newmin, newmax);
+		return new LogRange(newmin, newmax);
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class LogAxis extends Axis {
 	}
 	
 	public void viewToModel(float[] v, int index, int step) {
-		for (int i = index; i < v.length; i+= step) {
+		for (int i = index; i < v.length; i += step) {
 			v[i] = viewToModel(v[i]);
 		}
 	}
@@ -83,7 +83,7 @@ public class LogAxis extends Axis {
 	
 	@Override
 	public void modelToView(float[] v, int index, int step) {
-		for (int i = index; i < v.length; i+= step) {
+		for (int i = index; i < v.length; i += step) {
 			v[i] = modelToView(v[i]);
 		}
 	}

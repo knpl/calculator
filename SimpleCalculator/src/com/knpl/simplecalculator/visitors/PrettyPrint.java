@@ -140,7 +140,7 @@ public class PrettyPrint extends Visitor<Void, Info> {
 
 	@Override
 	public Void visit(Num node, Info info) throws Exception {
-		double val = node.getValue();
+		double val = node.getDouble();
 		if (val == (long)val) {
 			out.print((long) val);
 		}

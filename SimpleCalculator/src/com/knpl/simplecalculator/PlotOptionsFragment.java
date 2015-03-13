@@ -1,7 +1,7 @@
 package com.knpl.simplecalculator;
 
-import com.knpl.simplecalculator.plot.Axis;
-import com.knpl.simplecalculator.plot.LogAxis;
+import com.knpl.simplecalculator.plot.Range;
+import com.knpl.simplecalculator.plot.LogRange;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,7 +39,7 @@ public class PlotOptionsFragment extends Fragment {
 			}
 		});
 		
-		Axis x = listener.getXAxis(),
+		Range x = listener.getXAxis(),
 			 y = listener.getYAxis();
 		
 		EditText et;
@@ -73,12 +73,12 @@ public class PlotOptionsFragment extends Fragment {
 		}
 	}
 	
-	public Axis getAxis(Spinner spinner, float min, float max) {
+	public Range getAxis(Spinner spinner, float min, float max) {
 		switch (spinner.getSelectedItemPosition()) {
 		case 0: 
-			return new Axis(min, max);
+			return new Range(min, max);
 		case 1: 
-			return new LogAxis(min, max);
+			return new LogRange(min, max);
 		default:	
 			return SimpleCalculatorActivity.DEFAULT_AXIS;
 		}
@@ -87,8 +87,8 @@ public class PlotOptionsFragment extends Fragment {
 	public void apply() {
 		View v = getView();
 		
-		Axis oldx = listener.getXAxis();
-		Axis oldy = listener.getYAxis();
+		Range oldx = listener.getXAxis();
+		Range oldy = listener.getYAxis();
 		
 		float xmin = getNumber((EditText)v.findViewById(R.id.xMin)),
 			  xmax = getNumber((EditText)v.findViewById(R.id.xMax)),
@@ -126,9 +126,9 @@ public class PlotOptionsFragment extends Fragment {
 	}
 	
 	public interface OptionsListener {
-		void setXAxis(Axis x);
-		Axis getXAxis();
-		void setYAxis(Axis y);
-		Axis getYAxis();
+		void setXAxis(Range x);
+		Range getXAxis();
+		void setYAxis(Range y);
+		Range getYAxis();
 	}
 }

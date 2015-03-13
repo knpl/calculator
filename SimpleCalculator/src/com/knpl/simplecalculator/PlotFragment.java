@@ -3,7 +3,7 @@ package com.knpl.simplecalculator;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.knpl.simplecalculator.plot.Axis;
+import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.PlotView;
 import com.knpl.simplecalculator.util.Pair;
@@ -23,7 +23,7 @@ public class PlotFragment extends Fragment {
 		 return initPlotFragment(v);
 	}
 	
-	public static PlotFragment createPlotFragment(ArrayList<Pair<Mapper, Integer>> mappers, Axis x, Axis y) {
+	public static PlotFragment createPlotFragment(ArrayList<Pair<Mapper, Integer>> mappers, Range x, Range y) {
 		PlotFragment fragment = new PlotFragment();
 		Bundle args = new Bundle();
 		
@@ -43,8 +43,8 @@ public class PlotFragment extends Fragment {
 		final List<Pair<Mapper, Integer>> paths = 
 				(List<Pair<Mapper, Integer>>) 
 					(List<? extends Parcelable>) args.getParcelableArrayList("paths");	
-		final Axis x = (Axis) args.getSerializable("xaxis");
-		final Axis y = (Axis) args.getSerializable("yaxis");
+		final Range x = (Range) args.getSerializable("xaxis");
+		final Range y = (Range) args.getSerializable("yaxis");
 		
 		return v.init(paths, x, y);
 	}

@@ -7,7 +7,7 @@ import com.knpl.simplecalculator.nodes.Node;
 import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
-import com.knpl.simplecalculator.plot.Axis;
+import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
@@ -50,9 +50,9 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 							BASE = 10;
 	
 	public static final String EXTRA_MESSAGE = packagePrefix+"EXTRA_MESSAGE";
-	public static final Axis DEFAULT_AXIS = new Axis(-5, 5);
+	public static final Range DEFAULT_AXIS = new Range(-5, 5);
 	
-	private static Axis xaxis = DEFAULT_AXIS,
+	private static Range xaxis = DEFAULT_AXIS,
 						yaxis = DEFAULT_AXIS;
 	
 	private Fragment[] drawerFragments;
@@ -228,22 +228,22 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     
 
 	@Override
-	public void setXAxis(Axis x) {
+	public void setXAxis(Range x) {
 		xaxis = x;
 	}
 
 	@Override
-	public void setYAxis(Axis y) {
+	public void setYAxis(Range y) {
 		yaxis = y;
 	}
 	
 	@Override 
-	public Axis getXAxis() {
+	public Range getXAxis() {
 		return xaxis;
 	}
 	
 	@Override
-	public Axis getYAxis() {
+	public Range getYAxis() {
 		return yaxis;
 	}
 }

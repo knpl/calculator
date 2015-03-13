@@ -24,7 +24,6 @@ public class Compile extends Visitor<Void, Void> {
 	private List<Var> parameters;
 	
 	private Map<Double,Integer> constantMap;
-	
 	private Map<UserFunc, Integer> functionMap;
 	private Map<UserFunc, Integer> newFunctionMap;
 	
@@ -65,16 +64,14 @@ public class Compile extends Visitor<Void, Void> {
 	
 	private void push() {
 		curStackSize += 1;
-		if (curStackSize > maxStackSize) {
+		if (curStackSize > maxStackSize)
 			maxStackSize = curStackSize;
-		}
 	}
 	
 	private void push(int s) {
 		curStackSize += s;
-		if (curStackSize > maxStackSize) {
+		if (curStackSize > maxStackSize)
 			maxStackSize = curStackSize;
-		}
 	}
 	
 	private void pop() {
@@ -92,10 +89,6 @@ public class Compile extends Visitor<Void, Void> {
 	
 	@Override
 	public Void visit(FuncDefNode node, Void info) throws Exception {
-		if (nbytes != 0) {
-			throw new Exception("Recursive function definition encountered");
-		}
-		
 		Signature sig = node.getSignature();
 		parameters = sig.getParameters();
 		
@@ -167,7 +160,6 @@ public class Compile extends Visitor<Void, Void> {
 		visit((BinOp)node, info);
 		write(ByteCodes.SUB);
 		pop();
-		
 		return null;
 	}
 
@@ -210,7 +202,7 @@ public class Compile extends Visitor<Void, Void> {
 
 	@Override
 	public Void visit(Num node, Void info) throws Exception {
-		Double val = node.getValue();
+		Double val = node.getDouble();
 		
 		write(ByteCodes.LOADC);
 		push();

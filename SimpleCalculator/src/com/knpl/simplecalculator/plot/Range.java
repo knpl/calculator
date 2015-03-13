@@ -6,32 +6,32 @@ import com.knpl.simplecalculator.util.Pair;
 
 import android.graphics.Matrix;
 
-public class Axis implements Serializable {
+public class Range implements Serializable {
 	private static final long serialVersionUID = 4451726311629241145L;
 	
 	public final float min,
 		  		 	   max;
 	
-	public Axis(float min, float max) {
+	public Range(float min, float max) {
 		this.min = min;
 		this.max = max;
 	}
 	
-	public Axis(Axis old) {
+	public Range(Range old) {
 		this(old.min, old.max);
 	}
 	
-	public Axis create(float min, float max) {
-		return new Axis(min, max);
+	public Range create(float min, float max) {
+		return new Range(min, max);
 	}
 	
 	public boolean contains(float x) {
 		return min <= x && x <= max;
 	}
 	
-	public Axis extend(float factor) {
+	public Range extend(float factor) {
 		float tmp = .5f * (factor - 1) * (max-min);
-		return new Axis(min - tmp, max + tmp);
+		return new Range(min - tmp, max + tmp);
 	}
 	
 	public void generate(float[] dst, int index, int step) {
@@ -90,7 +90,7 @@ public class Axis implements Serializable {
 		return max-min;
 	}
 	
-	public static void modelToView(float[] v, Axis x, Axis y) {
+	public static void modelToView(float[] v, Range x, Range y) {
 		x.modelToView(v, 0, 2);
 		y.modelToView(v, 1, 2);
 	}
@@ -100,11 +100,11 @@ public class Axis implements Serializable {
 		return "["+min+", "+max+"]";
 	}
 	
-	public static Pair<Axis, Axis> map(Axis x, Axis y, Matrix ctm) {
+	public static Pair<Range, Range> map(Range x, Range y, Matrix ctm) {
 		float[] pts = new float[] {x.min, y.min, x.max, y.max};
 		ctm.mapPoints(pts);
-		return new Pair<Axis, Axis>(
-					new Axis(pts[0], pts[2]), new Axis(pts[3], pts[1]));
+		return new Pair<Range, Range>(
+					x.create(pts[0], pts[2]), y.create(pts[3], pts[1]));
 	}
 
 	public float viewToModel(float v) {
