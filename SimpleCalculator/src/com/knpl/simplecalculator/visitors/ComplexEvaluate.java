@@ -114,7 +114,7 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 		Complex result = map.get(node.getName());
 		if (result == null)
 			throw new Exception("No mapping for variable "+node.getName());
-		return result;
+		return new Complex(result);
 	}
 	
 	@Override
