@@ -87,4 +87,11 @@ public class LogRange extends Range {
 			v[i] = modelToView(v[i]);
 		}
 	}
+	
+	@Override
+	public void modelToView(float[] v, int stop, int index, int step) {
+		for (int i = index; i < stop; i += step) {
+			v[i] = modelToView(v[i]);
+		}
+	}
 }

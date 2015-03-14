@@ -133,20 +133,25 @@ public class PlotView extends View {
 		invalidate();
 	}
 	
-	public void translate(float x, float y) {
-		float[] dv = new float[]{x,y};
-		screenToNormal.mapVectors(dv);
-		normalToView.mapVectors(dv);
-		
-		xaxis = xaxis.create(xaxis.viewToModel(xaxis.min - dv[0]),
-									  xaxis.viewToModel(xaxis.max - dv[0]));
-		yaxis = yaxis.create(yaxis.viewToModel(yaxis.min - dv[1]),
-									  yaxis.viewToModel(yaxis.max - dv[1]));
+	public void setWindow(Range xrange, Range yrange) {
+		xaxis = xrange;
+		yaxis = yrange;
 		
 		viewToNormal.reset();
 		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
 		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
 		viewToNormal.invert(normalToView);
+	}
+	
+	public void translate(float x, float y) {
+		float[] dv = new float[]{x,y};
+		screenToNormal.mapVectors(dv);
+		normalToView.mapVectors(dv);
+		
+		setWindow(xaxis.create(xaxis.viewToModel(xaxis.min - dv[0]),
+				  			   xaxis.viewToModel(xaxis.max - dv[0])),
+				  yaxis.create(yaxis.viewToModel(yaxis.min - dv[1]),
+						  	   yaxis.viewToModel(yaxis.max - dv[1])));
 		
 		invalidate();
 	}
@@ -164,15 +169,10 @@ public class PlotView extends View {
 		screenToNormal.mapPoints(center);
 		normalToView.mapPoints(center);
 		
-		xaxis = xaxis.create(xaxis.viewToModel(center[0] + (xaxis.min - center[0])/f), 
-							 xaxis.viewToModel(center[0] + (xaxis.max - center[0])/f));
-		yaxis = yaxis.create(yaxis.viewToModel(center[1] + (yaxis.min - center[1])/f), 
-							 yaxis.viewToModel(center[1] + (yaxis.max - center[1])/f));
-		
-		viewToNormal.reset();
-		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
-		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
-		viewToNormal.invert(normalToView);
+		setWindow(xaxis.create(xaxis.viewToModel(center[0] + (xaxis.min - center[0])/f), 
+							   xaxis.viewToModel(center[0] + (xaxis.max - center[0])/f)),
+				  yaxis.create(yaxis.viewToModel(center[1] + (yaxis.min - center[1])/f), 
+							   yaxis.viewToModel(center[1] + (yaxis.max - center[1])/f)));
 		
 		invalidate();
 	}

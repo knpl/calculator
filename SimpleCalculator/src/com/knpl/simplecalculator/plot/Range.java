@@ -76,6 +76,11 @@ public class Range implements Serializable {
 		return n;
 	}
 	
+	
+	public float len() {
+		return max-min;
+	}
+
 	public float modelToView(float v) {
 		return v;
 	}
@@ -83,16 +88,20 @@ public class Range implements Serializable {
 	public void modelToView(float[] v) {
 	}
 	
-	public void modelToView(float[] v, int index, int step) {
+	public void modelToView(float[] v, int stop, int index, int step) {
 	}
 	
-	public float len() {
-		return max-min;
+	public void modelToView(float[] v, int index, int step) {
 	}
 	
 	public static void modelToView(float[] v, Range x, Range y) {
 		x.modelToView(v, 0, 2);
 		y.modelToView(v, 1, 2);
+	}
+	
+	public static void modelToView(float[] v, int n, Range x, Range y) {
+		x.modelToView(v, n, 0, 2);
+		y.modelToView(v, n, 1, 2);
 	}
 	
 	@Override 
