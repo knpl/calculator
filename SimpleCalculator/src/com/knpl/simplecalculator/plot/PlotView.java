@@ -19,14 +19,14 @@ import android.view.View;
 public class PlotView extends View {
 	private static final Paint linePaint;
 	
-	public static final float leftPadding 	= .5f,
-							  topPadding 	= .5f,
-							  rightPadding 	= .5f,
-							  bottomPadding = .5f;
+	public static final float leftPadding 	= 0f,
+							  topPadding 	= 0f,
+							  rightPadding 	= 0f,
+							  bottomPadding = 0f;
 
 	static {
 		linePaint = new Paint();
-		linePaint.setAntiAlias(true);
+		linePaint.setAntiAlias(false);
 		linePaint.setColor(Color.BLACK);
 		linePaint.setStyle(Paint.Style.STROKE);
 		linePaint.setStrokeWidth(0f);

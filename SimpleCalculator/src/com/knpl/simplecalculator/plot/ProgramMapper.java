@@ -99,20 +99,21 @@ public class ProgramMapper implements Mapper {
 			initialize(DEFAULT_BUFSIZE, xrange);
 		}
 		
-		float ratio = (range.modelToView(xrange.max) - range.modelToView(xrange.min))/range.len();
-		if (ratio > 2f) {
-			float max = range.viewToModel(range.min + range.len()*2);
-			initialize(DEFAULT_BUFSIZE, range.create(range.min, max));
-		}
-		else if (ratio < 1/2f) {
-			float max = range.viewToModel(range.min + range.len()/2);
-			initialize(DEFAULT_BUFSIZE, range.create(range.min, max));
-		}
-		else if (xrange.min < range.viewToModel(range.min - 0.5f*range.len())) {
+		if (xrange.min < range.viewToModel(range.min - 0.5f*range.len())) {
 			goLeft();
 		}
 		else if (xrange.min > range.viewToModel(range.min + 0.5f*range.len())) {
 			goRight();
+		}
+		
+		float ratio = (range.modelToView(xrange.max) - range.modelToView(xrange.min))/range.len();
+		if (ratio > 3/2f) {
+			float max = range.viewToModel(range.min + range.len()*2);
+			initialize(DEFAULT_BUFSIZE, range.create(range.min, max));
+		}
+		else if (ratio < 2/3f) {
+			float max = range.viewToModel(range.min + range.len()/2);
+			initialize(DEFAULT_BUFSIZE, range.create(range.min, max));
 		}
 		
 		scratch(xrange);

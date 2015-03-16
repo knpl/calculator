@@ -26,9 +26,7 @@ public class Range implements Serializable {
 	public boolean contains(float x) {
 		return min <= x && x <= max;
 	}
-	
 
-	
 	public float len() {
 		return max-min;
 	}
