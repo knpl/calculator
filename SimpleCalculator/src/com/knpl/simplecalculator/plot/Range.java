@@ -2,9 +2,7 @@ package com.knpl.simplecalculator.plot;
 
 import java.io.Serializable;
 
-import com.knpl.simplecalculator.util.Pair;
-
-import android.graphics.Matrix;
+import android.graphics.Path;
 
 public class Range implements Serializable {
 	private static final long serialVersionUID = 4451726311629241145L;
@@ -29,59 +27,17 @@ public class Range implements Serializable {
 		return min <= x && x <= max;
 	}
 	
-	public Range extend(float factor) {
-		float tmp = .5f * (factor - 1) * (max-min);
-		return new Range(min - tmp, max + tmp);
-	}
-	
-	public void generate(float[] dst, int index, int step) {
-		int size = dst.length / step;
-		
-		float c = min;
-		float cs = (max-min)/(size-1);
-		
-		for (int i = index; i < dst.length; i += step) {
-			dst[i] = c;
-			c += cs;
-		}
-	}
-	
-	public int generateMarkers(float[] dst, int index, int stride) {
-		double step, begin, c;
-		int n;
-		
-		step = Math.pow(10, Math.floor(Math.log10(max-min)));
-		c = Math.ceil(min/step);
-		n = (int)(Math.floor(max/step) - c) + 1;
-		if (n == 1) {
-			step /= 5;
-			c = Math.ceil(min/step);
-			n = (int)(Math.floor(max/step) - c) + 1;
-		}
-		else if (2 <= n && n <= 4) {
-			step /= 2;
-			c = Math.ceil(min/step);
-			n = (int)(Math.floor(max/step) - c) + 1;
-		}
-		
-		begin = c*step;
-		
-		c = begin;
-		n = (int)Math.min(dst.length/stride, n);
-		for (int i = index; i < n*stride; i += stride) {
-			dst[i] = (float)c;
-			c += step;
-		}
-		
-		return n;
-	}
-	
+
 	
 	public float len() {
 		return max-min;
 	}
 
 	public float modelToView(float v) {
+		return v;
+	}
+	
+	public float viewToModel(float v) {
 		return v;
 	}
 
@@ -104,19 +60,61 @@ public class Range implements Serializable {
 		y.modelToView(v, n, 1, 2);
 	}
 	
+	public Range extend(float factor) {
+		float tmp = .5f * (factor - 1) * (max-min);
+		return new Range(min - tmp, max + tmp);
+	}
+	
+	public void generate(float[] dst, int index, int step) {
+		int size = dst.length / step;
+		
+		float c = min;
+		float cs = (max-min)/(size-1);
+		
+		for (int i = index; i < dst.length; i += step) {
+			dst[i] = c;
+			c += cs;
+		}
+	}
+
+	private static float[] markerPositions = new float[] {
+		0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f	
+	};
+	
+	private static Path markerModel = null;
+	
+	public Path getMarkerModel() {
+		if (markerModel != null) {
+			return new Path(markerModel);
+		}
+		
+		Path p = new Path();
+		for (int i = 0; i < markerPositions.length; i++) {
+			float len;
+			switch (i) {
+			case 0:  len = 4; break;
+			case 5:  len = 2; break;
+			default: len = 1;
+			}
+			p.moveTo(markerPositions[i], -len/2);
+			p.rLineTo(0, len);
+		}
+		
+		markerModel = p;
+		return new Path(p);
+	}
+	
+	public float[] getMarkerInfo() {
+		float[] result = new float[2];
+		double step = Math.pow(10, Math.floor(Math.log10(max-min)));
+		result[0] = (float)(step*Math.floor(min/step));
+		result[1] = (float)step;
+		return result;
+	}
+	
 	@Override 
 	public String toString() {
 		return "["+min+", "+max+"]";
 	}
 	
-	public static Pair<Range, Range> map(Range x, Range y, Matrix ctm) {
-		float[] pts = new float[] {x.min, y.min, x.max, y.max};
-		ctm.mapPoints(pts);
-		return new Pair<Range, Range>(
-					x.create(pts[0], pts[2]), y.create(pts[3], pts[1]));
-	}
-
-	public float viewToModel(float v) {
-		return v;
-	}
 }

@@ -42,9 +42,7 @@ public class UserFunc extends Func {
 		Iterator<Complex> itArg  = args.iterator();
 		Iterator<Var>  	  itParam = params.iterator();
 		while (itParam.hasNext()) {
-			Var var = itParam.next();
-			Complex arg = itArg.next();
-			map.put(var.getName(), arg);
+			map.put(itParam.next().getName(), itArg.next());
 		}
 		ComplexEvaluate eval = new ComplexEvaluate(map);
 		return ((UserFuncDef) definition).getExpression().accept(eval, null);

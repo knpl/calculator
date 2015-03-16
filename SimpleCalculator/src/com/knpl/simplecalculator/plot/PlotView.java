@@ -1,9 +1,9 @@
 package com.knpl.simplecalculator.plot;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.PlotStates.PlotState;
+import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.Context;
@@ -11,14 +11,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
 public class PlotView extends View {
-	
-	private static final DecimalFormat FMT = new DecimalFormat("0.######");
-	
 	private static final Paint linePaint;
 	
 	public static final float leftPadding 	= .5f,
@@ -84,12 +82,10 @@ public class PlotView extends View {
 					plotwidth    = screenwidth - (leftPadding + rightPadding),
 					plotheight   = screenheight - (topPadding + bottomPadding);
 		
-		if (plotwidth > plotheight) {
+		if (plotwidth > plotheight)
 			xaxis = xaxis.extend(plotwidth/plotheight);
-		}
-		else {
+		else
 			yaxis = yaxis.extend(plotheight/plotwidth);
-		}
 		
 		normalToScreen.reset();
 		normalToScreen.preTranslate(leftPadding, topPadding);
@@ -234,100 +230,121 @@ public class PlotView extends View {
 		}
 		linePaint.setColor(Color.BLACK);
 	}
+	
+	public void drawAxes(Canvas c, Matrix ctm, Range x, Range y) {
+		float xy, yx;
+		
+		if 		(y.min > 0) xy = y.min;
+		else if (y.max < 0) xy = y.max;
+		else 				xy = 0;
+		
+		if 		(x.min > 0)	yx = x.min;
+		else if (x.max < 0) yx = x.max;
+		else 				yx = 0;
+		
+		float[] viewToScreenUnits = new float[]{1,1};
+		ctm.mapVectors(viewToScreenUnits);
+		
+		drawXMarkers(c, ctm, x, xy, 1/viewToScreenUnits[0], 1/viewToScreenUnits[1]);
+		drawYMarkers(c, ctm, y, yx, 1/viewToScreenUnits[0], 1/viewToScreenUnits[1]);
 
-	private void fill(float[] dst, int index, int step, float fill, int n) {
-		for (int i = index; i < step*n; i += step) {
-			dst[i] = fill;
-		}
+		Path path = new Path();
+		path.moveTo(x.min, xy);
+		path.lineTo(x.max, xy);
+		path.moveTo(yx, y.min);
+		path.lineTo(yx, y.max);
+		path.transform(ctm);
+		c.drawPath(path, linePaint);
 	}
 	
-	private void generateLabels(String[] labels, float[] values, int n, int index, int step) {
-		int i,j;
-		for (j = 0, i = index; i < n*step; i += step, j++) {
-			if ((values[i] + 0.0) == 0)
-				labels[j] = "";
-			else
-				labels[j] = FMT.format(0.0 + values[i]);
-		}
-	}
-
-	public void drawAxes(Canvas c, Matrix ctm, Range x, Range y) {
-		Path p = new Path();
-		float[] markers = new float[40];
-		String[] labels = new String[20];
-		int i, n;
+	private void drawXMarkers(Canvas c, Matrix ctm, Range x, float xy, float xscale, float yscale) {
+		Matrix init = new Matrix();
+		Matrix translate = new Matrix();
 		
-		float xaxisy = 0,
-			  xlabeloff = linePaint.ascent();
-		if (y.min >= 0) {
-			xaxisy = y.min;
-		}
-		else if (y.max <= 0) {
-			xlabeloff = 10 -linePaint.ascent();
-			xaxisy = y.max;
-		} 
+		Path path;
+		float[] info;
+		float start, step, cur;
 		
-		float yaxisx = 0,
-			  ylabeloff = 15;
-		boolean alignleft = true;
-		if (x.min >= 0) {
-			yaxisx = x.min;
-		}
-		else if (x.max <= 0) {
-			alignleft = false;
-			ylabeloff = -15;
-			yaxisx = x.max;
-		}
+		info = x.getMarkerInfo();
+		start = info[0];
+		step  = info[1];
+		path = x.getMarkerModel();
 		
-		// Draw axes
-		p.moveTo(x.min, xaxisy);
-		p.lineTo(x.max, xaxisy);
-		p.moveTo(yaxisx, y.min);
-		p.lineTo(yaxisx, y.max);
-		p.transform(ctm);
-		c.drawPath(p, linePaint);
-		p.rewind();
+		init.preConcat(ctm);
+		init.preTranslate(start, xy);
+		init.preScale(step, -5 * yscale);
+		path.transform(init);
+		translate.setTranslate(step / xscale, 0);
 		
-		// Draw markers on x axis
-		n = x.generateMarkers(markers, 0, 2);
-		generateLabels(labels, markers, n, 0, 2);
-		fill(markers, 1, 2, xaxisy, n);
-		Range.modelToView(markers, x, y);
-		ctm.mapPoints(markers);
-		for (i = 0; i < n; ++i) {
-			p.moveTo(markers[2*i], markers[2*i+1] + 5);
-			p.rLineTo(0, -10);
-		}
-		c.drawPath(p, linePaint);
-		p.rewind();
+		float[] labelPos = new float[] {start, xy};
+		ctm.mapPoints(labelPos);
 		
-		// Draw labels on x axis
-		linePaint.setTextAlign(Paint.Align.CENTER);
-		for (i = 0; i < n; ++i) {
-			c.drawText(labels[i], markers[2*i], markers[2*i+1] + xlabeloff, linePaint);
-		}
-		
-		// Draw markers on y axis
-		n = y.generateMarkers(markers, 1, 2);
-		generateLabels(labels, markers, n, 1, 2);
-		fill(markers, 0, 2, yaxisx, n);
-		Range.modelToView(markers, x, y);
-		ctm.mapPoints(markers);
-		for (i = 0; i < n; ++i) {
-			p.moveTo(markers[2*i] - 5, markers[2*i+1]);
-			p.rLineTo(10, 0);
-		}
-		c.drawPath(p, linePaint);
-		p.rewind();
-
-		// Draw labels on y axis
-		if (alignleft)
-			linePaint.setTextAlign(Paint.Align.LEFT);
+		linePaint.setTextAlign(Align.CENTER);
+		if (getHeight() - labelPos[1] < 50)
+			labelPos[1] -= 15; 
 		else
-			linePaint.setTextAlign(Paint.Align.RIGHT);
-		for (i = 0; i < n; ++i) {
-			c.drawText(labels[i], markers[2*i] + ylabeloff, markers[2*i+1], linePaint);
+			labelPos[1] -= linePaint.ascent() - 15;
+		
+		c.save();
+		cur = start;
+		do {
+			c.drawPath(path, linePaint);
+			if (cur >= x.min && cur != 0f) {
+				c.drawText(FormatUtils.format(x.viewToModel(cur), 3, 10),
+						   labelPos[0], labelPos[1], linePaint);
+			}
+			c.concat(translate);
+			cur += step;
 		}
+		while (cur < x.max);
+		c.restore();
+	}
+	
+	private void drawYMarkers(Canvas c, Matrix ctm, Range y, float yx, float xscale, float yscale) {
+		Matrix init = new Matrix();
+		Matrix translate = new Matrix();
+		
+		Path path;
+		float[] info;
+		float start, step, cur;
+		
+		info = y.getMarkerInfo();
+		start = info[0];
+		step  = info[1];
+		path = y.getMarkerModel();
+		
+		init.preConcat(ctm);
+		init.preTranslate(yx, start);
+		init.preScale(-5 * xscale, step);
+		init.preRotate(90);
+		path.transform(init);
+		translate.setTranslate(0, step / yscale);
+		
+		float[] labelPos = new float[] {yx, start};
+		ctm.mapPoints(labelPos);
+		labelPos[1] -= linePaint.ascent() / 2;
+		if (labelPos[0] <= 50) {
+			linePaint.setTextAlign(Align.LEFT);
+			labelPos[0] += 15;
+		}
+		else {
+			linePaint.setTextAlign(Align.RIGHT);
+			labelPos[0] -= 15;
+		}
+		
+		c.save();
+		cur = start;
+		do {
+			c.drawPath(path, linePaint);
+			if (cur >= y.min && cur != 0f) {
+				c.drawText(FormatUtils.format(y.viewToModel(cur), 3, 10),
+						   labelPos[0], labelPos[1], linePaint);
+			}
+			c.concat(translate);
+			cur += step;
+		}
+		while (cur < y.max);
+		c.restore();
 	}
 
 	@Override
