@@ -7,17 +7,20 @@ import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 
 public class PlotView extends View {
-	private static final Paint linePaint;
+	private static final Paint linePaint,
+							   lightLinePaint;
 	
 	public static final float leftPadding 	= 0f,
 							  topPadding 	= 0f,
@@ -26,21 +29,26 @@ public class PlotView extends View {
 
 	static {
 		linePaint = new Paint();
-		linePaint.setAntiAlias(false);
+		linePaint.setAntiAlias(true);
 		linePaint.setColor(Color.BLACK);
 		linePaint.setStyle(Paint.Style.STROKE);
 		linePaint.setStrokeWidth(0f);
 		linePaint.setTextSize(16f);
+		lightLinePaint = new Paint(linePaint);
+		lightLinePaint.setColor(Color.LTGRAY);
 	}
 	
 	private List<Pair<Mapper, Integer>> mappers;
 	
 	private Range xaxis,
-				 yaxis;
+				  yaxis;
 	
 	private float[] translate,
 					scalecenter;
 	private float   scalefactor;
+	
+	private float height,
+				  width;
 	
 	private PlotState plotState;
 	
@@ -49,6 +57,9 @@ public class PlotView extends View {
 				   normalToView,
 				   normalToScreen,
 				   screenToNormal;
+	
+	private boolean grid, 
+					extend;
 	
 	public PlotView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -68,9 +79,13 @@ public class PlotView extends View {
 		
 		viewToNormal = new Matrix();
 		normalToView = new Matrix();
-		
 		normalToScreen = new Matrix();
 		screenToNormal = new Matrix();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		grid   = prefs.getBoolean("pref_key_extend_grid", false);
+		extend = prefs.getBoolean("pref_key_extend_window", true);
 	}
 	
 	@Override
@@ -82,10 +97,12 @@ public class PlotView extends View {
 					plotwidth    = screenwidth - (leftPadding + rightPadding),
 					plotheight   = screenheight - (topPadding + bottomPadding);
 		
-		if (plotwidth > plotheight)
-			xaxis = xaxis.extend(plotwidth/plotheight);
-		else
-			yaxis = yaxis.extend(plotheight/plotwidth);
+		if (extend) {
+			if (plotwidth > plotheight)
+				xaxis = xaxis.extend(plotwidth/plotheight);
+			else
+				yaxis = yaxis.extend(plotheight/plotwidth);
+		}
 		
 		normalToScreen.reset();
 		normalToScreen.preTranslate(leftPadding, topPadding);
@@ -97,6 +114,9 @@ public class PlotView extends View {
 		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
 		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
 		viewToNormal.invert(normalToView);
+		
+		height = h;
+		width = w;
 	}
 
 	public PlotView init(List<Pair<Mapper, Integer>> paths, Range x, Range y) {
@@ -176,6 +196,7 @@ public class PlotView extends View {
 	@Override
 	protected void onDraw(Canvas c) {
 		setBackgroundColor(Color.WHITE);
+		c.clipRect(leftPadding, topPadding, width - rightPadding, height - bottomPadding);
 		super.onDraw(c);
 		
 		ctm.reset();
@@ -280,18 +301,22 @@ public class PlotView extends View {
 		ctm.mapPoints(labelPos);
 		
 		linePaint.setTextAlign(Align.CENTER);
-		if (getHeight() - labelPos[1] < 50)
-			labelPos[1] -= 15; 
+		float yoffset;
+		if (height - labelPos[1] < 50 + bottomPadding)
+			yoffset = -15; 
 		else
-			labelPos[1] -= linePaint.ascent() - 15;
+			yoffset = -linePaint.ascent() + 15;
 		
 		c.save();
 		cur = start;
 		do {
 			c.drawPath(path, linePaint);
 			if (cur >= x.min && cur != 0f) {
+				if (grid) {
+					c.drawLine(labelPos[0], 0, labelPos[0], height, lightLinePaint);
+				}
 				c.drawText(FormatUtils.format(x.viewToModel(cur), 3, 10),
-						   labelPos[0], labelPos[1], linePaint);
+						   labelPos[0], labelPos[1] + yoffset, linePaint);
 			}
 			c.concat(translate);
 			cur += step;
@@ -322,23 +347,27 @@ public class PlotView extends View {
 		
 		float[] labelPos = new float[] {yx, start};
 		ctm.mapPoints(labelPos);
-		labelPos[1] -= linePaint.ascent() / 2;
-		if (labelPos[0] <= 50) {
+		float xoffset;
+		if (labelPos[0] < leftPadding + 50) {
 			linePaint.setTextAlign(Align.LEFT);
-			labelPos[0] += 15;
+			xoffset = 15;
 		}
 		else {
 			linePaint.setTextAlign(Align.RIGHT);
-			labelPos[0] -= 15;
+			xoffset = -15;
 		}
+		float yoffset = -linePaint.ascent()/2;
 		
 		c.save();
 		cur = start;
 		do {
 			c.drawPath(path, linePaint);
 			if (cur >= y.min && cur != 0f) {
+				if (grid) {
+					c.drawLine(0, labelPos[1], width, labelPos[1], lightLinePaint);
+				}
 				c.drawText(FormatUtils.format(y.viewToModel(cur), 3, 10),
-						   labelPos[0], labelPos[1], linePaint);
+						   labelPos[0] + xoffset, labelPos[1] + yoffset, linePaint);
 			}
 			c.concat(translate);
 			cur += step;

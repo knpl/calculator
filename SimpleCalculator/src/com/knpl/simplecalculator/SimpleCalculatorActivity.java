@@ -12,8 +12,11 @@ import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -44,7 +47,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	public static final int MAIN_FRAGMENT_POSITION = 0,
 							OPTIONS_FRAGMENT_POSITION = 1,
 							PLOTMENU_FRAGMENT_POSITION = 2,
-							FUNCDEF_FRAGMENT_POSITION = 3;
+							FUNCDEF_FRAGMENT_POSITION = 3,
+							PREFERENCES_FRAGMENT_POSITION = 4;
 	
 	public static final int N_DECIMALS = 10,
 							BASE = 10;
@@ -64,6 +68,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_calculator);
         
         items = getResources().getStringArray(R.array.listitems);
@@ -107,15 +112,16 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         		new MainFragment(),
         		new PlotOptionsFragment(),
         		new PlotMenuFragment(),
-        		new FuncDefFragment()
+        		new FuncDefFragment(),
+        		new CalculatorPreferenceFragment()
         };
         
         if (savedInstanceState == null) {	
         	setFragment(drawerFragments[MAIN_FRAGMENT_POSITION], false);
         }
     }
-    
-    @Override
+
+	@Override
     protected void onSaveInstanceState(Bundle outState) {
     	super.onSaveInstanceState(outState);
     }
@@ -217,16 +223,22 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     }
     
     public void print(Complex z) {
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	int ndecimals = prefs.getInt(CalculatorPreferenceFragment.PREF_KEY_PRECISION, 10);
+    	boolean polar = prefs.getBoolean("pref_key_complex_polar", false);
+    	
     	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(z, N_DECIMALS, BASE));
+    	output.setText(FormatUtils.format(z, ndecimals, BASE, polar));
     }
     
     public void print(double d) {
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	int ndecimals = prefs.getInt(CalculatorPreferenceFragment.PREF_KEY_PRECISION, 10);
+    	
     	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(d, N_DECIMALS, BASE));
+    	output.setText(FormatUtils.format(d, ndecimals, BASE));
     }
     
-
 	@Override
 	public void setXAxis(Range x) {
 		xaxis = x;

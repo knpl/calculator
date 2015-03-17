@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	<PreferenceCategory
+	    android:key="pref_key_plot_settings" 
+	    android:title="Plot settings">
+	    
+	    <CheckBoxPreference
+	        android:key="pref_key_extend_window"
+	        android:title="Extend plotwindow"
+	        android:summary="Let the current plotwindow occupy a square region in the center of the screen."
+	        android:defaultValue="true" />
+	    
+	    <CheckBoxPreference
+	        android:key="pref_key_extend_grid"
+	        android:title="Display grid"
+	        android:summary="Displays gridlines on plotwindow."
+	        android:defaultValue="true" />
+
+	</PreferenceCategory>
+	
+	<PreferenceCategory 
+	    android:key="pref_key_numberformat_settings"
+	    android:title="Number formatting">
+	    
+	    <com.knpl.simplecalculator.PrecisionPreference
+	        android:key="pref_key_precision"
+	        android:title="Precision"
+	        android:summary="Calculator currently displays results using 10 digits."
+	        android:defaultValue="10" />
+	    
+	    <CheckBoxPreference
+	        android:key="pref_key_complex"
+	        android:title="Complex numbers"
+	        android:summary="Enables calculations involving complex numbers. (Experimental)"
+	        android:defaultValue="false" />
+	    
+	    <CheckBoxPreference
+	        android:key="pref_key_complex_polar"
+	        android:dependency="pref_key_complex"
+	        android:title="Polar notation"
+	        android:summary="Displays complex results in polar notation, instead of cartesian notation."
+	        android:defaultValue="false" />
+	    
+	</PreferenceCategory>
+
+</PreferenceScreen>

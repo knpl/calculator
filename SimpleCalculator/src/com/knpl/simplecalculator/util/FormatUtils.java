@@ -15,20 +15,40 @@ public class FormatUtils {
 		return new String(zeroes);
 	}
 	
-	public static String format(Complex z, int n, int base) {
-		if (z.im() == 0.0) {
-			return format(z.re(), n, base);
-		}
-		else if (z.re() == 0.0) {
-			if (z.im() == 1.0)
-				return "i";
-			return format(z.im(), n, base)+"*i";
+	public static String format(Complex z, int n, int base, boolean polar) {
+		if (polar) {
+			double mod = z.mod();
+			double arg = z.arg();
+
+			if (arg == 0.0) {
+				return format(mod, n, base);
+			}
+			else if (mod == 0.0) {
+				return "0";
+			}
+			else if (mod == 1.0) {
+				return "e^"+format(arg, n, base)+"*i";
+			}
+			else {
+				return format(mod, n, base) + "*e^" + format(arg, n, base)+"*i";
+			}
 		}
 		else {
-			String im = "";
-			if (z.im() != 1.0)
-				im = format(z.im(), n, base)+"*";
-			return format(z.re(), n, base) + " + " + im + "i";
+			// Cartesian coordinates
+			if (z.im() == 0.0) {
+				return format(z.re(), n, base);
+			}
+			else if (z.re() == 0.0) {
+				if (z.im() == 1.0)
+					return "i";
+				return format(z.im(), n, base)+"*i";
+			}
+			else {
+				String im = "";
+				if (z.im() != 1.0)
+					im = format(z.im(), n, base)+"*";
+				return format(z.re(), n, base) + " + " + im + "i";
+			}
 		}
 	}
 	
