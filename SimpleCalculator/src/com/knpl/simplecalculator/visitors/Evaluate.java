@@ -154,7 +154,7 @@ public class Evaluate extends Visitor<Double, Void> {
 	}
 	
 	@Override
-	public Double visit(Constant node, Void info) throws Exception {
+	public Double visit(ConstDef node, Void info) throws Exception {
 		return node.getDouble();
 	}
 }

@@ -2,8 +2,9 @@ package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
 
-import com.knpl.simplecalculator.util.FuncDef;
+import com.knpl.simplecalculator.nodes.ConstDef;
 import com.knpl.simplecalculator.util.Globals;
+
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -12,9 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class FuncDefFragment extends ListFragment {
-	
-	private static ArrayList<FuncDef> funcdefs = new ArrayList<FuncDef>();
+public class ConstDefFragment extends ListFragment {
+	private static ArrayList<ConstDef> constdefs = new ArrayList<ConstDef>();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,11 +22,11 @@ public class FuncDefFragment extends ListFragment {
 		setHasOptionsMenu(true);
 		
 		Globals defs = Globals.getInstance();
-		funcdefs = new ArrayList<FuncDef>(defs.getFuncDefMap().values());
+		constdefs = new ArrayList<ConstDef>(defs.getConstDefMap().values());
 		
-		ArrayAdapter<FuncDef> adapter= 
-				new ArrayAdapter<FuncDef>(getActivity(), 
-						android.R.layout.simple_list_item_1, funcdefs);
+		ArrayAdapter<ConstDef> adapter= 
+				new ArrayAdapter<ConstDef>(getActivity(), 
+						android.R.layout.simple_list_item_1, constdefs);
 		setListAdapter(adapter);
 		
 		return inflater.inflate(R.layout.fragment_funcdef, container, false);

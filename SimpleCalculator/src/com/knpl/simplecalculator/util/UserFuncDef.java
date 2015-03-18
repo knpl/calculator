@@ -5,16 +5,16 @@ import java.util.List;
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.visitors.Compile;
 
-public class UserFuncDef implements FunctionDefinition {
+public class UserFuncDef extends FuncDef {
 	
 	private final Signature sig;
-	private final String source;
+	private final String description;
 	private final Expr expression;
 	private Program program;
 	
-	public UserFuncDef(Signature sig, String source, Expr expression) {
+	public UserFuncDef(Signature sig, Expr expression, String description) {
 		this.sig = sig;
-		this.source = source;
+		this.description = description;
 		this.expression = expression;
 		this.program = null;
 	}
@@ -28,18 +28,18 @@ public class UserFuncDef implements FunctionDefinition {
 	
 	@Override
 	public Func createFunction(Signature sig, List<Expr> args) throws Exception {
-		if (!this.sig.match(sig)) {
+		if (!this.sig.match(sig))
 			throw new Exception("Signature mismatch");
-		}
 		return new UserFunc(this, args);
-	}
-	
-	public String getSource() {
-		return source;
 	}
 	
 	public Expr getExpression() {
 		return expression;
+	}
+	
+	@Override
+	public String getDescription() {
+		return description;
 	}
 
 	@Override
@@ -62,10 +62,4 @@ public class UserFuncDef implements FunctionDefinition {
 		}
 		return program;
 	}
-	
-	@Override
-	public String toString() {
-		return source;
-	}
-
 }

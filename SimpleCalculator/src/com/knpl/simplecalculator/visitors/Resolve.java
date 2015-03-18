@@ -83,7 +83,7 @@ public class Resolve extends Visitor<Node, Void> {
 		if (variable != null)
 			return variable;
 		
-		Constant constant = Globals.getInstance().getConstant(name);
+		ConstDef constant = Globals.getInstance().getConstant(name);
 		if (constant != null)
 			return constant;
 		

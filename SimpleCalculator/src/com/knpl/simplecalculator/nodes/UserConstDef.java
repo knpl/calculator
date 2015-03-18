@@ -3,15 +3,17 @@ package com.knpl.simplecalculator.nodes;
 import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 
-public class UserConst extends Constant {
+public class UserConstDef extends ConstDef {
 	
 	private String name;
 	private Expr expression;
+	private String description;
 	private Complex value;
 
-	public UserConst(String name, Expr expression) {
+	public UserConstDef(String name, Expr expression, String description) {
 		this.name = name;
 		this.expression = expression;
+		this.description = description;
 		this.value = null;
 	}
 	
@@ -22,6 +24,11 @@ public class UserConst extends Constant {
 	
 	public Expr getExpression() {
 		return expression;
+	}
+	
+	@Override
+	public String getDescription() {
+		return description;
 	}
 	
 	private void eval() {

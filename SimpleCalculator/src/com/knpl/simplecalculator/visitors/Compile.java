@@ -218,7 +218,7 @@ public class Compile extends Visitor<Void, Void> {
 	}
 
 	@Override
-	public Void visit(Constant node, Void info) throws Exception {
+	public Void visit(ConstDef node, Void info) throws Exception {
 		double val = node.getDouble();
 		
 		write(ByteCodes.LOADC);

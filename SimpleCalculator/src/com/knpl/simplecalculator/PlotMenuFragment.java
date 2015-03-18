@@ -82,7 +82,7 @@ public class PlotMenuFragment extends ListFragment {
 		if (entry != null) {
 			args.putInt("color", entry.color);
 			args.putString("name", entry.userFuncDef.getSignature().getName());
-			args.putString("source", entry.userFuncDef.getSource());
+			args.putString("source", entry.userFuncDef.getDescription());
 		}
 		dialog.setArguments(args);
 		dialog.setTargetFragment(this, REQUEST_CODE);

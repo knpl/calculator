@@ -7,13 +7,15 @@ import java.util.List;
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
 import com.knpl.simplecalculator.numbers.Complex;
-import com.knpl.simplecalculator.util.FunctionDefinition;
+import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class Builtins {
 	
 	/* Constants */
-	public static class Pi extends Constant {
+	public static class Pi extends ConstDef {
+		public static final String description = 
+				"The ratio of a circle's circumference to its diameter.";
 		
 		@Override
 		public String getName() {
@@ -34,9 +36,16 @@ public class Builtins {
 		public Complex getComplex() {
 			return new Complex(Math.PI, 0);
 		}
+
+		@Override
+		public String getDescription() {
+			return getName() + " = " + description;
+		}
 	}
 	
-	public static class Euler extends Constant {
+	public static class Euler extends ConstDef {
+		public static final String description = 
+				"Euler's constant. The base of the natural logarithm and exponential function.";
 
 		@Override
 		public String getName() {
@@ -57,9 +66,16 @@ public class Builtins {
 		public Complex getComplex() {
 			return new Complex(Math.E, 0);
 		}
+
+		@Override
+		public String getDescription() {
+			return getName() + " = " + description;
+		}
 	}
 	
-	public static class Im extends Constant {
+	public static class Im extends ConstDef {
+		public static final String description = 
+				"The imaginary unit. The square root of -1.";
 
 		@Override
 		public String getName() {
@@ -80,13 +96,18 @@ public class Builtins {
 		public Complex getComplex() {
 			return new Complex(0, 1);
 		}
+
+		@Override
+		public String getDescription() {
+			return getName() + " = " + description;
+		}
 	}
 	
 	/* Functions */
 	public static class Min extends Func {
 		private Expr arguments[];
 		
-		public Min(FunctionDefinition definition, Expr arg1, Expr arg2) {
+		public Min(FuncDef definition, Expr arg1, Expr arg2) {
 			this.definition = definition;
 			this.arguments = new Expr[2];
 			arguments[0] = arg1;
@@ -115,7 +136,7 @@ public class Builtins {
 	public static class Max extends Func {
 		private Expr arguments[];
 		
-		public Max(FunctionDefinition definition, Expr arg1, Expr arg2) {
+		public Max(FuncDef definition, Expr arg1, Expr arg2) {
 			this.definition = definition;
 			this.arguments = new Expr[2];
 			arguments[0] = arg1;
@@ -144,7 +165,7 @@ public class Builtins {
 	public static class Sqrt extends Func {
 		private Expr argument;
 		
-		public Sqrt(FunctionDefinition definition, Expr argument) {
+		public Sqrt(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -172,7 +193,7 @@ public class Builtins {
 	public static class Abs extends Func {
 		private Expr argument;
 		
-		public Abs(FunctionDefinition definition, Expr argument) {
+		public Abs(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -200,7 +221,7 @@ public class Builtins {
 	public static class Log extends Func {
 		private Expr argument;
 		
-		public Log(FunctionDefinition definition, Expr argument) {
+		public Log(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -228,7 +249,7 @@ public class Builtins {
 	public static class Exp extends Func {
 		private Expr argument;
 		
-		public Exp(FunctionDefinition definition, Expr argument) {
+		public Exp(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -256,7 +277,7 @@ public class Builtins {
 	public static class Sinh extends Func {
 		private Expr argument;
 		
-		public Sinh(FunctionDefinition definition, Expr argument) {
+		public Sinh(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -284,7 +305,7 @@ public class Builtins {
 	public static class Cosh extends Func {
 		private Expr argument;
 		
-		public Cosh(FunctionDefinition definition, Expr argument) {
+		public Cosh(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -312,7 +333,7 @@ public class Builtins {
 	public static class Sin extends Func {
 		private Expr argument;
 		
-		public Sin(FunctionDefinition definition, Expr argument) {
+		public Sin(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -340,7 +361,7 @@ public class Builtins {
 	public static class Cos extends Func {
 		private Expr argument;
 		
-		public Cos(FunctionDefinition definition, Expr argument) {
+		public Cos(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -368,7 +389,7 @@ public class Builtins {
 	public static class Tan extends Func {
 		private Expr argument;
 		
-		public Tan(FunctionDefinition definition, Expr argument) {
+		public Tan(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -396,7 +417,7 @@ public class Builtins {
 	public static class Asin extends Func {
 		private Expr argument;
 		
-		public Asin(FunctionDefinition definition, Expr argument) {
+		public Asin(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -424,7 +445,7 @@ public class Builtins {
 	public static class Acos extends Func {
 		private Expr argument;
 		
-		public Acos(FunctionDefinition definition, Expr argument) {
+		public Acos(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -452,7 +473,7 @@ public class Builtins {
 	public static class Atan extends Func {
 		private Expr argument;
 		
-		public Atan(FunctionDefinition definition, Expr argument) {
+		public Atan(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}

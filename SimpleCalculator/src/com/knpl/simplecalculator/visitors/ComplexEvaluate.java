@@ -210,7 +210,7 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 	}
 
 	@Override
-	public Complex visit(Constant node, Void info) throws Exception {
+	public Complex visit(ConstDef node, Void info) throws Exception {
 		return node.getComplex();
 	}
 }

@@ -13,7 +13,6 @@ import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -48,7 +47,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 							OPTIONS_FRAGMENT_POSITION = 1,
 							PLOTMENU_FRAGMENT_POSITION = 2,
 							FUNCDEF_FRAGMENT_POSITION = 3,
-							PREFERENCES_FRAGMENT_POSITION = 4;
+							CONSTDEF_FRAGMENT_POSITION = 4,
+							PREFERENCES_FRAGMENT_POSITION = 5;
 	
 	public static final int N_DECIMALS = 10,
 							BASE = 10;
@@ -113,6 +113,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         		new PlotOptionsFragment(),
         		new PlotMenuFragment(),
         		new FuncDefFragment(),
+        		new ConstDefFragment(),
         		new CalculatorPreferenceFragment()
         };
         

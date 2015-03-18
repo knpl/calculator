@@ -1,13 +1,11 @@
 package com.knpl.simplecalculator.util;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.Func;
 import com.knpl.simplecalculator.nodes.Call;
-import com.knpl.simplecalculator.nodes.Constant;
-import com.knpl.simplecalculator.nodes.UserConst;
+import com.knpl.simplecalculator.nodes.ConstDef;
 
 import com.knpl.simplecalculator.nodes.Builtins.Pi;
 import com.knpl.simplecalculator.nodes.Builtins.Euler;
@@ -16,20 +14,24 @@ import com.knpl.simplecalculator.nodes.Builtins.Im;
 public class Globals {
 	private static Globals instance = null;
 	
-	private Map<String, FunctionDefinition> builtinFuncDefMap;
-	private Map<String, UserFuncDef> userFuncDefMap;
-	private Map<String, Constant> constDefMap;
-	private Map<String, UserConst> userConstDefMap;
+	public static Globals getInstance() {
+		if (instance == null) {
+			instance = new Globals();
+		}
+		return instance;
+	}
+	
+	private Map<String, FuncDef> funcDefMap;
+	private Map<String, ConstDef> constDefMap;
 	
 	private Globals() {
-		builtinFuncDefMap = new HashMap<String, FunctionDefinition>();
-		userFuncDefMap = new HashMap<String, UserFuncDef>();
-		constDefMap = new HashMap<String, Constant>();
-		userConstDefMap = new HashMap<String, UserConst>();
+		funcDefMap = new LinkedHashMap<String, FuncDef>();
+		constDefMap = new LinkedHashMap<String, ConstDef>();
 		
-		FunctionDefinition defs[] = BuiltinFuncDefs.builtinFunctions;
+		FuncDef defs[] = BuiltinFuncDefs.builtinFunctions;
 		for (int i = 0; i < defs.length; i++) {
-			builtinFuncDefMap.put(defs[i].getSignature().getName(), defs[i]);
+			FuncDef def = defs[i];
+			funcDefMap.put(def.getSignature().getName(), def);
 		}
 		
 		constDefMap.put("pi", new Pi());
@@ -37,78 +39,47 @@ public class Globals {
 		constDefMap.put("i", new Im());
 	}
 	
-	private static void createInstance() {
-		if (instance == null)
-			instance = new Globals();
+	public Map<String, FuncDef> getFuncDefMap() {
+		return funcDefMap;
 	}
 	
-	public static Globals getInstance() {
-		if (instance == null) {
-			createInstance();
-		}
-		return instance;
+	public Map<String, ConstDef> getConstDefMap() {
+		return constDefMap;
 	}
 	
 	public Func createFunction(Call call) throws Exception {
-		FunctionDefinition def;
-		
-		def= builtinFuncDefMap.get(call.getName());
-		if (def != null) {
-			return def.createFunction(call);	
+		FuncDef def = funcDefMap.get(call.getName());
+		if (def == null) {
+			throw new Exception("Function " + call.getName() + " undefined");	
 		}
-		
-		def= userFuncDefMap.get(call.getName());
-		if (def != null) {
-			return def.createFunction(call);	
-		}
-		
-		throw new Exception("Function \"" + call.getName() + "\" undefined");
+		return def.createFunction(call);
 	}
 	
-	public Constant getConstant(String id) {
-		Constant constant = constDefMap.get(id);
-		if (constant != null) {
-			return constant;
-		}
-		return userConstDefMap.get(id);
+	public ConstDef getConstant(String id) {
+		return constDefMap.get(id);
 	}
 	
-	public FunctionDefinition getFunctionDefinition(String id) {
-		FunctionDefinition fd = builtinFuncDefMap.get(id);
-		if (fd != null) {
-			return fd;
-		}
-		return userFuncDefMap.get(id);
+	public FuncDef getFuncDef(String id) {
+		return funcDefMap.get(id);
 	}
-	
-	public FunctionDefinition getBuiltinFuncDef(String id) {
-		return builtinFuncDefMap.get(id);
-	}
-	
-	public UserFuncDef getUserFuncDef(String id) {
-		return userFuncDefMap.get(id);
-	}
-	
-	public UserFuncDef removeUserFuncDef(String id) {
-		return userFuncDefMap.remove(id);
-	}
-	
-	public Collection<UserFuncDef> getUserFuncDefs() {
-		return userFuncDefMap.values();
-	}
-	
-	public boolean putUserConstDef(String id, UserConst userConstDef) {
+
+	public boolean putFuncDef(FuncDef funcDef) {
 		boolean result = false;
-		if (userConstDefMap.get(id) == null) {
-			userConstDefMap.put(id, userConstDef);
+		String name = funcDef.getSignature().getName();
+		if (funcDefMap.get(name) == null) {
+			funcDefMap.put(name, funcDef);
 			result = true;
 		}
 		return result;
 	}
 	
-	public UserFuncDef putUserFuncDef(UserFuncDef ufd) {
-		String name = ufd.getSignature().getName();
-		return userFuncDefMap.put(name, ufd);
-	}
-	
+	public boolean putConstDef(ConstDef constDef) {
+		boolean result = false;
+		String name = constDef.getName();
+		if (constDefMap.get(name) == null) {
+			constDefMap.put(name, constDef);
+			result = true;
+		}
+		return result;
+	}	
 }

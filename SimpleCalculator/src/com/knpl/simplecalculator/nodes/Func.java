@@ -2,11 +2,11 @@ package com.knpl.simplecalculator.nodes;
 
 import java.util.List;
 
-import com.knpl.simplecalculator.util.FunctionDefinition;
+import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class Func extends Expr {
-	protected FunctionDefinition definition;
+	protected FuncDef definition;
 	
 	public abstract List<Expr> getArguments();
 
@@ -16,7 +16,7 @@ public abstract class Func extends Expr {
 	
 	public abstract Expr getArg(int i);
 	
-	public FunctionDefinition getDefinition() {
+	public FuncDef getDefinition() {
 		return definition;
 	}
 	

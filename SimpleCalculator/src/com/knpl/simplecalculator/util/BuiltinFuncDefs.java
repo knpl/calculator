@@ -12,7 +12,7 @@ import com.knpl.simplecalculator.nodes.Builtins.*;
 
 public class BuiltinFuncDefs {
 	
-	public static final FunctionDefinition builtinFunctions[] = 
+	public static final FuncDef builtinFunctions[] = 
 	{
 		new MinDefinition(),
 		new MaxDefinition(),
@@ -30,7 +30,9 @@ public class BuiltinFuncDefs {
 		new AtanDefinition()
 	};
 	
-	public static class MinDefinition implements FunctionDefinition {
+	public static class MinDefinition extends FuncDef {
+		public static final String description = "The minimum of a and b.";
+		
 		private final Signature sig;
 		
 		public MinDefinition() {
@@ -56,9 +58,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Min(this, args.get(0), args.get(1));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class MaxDefinition implements FunctionDefinition {
+	public static class MaxDefinition extends FuncDef {
+		public static final String description = "The maximum of a and b.";
+		
 		private final Signature sig;
 		
 		public MaxDefinition() {
@@ -84,9 +93,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Max(this, args.get(0), args.get(1));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class SqrtDefinition implements FunctionDefinition {
+	public static class SqrtDefinition extends FuncDef {
+		public static final String description = "The square root of x.";
+		
 		private final Signature sig;
 		
 		public SqrtDefinition() {
@@ -111,9 +127,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Sqrt(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class AbsDefinition implements FunctionDefinition {
+	public static class AbsDefinition extends FuncDef {
+		public static final String description = "The absolute value of x.";
+		
 		private final Signature sig;
 		
 		public AbsDefinition() {
@@ -138,9 +161,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Abs(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class LogDefinition implements FunctionDefinition {
+	public static class LogDefinition extends FuncDef {
+		public static final String description = "The natural (base e) logarithm of x.";
+		
 		private final Signature sig;
 		
 		public LogDefinition() {
@@ -165,9 +195,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Log(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class ExpDefinition implements FunctionDefinition {
+	public static class ExpDefinition extends FuncDef {
+		public static final String description = "The exponential (base e) of x.";
+		
 		private final Signature sig;
 		
 		public ExpDefinition() {
@@ -191,9 +228,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Exp(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class SinhDefinition implements FunctionDefinition {
+	public static class SinhDefinition extends FuncDef {
+		public static final String description = "The hyperbolic sine of x.";
+		
 		private final Signature sig;
 		
 		public SinhDefinition() {
@@ -217,9 +261,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Sinh(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class CoshDefinition implements FunctionDefinition {
+	public static class CoshDefinition extends FuncDef {
+		public static final String description = "The hyperbolic cosine x.";
+		
 		private final Signature sig;
 		
 		public CoshDefinition() {
@@ -244,9 +295,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Cosh(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class SinDefinition implements FunctionDefinition {
+	public static class SinDefinition extends FuncDef {
+		public static final String description = "The sine of x.";
+		
 		private final Signature sig;
 		
 		public SinDefinition() {
@@ -271,9 +329,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Sin(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class CosDefinition implements FunctionDefinition {
+	public static class CosDefinition extends FuncDef {
+		public static final String description = "The cosine of x.";
+		
 		private final Signature sig;
 		
 		public CosDefinition() {
@@ -298,9 +363,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Cos(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class TanDefinition implements FunctionDefinition {
+	public static class TanDefinition extends FuncDef {
+		public static final String description = "The tangent of x.";
+		
 		private final Signature sig;
 		
 		public TanDefinition() {
@@ -325,9 +397,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Tan(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class AsinDefinition implements FunctionDefinition {
+	public static class AsinDefinition extends FuncDef {
+		public static final String description = "The inverse sine (arcsin) of x.";
+		
 		private final Signature sig;
 		
 		public AsinDefinition() {
@@ -352,9 +431,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Asin(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class AcosDefinition implements FunctionDefinition {
+	public static class AcosDefinition extends FuncDef {
+		public static final String description = "The inverse cosine (arccos) of x.";
+		
 		private final Signature sig;
 		
 		public AcosDefinition() {
@@ -379,9 +465,16 @@ public class BuiltinFuncDefs {
 				throw new Exception("Signature mismatch");
 			return new Acos(this, args.get(0));
 		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
 	}
 	
-	public static class AtanDefinition implements FunctionDefinition {
+	public static class AtanDefinition extends FuncDef {
+		public static final String description = "The inverse tangent (arctan) of x.";
+		
 		private final Signature sig;
 		
 		public AtanDefinition() {
@@ -405,6 +498,11 @@ public class BuiltinFuncDefs {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Atan(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
 		}
 	}
 }

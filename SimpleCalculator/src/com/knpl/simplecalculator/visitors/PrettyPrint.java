@@ -152,7 +152,7 @@ public class PrettyPrint extends Visitor<Void, Info> {
 	}
 	
 	@Override
-	public Void visit(Constant node, Info info) throws Exception {
+	public Void visit(ConstDef node, Info info) throws Exception {
 		out.print(node.getName());
 		return null;
 	}

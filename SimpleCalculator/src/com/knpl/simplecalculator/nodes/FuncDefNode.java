@@ -24,7 +24,7 @@ public class FuncDefNode extends Node {
 	@Override
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
 		Globals defs = Globals.getInstance();
-		if (defs.getFunctionDefinition(sig.getName()) != null) {
+		if (defs.getFuncDef(sig.getName()) != null) {
 			throw new Exception("Function \""+sig+"\" already defined");
 		}
 		
@@ -32,12 +32,12 @@ public class FuncDefNode extends Node {
 		accept(resolve, null);
 		
 		PrettyPrint prettyPrint = new PrettyPrint();
-		expression.accept(prettyPrint, null);
+		accept(prettyPrint, null);
 		
-		UserFuncDef ufd = new UserFuncDef(sig, prettyPrint.toString(), expression);
+		UserFuncDef ufd = new UserFuncDef(sig, expression, prettyPrint.toString());
 		ufd.compile();
 		
-		defs.putUserFuncDef(ufd);
+		defs.putFuncDef(ufd);
 		
 		calculator.print(""+ufd.getProgram());
 	}
@@ -55,7 +55,7 @@ public class FuncDefNode extends Node {
 		PrettyPrint prettyPrint = new PrettyPrint();
 		accept(prettyPrint, null);
 		
-		return new UserFuncDef(sig, prettyPrint.toString(), expression);
+		return new UserFuncDef(sig, expression, prettyPrint.toString());
 	}
 	
 	public Signature getSignature() {
