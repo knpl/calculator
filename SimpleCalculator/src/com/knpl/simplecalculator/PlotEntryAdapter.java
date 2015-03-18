@@ -23,7 +23,6 @@ public class PlotEntryAdapter extends ArrayAdapter<PlotEntry> {
 			this.tv = tv;
 			this.iv = iv;
 		}
-		
 	}
 
 	private final Context context;

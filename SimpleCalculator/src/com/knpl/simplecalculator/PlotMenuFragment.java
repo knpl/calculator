@@ -161,7 +161,8 @@ public class PlotMenuFragment extends ListFragment {
 	}
 
 	
-	public static class PlotEntryDialog extends DialogFragment {
+	public static class PlotEntryDialog extends DialogFragment
+		implements DialogInterface.OnClickListener {
 		
 		public static final int DEFAULT_COLOR = Color.BLACK;
 		
@@ -211,7 +212,7 @@ public class PlotMenuFragment extends ListFragment {
 			
 			source = args.getString("source");
 			if (source == null)
-				source = "f(x) = ";
+				source = "y(x) = ";
 			
 			exprEditText.setText(source);
 			colorIndicator.getBackground().setColorFilter(color, Mode.MULTIPLY);
@@ -228,50 +229,44 @@ public class PlotMenuFragment extends ListFragment {
 		@SuppressLint("InflateParams") @Override @NonNull
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			LayoutInflater inflater = getActivity().getLayoutInflater();
-			View content = inflater.inflate(R.layout.fragment_dialog, null);
+			View content = inflater.inflate(R.layout.fragment_plotmenu_dialog, null);
 			
 			init(content);
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setView(content)
 				   .setTitle(name)
-				   .setPositiveButton("save", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {}
-				   })
-				   .setNegativeButton((position != -1) ? "delete" : "cancel", new DialogInterface.OnClickListener() {
-					   	@Override
-						public void onClick(DialogInterface dialog, int which) {}
-				   });
+				   .setPositiveButton("save", this)
+				   .setNegativeButton((position != -1) ? "delete" : "cancel", this);
 			
-			return builder.create();
+			final AlertDialog d = builder.create();
+			d.setOnShowListener(new DialogInterface.OnShowListener() {
+				@Override
+				public void onShow(DialogInterface dialog) {
+					d.getButton(AlertDialog.BUTTON_POSITIVE)
+						.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							onPositive();
+						}
+					});
+				}
+			});
+			return d;
 		}
 		
 		@Override
-		public void onStart() {
-			super.onStart();
-			AlertDialog dialog = (AlertDialog)getDialog();
-			if (dialog == null) {
-				return;
+		public void onClick(DialogInterface dialog, int which) {
+			switch (which) {
+			
+			case DialogInterface.BUTTON_NEGATIVE:
+				if (position != -1)
+					plotEntries.remove(position);
+				break;
+				
+			default:
+				;
 			}
-			dialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onPositive();
-				}
-			});
-			dialog.getButton(Dialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onNegative();
-				}
-			});
-		}
-		
-		private void onNegative() {
-			if (position != -1)
-				plotEntries.remove(position);
-			dismiss();
 		}
 		
 		private void onPositive() {
