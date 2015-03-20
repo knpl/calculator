@@ -1,9 +1,13 @@
 package com.knpl.simplecalculator.util;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.visitors.Compile;
+import com.knpl.simplecalculator.visitors.PrettyPrint;
+import com.knpl.simplecalculator.visitors.Resolve;
 
 public class UserFuncDef extends FuncDef {
 	
@@ -16,6 +20,25 @@ public class UserFuncDef extends FuncDef {
 		this.sig = sig;
 		this.description = description;
 		this.expression = expression;
+		this.program = null;
+	}
+	
+	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
+		Resolve resolve = new Resolve();
+		funcDefNode.accept(resolve, null);
+		
+		Map<String, Var> freeVars = resolve.getFreeVarMap();
+		if (!freeVars.isEmpty()) {
+			String vars = Arrays.toString(resolve.getFreeVarMap().keySet().toArray());
+			throw new Exception("Resolve error: undeclared variables "+vars);
+		}
+		
+		PrettyPrint prettyPrint = new PrettyPrint();
+		funcDefNode.accept(prettyPrint, null);
+		
+		this.sig = funcDefNode.getSignature();
+		this.description = prettyPrint.toString();
+		this.expression = funcDefNode.getExpression();
 		this.program = null;
 	}
 

@@ -275,7 +275,7 @@ public class PlotMenuFragment extends ListFragment {
 		
 			Parser parser = new Parser(new Lexer(expr));
 			if (!parser.functionDefinition()) {
-				displayMessage("Syntax error: "+expr);
+				displayMessage("Syntax error");
 				return;
 			}
 			
@@ -296,7 +296,7 @@ public class PlotMenuFragment extends ListFragment {
 			
 			UserFuncDef userFuncDef;
 			try {
-				userFuncDef = funcDefNode.createUserFuncDef();
+				userFuncDef = new UserFuncDef(funcDefNode);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();

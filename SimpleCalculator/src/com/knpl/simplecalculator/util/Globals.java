@@ -73,6 +73,10 @@ public class Globals {
 		return result;
 	}
 	
+	public boolean removeFuncDef(String id) {
+		return funcDefMap.remove(id) != null;
+	}
+	
 	public boolean putConstDef(ConstDef constDef) {
 		boolean result = false;
 		String name = constDef.getName();
