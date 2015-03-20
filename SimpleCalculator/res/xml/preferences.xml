@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    			  xmlns:knpl="http://knpl.com" >
 	<PreferenceCategory
 	    android:key="pref_key_plot_settings" 
 	    android:title="Plot settings">
@@ -15,6 +16,21 @@
 	        android:title="Display grid"
 	        android:summary="Displays gridlines on plotwindow."
 	        android:defaultValue="true" />
+	    
+	    <CheckBoxPreference
+	        android:key="pref_key_dark_background"
+	        android:title="Dark background"
+	        android:summary="Color plot background dark gray"
+	        android:defaultValue="false" />
+	    
+	    <com.knpl.simplecalculator.PrecisionPreference
+	        android:key="pref_key_line_thickness"
+	        android:title="Plotted line thickness"
+	        android:summary="Plotted lines are currently 1 pixels wide"
+	        android:defaultValue="1"
+	        knpl:min="1"
+	        knpl:max="10"
+	        knpl:default="1" />
 
 	</PreferenceCategory>
 	
@@ -26,7 +42,10 @@
 	        android:key="pref_key_precision"
 	        android:title="Precision"
 	        android:summary="Calculator currently displays results using 10 digits."
-	        android:defaultValue="10" />
+	        android:defaultValue="10"
+	        knpl:min="1"
+	        knpl:max="16"
+	        knpl:default="10" />
 	    
 	    <CheckBoxPreference
 	        android:key="pref_key_complex"

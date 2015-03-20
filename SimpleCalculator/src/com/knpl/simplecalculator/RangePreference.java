@@ -8,16 +8,17 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class PrecisionPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
-	public static int MIN_VALUE = 1,
-					  MAX_VALUE = 16,
-					  DEFAULT_VALUE = 10;
+public class RangePreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
+	
+	private final int min,
+					  max,
+					  defaultt;
 	
 	private SeekBar seekBar;
 	private TextView textView;
 	private Integer value;
 
-	public PrecisionPreference(Context context, AttributeSet attrs) {
+	public RangePreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
 		setDialogLayoutResource(R.layout.integer_preference_dialog);
@@ -25,6 +26,12 @@ public class PrecisionPreference extends DialogPreference implements SeekBar.OnS
 		setNegativeButtonText(android.R.string.cancel);
 		
 		setDialogIcon(null);
+		
+		
+		
+		min = attrs.getAttributeIntValue("http://knpl.com", "min", 0);	
+		max = attrs.getAttributeIntValue("http://knpl.com", "max", 100);
+		defaultt = attrs.getAttributeIntValue("http://knpl.com", "default", 50);
 	}
 
 	@Override
@@ -35,8 +42,8 @@ public class PrecisionPreference extends DialogPreference implements SeekBar.OnS
 
 		textView.setText(""+value);
 		
-		seekBar.setMax(MAX_VALUE - MIN_VALUE);
-		seekBar.setProgress(value - MIN_VALUE);
+		seekBar.setMax(max - min);
+		seekBar.setProgress(value - min);
 		
 		seekBar.setOnSeekBarChangeListener(this);
 		return view;
@@ -45,7 +52,7 @@ public class PrecisionPreference extends DialogPreference implements SeekBar.OnS
 	@Override
 	protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
 		if (restorePersistedValue) {
-			value = getPersistedInt(DEFAULT_VALUE);
+			value = getPersistedInt(defaultt);
 		}
 		else {
 			value = (Integer) defaultValue;
@@ -55,20 +62,20 @@ public class PrecisionPreference extends DialogPreference implements SeekBar.OnS
 
 	@Override
 	protected Object onGetDefaultValue(TypedArray a, int index) {
-		return a.getInteger(index, DEFAULT_VALUE);
+		return a.getInteger(index, defaultt);
 	}
 
 	@Override
 	protected void onDialogClosed(boolean positiveResult) {
 		if (positiveResult) {
-			value = seekBar.getProgress() + MIN_VALUE;
+			value = seekBar.getProgress() + min;
 			persistInt(value);
 		}
 	}
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		textView.setText(""+(progress + MIN_VALUE));
+		textView.setText(""+(progress + min));
 	}
 
 	@Override public void onStartTrackingTouch(SeekBar seekBar) {}

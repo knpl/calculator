@@ -19,24 +19,17 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class PlotView extends View {
-	private static final Paint linePaint,
-							   lightLinePaint;
 	
 	public static final float leftPadding 	= 0f,
 							  topPadding 	= 0f,
 							  rightPadding 	= 0f,
 							  bottomPadding = 0f;
-
-	static {
-		linePaint = new Paint();
-		linePaint.setAntiAlias(true);
-		linePaint.setColor(Color.BLACK);
-		linePaint.setStyle(Paint.Style.STROKE);
-		linePaint.setStrokeWidth(0f);
-		linePaint.setTextSize(16f);
-		lightLinePaint = new Paint(linePaint);
-		lightLinePaint.setColor(Color.LTGRAY);
-	}
+	
+	private int backgroundColor;
+	private int plotLineStrokeWidth;
+	private Paint plotPaint,
+				  linePaint,
+				  lightLinePaint;
 	
 	private List<Pair<Mapper, Integer>> mappers;
 	
@@ -82,10 +75,30 @@ public class PlotView extends View {
 		normalToScreen = new Matrix();
 		screenToNormal = new Matrix();
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		plotPaint = new Paint();
+		plotPaint.setAntiAlias(true);
+		plotPaint.setStyle(Paint.Style.STROKE);
+		plotPaint.setStrokeWidth(0f);
+		linePaint = new Paint(plotPaint);
+		linePaint.setTextSize(16f);
+		lightLinePaint = new Paint(plotPaint);
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		grid   = prefs.getBoolean("pref_key_extend_grid", false);
 		extend = prefs.getBoolean("pref_key_extend_window", true);
+		
+		if (prefs.getBoolean("pref_key_dark_background", false)) {
+			linePaint.setColor(Color.WHITE);
+			lightLinePaint.setColor(Color.DKGRAY);
+			backgroundColor = Color.BLACK;
+		}
+		else {
+			linePaint.setColor(Color.BLACK);
+			lightLinePaint.setColor(Color.LTGRAY);
+			backgroundColor = Color.WHITE;
+		}
+		
+		plotPaint.setStrokeWidth(prefs.getInt("pref_key_line_thickness", 0));
 	}
 	
 	@Override
@@ -195,7 +208,7 @@ public class PlotView extends View {
 	
 	@Override
 	protected void onDraw(Canvas c) {
-		setBackgroundColor(Color.WHITE);
+		setBackgroundColor(backgroundColor);
 		c.clipRect(leftPadding, topPadding, width - rightPadding, height - bottomPadding);
 		super.onDraw(c);
 		
@@ -246,10 +259,9 @@ public class PlotView extends View {
 			Mapper mapper = pair.getFirst();
 			int color = pair.getLast();
 
-			linePaint.setColor(color);
-			c.drawPath(mapper.map(ctm, xrange, yrange), linePaint);
+			plotPaint.setColor(color);
+			c.drawPath(mapper.map(ctm, xrange, yrange), plotPaint);
 		}
-		linePaint.setColor(Color.BLACK);
 	}
 	
 	public void drawAxes(Canvas c, Matrix ctm, Range x, Range y) {
