@@ -2,6 +2,8 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
+import com.knpl.simplecalculator.visitors.PrettyPrint;
+import com.knpl.simplecalculator.visitors.Resolve;
 
 public class UserConstDef extends ConstDef {
 	
@@ -14,6 +16,23 @@ public class UserConstDef extends ConstDef {
 		this.name = name;
 		this.expression = expression;
 		this.description = description;
+		this.value = null;
+	}
+	
+	public UserConstDef(ConstDefNode constDefNode) throws Exception {
+		Resolve resolve = new Resolve();
+		constDefNode.accept(resolve, null);
+		
+		if (!resolve.getFreeVarMap().isEmpty()) {
+			throw new Exception("Constant expression contains free variables");
+		}
+		
+		PrettyPrint pp = new PrettyPrint();
+		constDefNode.accept(pp, null);
+		
+		this.name = constDefNode.getName();
+		this.expression = constDefNode.getExpression();
+		this.description = pp.toString();
 		this.value = null;
 	}
 	

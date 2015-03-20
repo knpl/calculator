@@ -55,7 +55,7 @@ public class Globals {
 		return def.createFunction(call);
 	}
 	
-	public ConstDef getConstant(String id) {
+	public ConstDef getConstDef(String id) {
 		return constDefMap.get(id);
 	}
 	
@@ -71,6 +71,10 @@ public class Globals {
 			result = true;
 		}
 		return result;
+	}
+	
+	public boolean removeConstDef(String id) {
+		return constDefMap.remove(id) != null;
 	}
 	
 	public boolean removeFuncDef(String id) {

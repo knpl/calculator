@@ -118,7 +118,22 @@ public class Parser {
 		return true;
 	}
 	
-	public boolean functionDefinition() {
+	public boolean constDef() {
+		if (!match(ID))
+			return false;
+		
+		String id = tok.toString();
+		nextToken();
+		
+		if (!(token(EQ) && expr()))
+			return false;
+		
+		result = new ConstDefNode(id, (Expr) result);
+		
+		return true;
+	}
+	
+	public boolean funcDef() {
 		if (!match(ID))
 			return false;
 		

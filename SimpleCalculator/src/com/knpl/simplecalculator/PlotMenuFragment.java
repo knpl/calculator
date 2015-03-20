@@ -274,7 +274,7 @@ public class PlotMenuFragment extends ListFragment {
 			int color = colorPickerDialog.getColor();
 		
 			Parser parser = new Parser(new Lexer(expr));
-			if (!parser.functionDefinition()) {
+			if (!parser.funcDef()) {
 				displayMessage("Syntax error");
 				return;
 			}

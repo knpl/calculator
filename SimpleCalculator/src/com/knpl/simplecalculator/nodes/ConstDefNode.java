@@ -31,7 +31,7 @@ public class ConstDefNode extends Node {
 	@Override
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
 		Globals defs = Globals.getInstance();
-		if (defs.getConstant(name) != null) {
+		if (defs.getConstDef(name) != null) {
 			throw new Exception("Constant \""+name+"\" already defined");
 		}
 		
