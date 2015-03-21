@@ -80,12 +80,21 @@ public class LogRange extends Range {
 	}
 	
 	@Override
-	public float[] getMarkerInfo() {
+	public float[] getMarkerInfo2() {
 		float[] result = new float[2];
 		double step = modelToView(10) - modelToView(1);
 		result[0] = modelToView((float)Math.pow(10, Math.floor(Math.log10(min))));
 		result[1] = (float) step;
 		return result;
+	}
+	
+	@Override
+	public MarkerInfo getMarkerInfo() {
+		double step = modelToView(10) - modelToView(1);
+		int startn = (int) Math.floor(Math.log10(min));
+		int stopn  = (int) Math.ceil (Math.log10(max));
+		float start = modelToView((float)Math.pow(10, startn));
+		return new MarkerInfo(getMarkerModel(), start, (float)step, stopn - startn);
 	}
 	
 	private static float[] markerPositions = new float[] {

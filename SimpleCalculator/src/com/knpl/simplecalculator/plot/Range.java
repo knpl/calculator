@@ -74,6 +74,28 @@ public class Range implements Serializable {
 			c += cs;
 		}
 	}
+	
+	private static float[] halfMarkerPositions = new float[] {
+		0f, .2f, .4f, .6f, .8f
+	};
+	
+	private static Path halfMarkerModel = null;
+	
+	public Path getHalfMarkerModel() {
+		if (halfMarkerModel != null) {
+			return new Path(halfMarkerModel);
+		}
+		
+		Path p = new Path();
+		for (int i = 0; i < halfMarkerPositions.length; i++) {
+			float len = (i == 0) ? 4 : 1;
+			p.moveTo(halfMarkerPositions[i], -len/2);
+			p.rLineTo(0, len);
+		}
+		
+		halfMarkerModel = p;
+		return new Path(p);
+	}
 
 	private static float[] markerPositions = new float[] {
 		0f, .1f, .2f, .3f, .4f, .5f, .6f, .7f, .8f, .9f	
@@ -102,17 +124,51 @@ public class Range implements Serializable {
 		return new Path(p);
 	}
 	
-	public float[] getMarkerInfo() {
+	public float[] getMarkerInfo2() {
 		float[] result = new float[2];
 		double step = Math.pow(10, Math.floor(Math.log10(max-min)));
 		result[0] = (float)(step*Math.floor(min/step));
 		result[1] = (float)step;
+		
 		return result;
+	}
+	
+	public MarkerInfo getMarkerInfo() {
+		double step = Math.pow(10, Math.floor(Math.log10(max-min)));
+		int firstn = (int) Math.floor(min / step);
+		int lastn = (int) Math.ceil(max / step);
+		int nsteps = lastn - firstn;
+		
+		Path model;
+		if (nsteps <= 2) {
+			step /= 2;
+			firstn = (int) Math.floor(min / step);
+			lastn = (int) Math.ceil(max / step);
+			nsteps = lastn - firstn;
+			model = getHalfMarkerModel();
+		}
+		else {
+			model = getMarkerModel();
+		}
+		return new MarkerInfo(model, (float)(step*firstn), (float)step, nsteps);
+	}
+	
+	public static class MarkerInfo {
+		public final Path model;
+		public final float start,
+						   step;
+		public final int nsteps;
+		
+		public MarkerInfo(Path model, float start, float step, int nsteps) {
+			this.model = model;
+			this.start = start;
+			this.step = step;
+			this.nsteps = nsteps;
+		}
 	}
 	
 	@Override 
 	public String toString() {
 		return "["+min+", "+max+"]";
-	}
-	
+	}	
 }

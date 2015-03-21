@@ -131,6 +131,8 @@ public class ConstDefFragment extends ListFragment {
 	
 	public static class ConstDefDialog extends DialogFragment
 		implements DialogInterface.OnClickListener {
+		
+		public static final int NO_POSITION = -1;
 	
 		private String oldName;
 		private String description;
@@ -155,7 +157,7 @@ public class ConstDefFragment extends ListFragment {
 			else {
 				description = null;
 				oldName = null;
-				position = -1;
+				position = NO_POSITION;
 			}
 		}
 		
@@ -168,7 +170,7 @@ public class ConstDefFragment extends ListFragment {
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setView(content)
-			   .setTitle(edit ? "edit "+oldName : "new function")
+			   .setTitle(edit ? "edit "+oldName : "new constant")
 			   .setPositiveButton(edit ? "replace" : "save", this)
 			   .setNegativeButton(edit ? "delete" : "cancel", this);
 			final AlertDialog d = builder.create();

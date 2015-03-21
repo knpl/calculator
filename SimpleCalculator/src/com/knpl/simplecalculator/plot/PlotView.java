@@ -3,6 +3,7 @@ package com.knpl.simplecalculator.plot;
 import java.util.List;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.PlotStates.PlotState;
+import com.knpl.simplecalculator.plot.Range.MarkerInfo;
 import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
@@ -26,7 +27,6 @@ public class PlotView extends View {
 							  bottomPadding = 0f;
 	
 	private int backgroundColor;
-	private int plotLineStrokeWidth;
 	private Paint plotPaint,
 				  linePaint,
 				  lightLinePaint;
@@ -133,6 +133,9 @@ public class PlotView extends View {
 	}
 
 	public PlotView init(List<Pair<Mapper, Integer>> paths, Range x, Range y) {
+		for (Pair<Mapper, Integer> pair : paths) {
+			pair.getFirst().initialize();
+		}
 		this.mappers = paths;
 		this.xaxis = x;
 		this.yaxis = y;
@@ -294,22 +297,16 @@ public class PlotView extends View {
 		Matrix init = new Matrix();
 		Matrix translate = new Matrix();
 		
-		Path path;
-		float[] info;
-		float start, step, cur;
-		
-		info = x.getMarkerInfo();
-		start = info[0];
-		step  = info[1];
-		path = x.getMarkerModel();
+		float cur;
+		MarkerInfo info = x.getMarkerInfo();
 		
 		init.preConcat(ctm);
-		init.preTranslate(start, xy);
-		init.preScale(step, -5 * yscale);
-		path.transform(init);
-		translate.setTranslate(step / xscale, 0);
+		init.preTranslate(info.start, xy);
+		init.preScale(info.step, -5 * yscale);
+		info.model.transform(init);
+		translate.setTranslate(info.step / xscale, 0);
 		
-		float[] labelPos = new float[] {start, xy};
+		float[] labelPos = new float[] {info.start, xy};
 		ctm.mapPoints(labelPos);
 		
 		linePaint.setTextAlign(Align.CENTER);
@@ -320,20 +317,18 @@ public class PlotView extends View {
 			yoffset = -linePaint.ascent() + 15;
 		
 		c.save();
-		cur = start;
-		do {
-			c.drawPath(path, linePaint);
+		cur = info.start;
+		for (int i = 0; i < info.nsteps; ++i) {
+			c.drawPath(info.model, linePaint);
 			if (cur >= x.min && cur != 0f) {
-				if (grid) {
+				if (grid)
 					c.drawLine(labelPos[0], 0, labelPos[0], height, lightLinePaint);
-				}
 				c.drawText(FormatUtils.format(x.viewToModel(cur), 3, 10),
 						   labelPos[0], labelPos[1] + yoffset, linePaint);
 			}
 			c.concat(translate);
-			cur += step;
+			cur += info.step;
 		}
-		while (cur < x.max);
 		c.restore();
 	}
 	
@@ -341,23 +336,17 @@ public class PlotView extends View {
 		Matrix init = new Matrix();
 		Matrix translate = new Matrix();
 		
-		Path path;
-		float[] info;
-		float start, step, cur;
-		
-		info = y.getMarkerInfo();
-		start = info[0];
-		step  = info[1];
-		path = y.getMarkerModel();
+		float cur;
+		MarkerInfo info = y.getMarkerInfo();
 		
 		init.preConcat(ctm);
-		init.preTranslate(yx, start);
-		init.preScale(-5 * xscale, step);
+		init.preTranslate(yx, info.start);
+		init.preScale(-5 * xscale, info.step);
 		init.preRotate(90);
-		path.transform(init);
-		translate.setTranslate(0, step / yscale);
+		info.model.transform(init);
+		translate.setTranslate(0, info.step / yscale);
 		
-		float[] labelPos = new float[] {yx, start};
+		float[] labelPos = new float[] {yx, info.start};
 		ctm.mapPoints(labelPos);
 		float xoffset;
 		if (labelPos[0] < leftPadding + 50) {
@@ -371,20 +360,18 @@ public class PlotView extends View {
 		float yoffset = -linePaint.ascent()/2;
 		
 		c.save();
-		cur = start;
-		do {
-			c.drawPath(path, linePaint);
+		cur = info.start;
+		for (int i = 0; i < info.nsteps; ++i) {
+			c.drawPath(info.model, linePaint);
 			if (cur >= y.min && cur != 0f) {
-				if (grid) {
+				if (grid)
 					c.drawLine(0, labelPos[1], width, labelPos[1], lightLinePaint);
-				}
 				c.drawText(FormatUtils.format(y.viewToModel(cur), 3, 10),
 						   labelPos[0] + xoffset, labelPos[1] + yoffset, linePaint);
 			}
 			c.concat(translate);
-			cur += step;
+			cur += info.step;
 		}
-		while (cur < y.max);
 		c.restore();
 	}
 

@@ -32,7 +32,7 @@ public class ConstDefNode extends Node {
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
 		Globals defs = Globals.getInstance();
 		if (defs.getConstDef(name) != null) {
-			throw new Exception("Constant \""+name+"\" already defined");
+			throw new Exception("Constant "+name+" already defined");
 		}
 		
 		Resolve resolve = new Resolve();
