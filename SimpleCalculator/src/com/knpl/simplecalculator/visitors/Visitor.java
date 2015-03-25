@@ -151,4 +151,8 @@ public class Visitor<O, I> {
 	public O visit(ConstDefNode node, I info) throws Exception {
 		return visit((Node) node, info);
 	}
+	
+	public O visit(UserConstDef node, I info) throws Exception {
+		return visit((ConstDef) node, info);
+	}
 }

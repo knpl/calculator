@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.util;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -16,30 +15,33 @@ public class UserFuncDef extends FuncDef {
 	private final Expr expression;
 	private Program program;
 	
-	public UserFuncDef(Signature sig, Expr expression, String description) {
-		this.sig = sig;
-		this.description = description;
-		this.expression = expression;
-		this.program = null;
-	}
-	
-	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
+	public UserFuncDef(FuncDefNode funcDefNode, boolean userDefsAllowed) throws Exception {
 		Resolve resolve = new Resolve();
 		funcDefNode.accept(resolve, null);
 		
 		Map<String, Var> freeVars = resolve.getFreeVarMap();
 		if (!freeVars.isEmpty()) {
-			String vars = Arrays.toString(resolve.getFreeVarMap().keySet().toArray());
-			throw new Exception("Resolve error: undeclared variables "+vars);
+			throw new Exception("Resolve error: undeclared variables");
+		}
+		
+		if (!userDefsAllowed && (
+				resolve.getUFDDependencies().size() != 0 ||
+				resolve.getUCDDependencies().size() != 0)) {
+				throw new Exception("Resolve error: user-defined definitions not allowed");
 		}
 		
 		PrettyPrint prettyPrint = new PrettyPrint();
 		funcDefNode.accept(prettyPrint, null);
+		this.description = prettyPrint.toString();
+		
 		
 		this.sig = funcDefNode.getSignature();
-		this.description = prettyPrint.toString();
 		this.expression = funcDefNode.getExpression();
 		this.program = null;
+	}
+	
+	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
+		this(funcDefNode, true);
 	}
 
 	@Override

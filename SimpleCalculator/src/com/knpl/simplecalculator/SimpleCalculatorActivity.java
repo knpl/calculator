@@ -9,6 +9,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
+import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
@@ -70,6 +71,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 		super.onCreate(savedInstanceState);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_calculator);
+        
+        CalculatorDb.listUserDefs();
         
         items = getResources().getStringArray(R.array.listitems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

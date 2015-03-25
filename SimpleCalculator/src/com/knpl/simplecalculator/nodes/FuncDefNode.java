@@ -3,8 +3,6 @@ package com.knpl.simplecalculator.nodes;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.util.UserFuncDef;
-import com.knpl.simplecalculator.visitors.PrettyPrint;
-import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class FuncDefNode extends Node {
@@ -25,13 +23,7 @@ public class FuncDefNode extends Node {
 			throw new Exception("Function \""+sig+"\" already defined");
 		}
 		
-		Resolve resolve = new Resolve();
-		accept(resolve, null);
-		
-		PrettyPrint prettyPrint = new PrettyPrint();
-		accept(prettyPrint, null);
-		
-		UserFuncDef ufd = new UserFuncDef(sig, expression, prettyPrint.toString());
+		UserFuncDef ufd = new UserFuncDef(this);
 		ufd.compile();
 		
 		defs.putFuncDef(ufd);

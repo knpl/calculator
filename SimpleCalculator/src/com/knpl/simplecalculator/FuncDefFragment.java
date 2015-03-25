@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.knpl.simplecalculator.nodes.FuncDefNode;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
+import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.util.UserFuncDef;
@@ -198,7 +199,8 @@ public class FuncDefFragment extends ListFragment {
 		public void onNegative() {
 			if (edit) {
 				Globals defs = Globals.getInstance();
-				defs.removeFuncDef(oldName);
+				defs.removeUserFuncDef(oldName);
+				CalculatorDb.deleteUFD(oldName);
 				sendResultNegative();
 			}
 			dismiss();
@@ -225,7 +227,7 @@ public class FuncDefFragment extends ListFragment {
 			
 			UserFuncDef userFuncDef;
 			try {
-				userFuncDef = new UserFuncDef(funcDefNode);
+				userFuncDef = new UserFuncDef(funcDefNode, false);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
@@ -233,9 +235,12 @@ public class FuncDefFragment extends ListFragment {
 				return;
 			}
 			
-			if (edit)
-				defs.removeFuncDef(oldName);
+			if (edit) {
+				defs.removeUserFuncDef(oldName);
+				CalculatorDb.deleteUFD(oldName);
+			}
 			defs.putFuncDef(userFuncDef);
+			CalculatorDb.insertUFD(userFuncDef);
 			
 			String newFuncDefId = userFuncDef.getSignature().getName();
 			sendResultPositive(newFuncDefId);

@@ -9,9 +9,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
@@ -164,7 +166,7 @@ public class PlotMenuFragment extends ListFragment {
 	public static class PlotEntryDialog extends DialogFragment
 		implements DialogInterface.OnClickListener {
 		
-		public static final int DEFAULT_COLOR = Color.BLACK;
+//		public static final int DEFAULT_COLOR = Color.BLACK;
 		
 		private EditText exprEditText;
 		private ColorPickerDialog colorPickerDialog;
@@ -203,8 +205,10 @@ public class PlotMenuFragment extends ListFragment {
 			position = args.getInt("position");
 			
 			int color = args.getInt("color");
-			if (color == 0)
-				color = DEFAULT_COLOR;
+			if (color == 0) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+				color = prefs.getBoolean("pref_key_dark_background", false) ? Color.WHITE : Color.BLACK;
+			}
 			
 			name = args.getString("name");
 			if (name == null)

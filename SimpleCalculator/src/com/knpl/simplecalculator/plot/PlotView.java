@@ -296,8 +296,6 @@ public class PlotView extends View {
 	private void drawXMarkers(Canvas c, Matrix ctm, Range x, float xy, float xscale, float yscale) {
 		Matrix init = new Matrix();
 		Matrix translate = new Matrix();
-		
-		float cur;
 		MarkerInfo info = x.getMarkerInfo();
 		
 		init.preConcat(ctm);
@@ -317,7 +315,7 @@ public class PlotView extends View {
 			yoffset = -linePaint.ascent() + 15;
 		
 		c.save();
-		cur = info.start;
+		float cur = info.start;
 		for (int i = 0; i < info.nsteps; ++i) {
 			c.drawPath(info.model, linePaint);
 			if (cur >= x.min && cur != 0f) {
@@ -335,8 +333,6 @@ public class PlotView extends View {
 	private void drawYMarkers(Canvas c, Matrix ctm, Range y, float yx, float xscale, float yscale) {
 		Matrix init = new Matrix();
 		Matrix translate = new Matrix();
-		
-		float cur;
 		MarkerInfo info = y.getMarkerInfo();
 		
 		init.preConcat(ctm);
@@ -360,7 +356,7 @@ public class PlotView extends View {
 		float yoffset = -linePaint.ascent()/2;
 		
 		c.save();
-		cur = info.start;
+		float cur = info.start;
 		for (int i = 0; i < info.nsteps; ++i) {
 			c.drawPath(info.model, linePaint);
 			if (cur >= y.min && cur != 0f) {

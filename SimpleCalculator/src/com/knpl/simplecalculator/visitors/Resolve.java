@@ -5,21 +5,30 @@ import java.util.List;
 import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.util.Globals;
+import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class Resolve extends Visitor<Node, Void> {
 	
 	private Map<String,Var> freeVarMap;
 	private Map<String,Var> boundedVarMap;
 	
+	private Map<String, UserFuncDef> ufdDependencies;
+	private Map<String, UserConstDef> ucdDependencies;
+	
 	public Resolve() {
-		freeVarMap = new HashMap<String,Var>();
-		boundedVarMap = new HashMap<String,Var>();
+		freeVarMap = new HashMap<String, Var>();
+		boundedVarMap = new HashMap<String, Var>();
+		ufdDependencies = new HashMap<String, UserFuncDef>();
+		ucdDependencies = new HashMap<String, UserConstDef>();
 	}
 	
 	public Resolve(Map<String, Var> boundedVarMap) {
 		freeVarMap = new HashMap<String, Var>();
 		this.boundedVarMap = boundedVarMap;
+		ufdDependencies = new HashMap<String, UserFuncDef>();
+		ucdDependencies = new HashMap<String, UserConstDef>();
 	}
 	
 	
@@ -29,6 +38,14 @@ public class Resolve extends Visitor<Node, Void> {
 	
 	public Map<String, Var> getBoundedVarMap() {
 		return boundedVarMap;
+	}
+	
+	public Map<String, UserFuncDef> getUFDDependencies() {
+		return ufdDependencies;
+	}
+	
+	public Map<String, UserConstDef> getUCDDependencies() {
+		return ucdDependencies;
 	}
 	
 	@Override
@@ -84,11 +101,20 @@ public class Resolve extends Visitor<Node, Void> {
 			return variable;
 		
 		ConstDef constant = Globals.getInstance().getConstDef(name);
-		if (constant != null)
+		if (constant != null) {
+			if (constant instanceof UserConstDef)
+				ucdDependencies.put(constant.getName(), (UserConstDef) constant);
 			return constant;
+		}
 		
 		freeVarMap.put(name, node);
 		
+		return node;
+	}
+	
+	@Override
+	public Node visit(UserConstDef node, Void info) throws Exception {
+		ucdDependencies.put(node.getName(), node);
 		return node;
 	}
 	
@@ -98,7 +124,13 @@ public class Resolve extends Visitor<Node, Void> {
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this, info));
 		}
-		return Globals.getInstance().createFunction(node);
+		Func f = Globals.getInstance().createFunction(node);
+		FuncDef fd = f.getDefinition(); 
+		if (fd instanceof UserFuncDef) {
+			UserFuncDef ufd = (UserFuncDef) fd;
+			ufdDependencies.put(ufd.getSignature().getName(), ufd);
+		}
+		return f;
 	}
 	
 	@Override
@@ -106,6 +138,11 @@ public class Resolve extends Visitor<Node, Void> {
 		List<Expr> arguments = node.getArguments();
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this, info));
+		}
+		FuncDef fd = node.getDefinition();
+		if (fd instanceof UserFuncDef) {
+			UserFuncDef ufd = (UserFuncDef) fd;
+			ufdDependencies.put(ufd.getSignature().getName(), ufd);
 		}
 		return node;
 	}

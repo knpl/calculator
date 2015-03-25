@@ -10,6 +10,7 @@ import com.knpl.simplecalculator.nodes.ConstDef;
 import com.knpl.simplecalculator.nodes.Builtins.Pi;
 import com.knpl.simplecalculator.nodes.Builtins.Euler;
 import com.knpl.simplecalculator.nodes.Builtins.Im;
+import com.knpl.simplecalculator.storage.CalculatorDb;
 
 public class Globals {
 	private static Globals instance = null;
@@ -17,6 +18,7 @@ public class Globals {
 	public static Globals getInstance() {
 		if (instance == null) {
 			instance = new Globals();
+			instance.loadDefinitionsFromDatabase();
 		}
 		return instance;
 	}
@@ -63,7 +65,7 @@ public class Globals {
 		return funcDefMap.get(id);
 	}
 
-	public boolean putFuncDef(FuncDef funcDef) {
+	public boolean putFuncDef(UserFuncDef funcDef) {
 		boolean result = false;
 		String name = funcDef.getSignature().getName();
 		if (funcDefMap.get(name) == null) {
@@ -73,11 +75,15 @@ public class Globals {
 		return result;
 	}
 	
-	public boolean removeConstDef(String id) {
+	public boolean removeUserConstDef(String id) {
 		return constDefMap.remove(id) != null;
 	}
 	
-	public boolean removeFuncDef(String id) {
+	public boolean removeUserFuncDef(String id) {
+		FuncDef fd = funcDefMap.get(id);
+		if (!(fd instanceof UserFuncDef)) {
+			return false;
+		}
 		return funcDefMap.remove(id) != null;
 	}
 	
@@ -90,4 +96,9 @@ public class Globals {
 		}
 		return result;
 	}	
+	
+	private void loadDefinitionsFromDatabase() {
+		CalculatorDb.putAllUFDs();
+		CalculatorDb.putAllUCDs();
+	}
 }

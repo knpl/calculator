@@ -6,6 +6,7 @@ import com.knpl.simplecalculator.nodes.ConstDef;
 import com.knpl.simplecalculator.nodes.ConstDefNode;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
+import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.nodes.UserConstDef;
 
@@ -164,7 +165,7 @@ public class ConstDefFragment extends ListFragment {
 		@SuppressLint("InflateParams") @Override @NonNull
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			LayoutInflater inflater = getActivity().getLayoutInflater();
-			View content = inflater.inflate(R.layout.fragment_funcdef_dialog, null);
+			View content = inflater.inflate(R.layout.fragment_constdef_dialog, null);
 			
 			init(content);
 			
@@ -199,7 +200,8 @@ public class ConstDefFragment extends ListFragment {
 		public void onNegative() {
 			if (edit) {
 				Globals defs = Globals.getInstance();
-				defs.removeConstDef(oldName);
+				defs.removeUserConstDef(oldName);
+				CalculatorDb.deleteUCD(oldName);
 				sendResultNegative();
 			}
 			dismiss();
@@ -226,7 +228,7 @@ public class ConstDefFragment extends ListFragment {
 		
 			UserConstDef userConstDef;
 			try {
-				userConstDef = new UserConstDef(constDefNode);
+				userConstDef = new UserConstDef(constDefNode, false);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();
@@ -234,9 +236,12 @@ public class ConstDefFragment extends ListFragment {
 				return;
 			}
 		
-			if (edit)
-				defs.removeConstDef(oldName);
+			if (edit) {
+				defs.removeUserConstDef(oldName);
+				CalculatorDb.deleteUCD(oldName);
+			}
 			defs.putConstDef(userConstDef);
+			CalculatorDb.insertUCD(userConstDef);
 			
 			String newFuncDefId = userConstDef.getName();
 			sendResultPositive(newFuncDefId);
