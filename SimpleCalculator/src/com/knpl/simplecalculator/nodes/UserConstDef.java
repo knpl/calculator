@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.nodes;
 
-import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
@@ -19,18 +18,12 @@ public class UserConstDef extends ConstDef {
 		this.value = null;
 	}
 	
-	public UserConstDef(ConstDefNode constDefNode, boolean userDefsAllowed) throws Exception {
+	public UserConstDef(ConstDefNode constDefNode) throws Exception {
 		Resolve resolve = new Resolve();
 		constDefNode.accept(resolve, null);
 		
 		if (!resolve.getFreeVarMap().isEmpty()) {
 			throw new Exception("Constant expression contains free variables");
-		}
-		
-		if (!userDefsAllowed && (
-				resolve.getUFDDependencies().size() != 0 ||
-				resolve.getUCDDependencies().size() != 0)) {
-				throw new Exception("Resolve error: user-defined definitions not allowed");
 		}
 		
 		PrettyPrint pp = new PrettyPrint();
@@ -40,10 +33,6 @@ public class UserConstDef extends ConstDef {
 		this.expression = constDefNode.getExpression();
 		this.description = pp.toString();
 		this.value = null;
-	}
-	
-	public UserConstDef(ConstDefNode constDefNode) throws Exception {
-		this(constDefNode, true);
 	}
 	
 	@Override
@@ -81,6 +70,6 @@ public class UserConstDef extends ConstDef {
 	public Complex getComplex() {
 		if (value == null)
 			eval();
-		return value;
+		return new Complex(value);
 	}
 }

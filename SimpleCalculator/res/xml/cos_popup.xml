@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:keyWidth="20%p"
+    android:keyHeight="10%p" >
+    
+    <Row>
+        <Key android:codes="61445" android:keyLabel="cos" />
+        <Key android:codes="61448" android:keyLabel="acos" />
+        <Key android:codes="61451" android:keyLabel="cosh" />
+    </Row>
+    
+</Keyboard>

@@ -12,6 +12,11 @@ public class Num extends Expr {
 	public double getDouble() {
 		return Double.parseDouble(token);
 	}
+	
+	@Override
+	public String toString() {
+		return token;
+	}
 
 	@Override
 	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {

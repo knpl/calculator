@@ -2,7 +2,7 @@ package com.knpl.simplecalculator.util;
 
 import java.util.Arrays;
 
-import com.knpl.simplecalculator.numbers.Complex;
+import com.knpl.simplecalculator.nodes.Complex;
 
 public class FormatUtils {
 	public static int flog(int base, double x) {

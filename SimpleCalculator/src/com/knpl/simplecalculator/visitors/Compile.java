@@ -216,6 +216,26 @@ public class Compile extends Visitor<Void, Void> {
 		
 		return null;
 	}
+	
+	@Override
+	public Void visit(Complex node, Void info) throws Exception {
+		if (node.im() != 0.0) {
+			throw new Exception("Program can't do complex calculations");
+		}
+		Double val = node.re();
+		
+		write(ByteCodes.LOADC);
+		push();
+		
+		Integer index = constantMap.get(val);
+		if (index == null) {
+			index = (Integer) constantMap.size();
+			constantMap.put(val, index);
+		}
+		write(index);
+		
+		return null;
+	}
 
 	@Override
 	public Void visit(ConstDef node, Void info) throws Exception {
@@ -304,6 +324,20 @@ public class Compile extends Visitor<Void, Void> {
 	}
 	
 	@Override
+	public Void visit(Floor node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.FLOOR);
+		return null;
+	}
+	
+	@Override
+	public Void visit(Ceil node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.CEIL);
+		return null;
+	}
+	
+	@Override
 	public Void visit(Sqrt node, Void info) throws Exception {
 		visit((Func)node, null);
 		write(ByteCodes.SQRT);
@@ -346,6 +380,13 @@ public class Compile extends Visitor<Void, Void> {
 	}
 	
 	@Override
+	public Void visit(Tanh node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.TANH);
+		return null;
+	}
+	
+	@Override
 	public Void visit(Sin node, Void info) throws Exception {
 		visit((Func)node, null);
 		write(ByteCodes.SIN);
@@ -384,6 +425,35 @@ public class Compile extends Visitor<Void, Void> {
 	public Void visit(Atan node, Void info) throws Exception {
 		visit((Func)node, null);
 		write(ByteCodes.ATAN);
+		return null;
+	}
+	
+	@Override
+	public Void visit(Erf node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.ERF);
+		return null;
+	}
+	
+	@Override
+	public Void visit(Gamma node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.GAMMA);
+		return null;
+	}
+	
+	@Override
+	public Void visit(LogGamma node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.LOGGAMMA);
+		return null;
+	}
+	
+	@Override
+	public Void visit(LogBeta node, Void info) throws Exception {
+		visit((Func)node, null);
+		write(ByteCodes.LOGBETA);
+		pop();
 		return null;
 	}
 }

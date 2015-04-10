@@ -15,19 +15,13 @@ public class UserFuncDef extends FuncDef {
 	private final Expr expression;
 	private Program program;
 	
-	public UserFuncDef(FuncDefNode funcDefNode, boolean userDefsAllowed) throws Exception {
+	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
 		Resolve resolve = new Resolve();
 		funcDefNode.accept(resolve, null);
 		
 		Map<String, Var> freeVars = resolve.getFreeVarMap();
 		if (!freeVars.isEmpty()) {
 			throw new Exception("Resolve error: undeclared variables");
-		}
-		
-		if (!userDefsAllowed && (
-				resolve.getUFDDependencies().size() != 0 ||
-				resolve.getUCDDependencies().size() != 0)) {
-				throw new Exception("Resolve error: user-defined definitions not allowed");
 		}
 		
 		PrettyPrint prettyPrint = new PrettyPrint();
@@ -40,10 +34,6 @@ public class UserFuncDef extends FuncDef {
 		this.program = null;
 	}
 	
-	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
-		this(funcDefNode, true);
-	}
-
 	@Override
 	public Func createFunction(Call call) throws Exception {
 		if (!call.match(sig))

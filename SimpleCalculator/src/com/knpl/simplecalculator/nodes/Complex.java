@@ -1,6 +1,8 @@
-package com.knpl.simplecalculator.numbers;
+package com.knpl.simplecalculator.nodes;
 
-public class Complex {
+import com.knpl.simplecalculator.visitors.Visitor;
+
+public class Complex extends Expr {
 	
 	private double re,
 				   im;
@@ -118,7 +120,6 @@ public class Complex {
 		im = 0.5*(ea + eainv)*Math.sin(im);
 		return this;
 	}
-
 	
 	public Complex cosh() {
 		double ea	 = Math.exp(re),
@@ -127,7 +128,12 @@ public class Complex {
 		im = 0.5*(ea - eainv)*Math.sin(im);
 		return this;
 	}
-
+	
+	public Complex tanh() {
+		re = Double.NaN;
+		im = Double.NaN;
+		return this;
+	}
 	
 	public Complex sin() {
 		double eb 	 = Math.exp(im),
@@ -367,5 +373,10 @@ public class Complex {
 	@Override
 	public String toString() {
 		return re+" + "+im+"*i";
+	}
+	
+	@Override
+	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+		return v.visit(this, info);
 	}
 }

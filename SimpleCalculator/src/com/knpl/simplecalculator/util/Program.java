@@ -6,6 +6,10 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.apache.commons.math3.special.Beta;
+import org.apache.commons.math3.special.Erf;
+import org.apache.commons.math3.special.Gamma;
+
 public class Program implements Serializable {
 	
 	private static final long serialVersionUID = -2503458081984075342L;
@@ -129,6 +133,14 @@ public class Program implements Serializable {
 				sp -= 1;
 				break;
 				
+			case ByteCodes.FLOOR:
+				stack[sp-1] = Math.floor(stack[sp-1]);
+				break;
+				
+			case ByteCodes.CEIL:
+				stack[sp-1] = Math.ceil(stack[sp-1]);
+				break;
+				
 			case ByteCodes.SQRT:
 				stack[sp-1] = Math.sqrt(stack[sp-1]);
 				break;
@@ -146,6 +158,10 @@ public class Program implements Serializable {
 				break;
 				
 			case ByteCodes.COSH:
+				stack[sp-1] = Math.cosh(stack[sp-1]);
+				break;
+				
+			case ByteCodes.TANH:
 				stack[sp-1] = Math.cosh(stack[sp-1]);
 				break;
 				
@@ -167,6 +183,23 @@ public class Program implements Serializable {
 				
 			case ByteCodes.ACOS:
 				stack[sp-1] = Math.acos(stack[sp-1]);
+				break;
+				
+			case ByteCodes.ERF:
+				stack[sp-1] = Erf.erf(stack[sp-1]);
+				break;
+				
+			case ByteCodes.GAMMA:
+				stack[sp-1] = Gamma.gamma(stack[sp-1]);
+				break;
+				
+			case ByteCodes.LOGGAMMA:
+				stack[sp-1] = Gamma.logGamma(stack[sp-1]);
+				break;
+				
+			case ByteCodes.LOGBETA:
+				stack[sp-2] = Beta.logBeta(stack[sp-2], stack[sp-1]);
+				sp -= 1;
 				break;
 				
 			case ByteCodes.ATAN:
@@ -271,6 +304,20 @@ public class Program implements Serializable {
 		}
 	}
 	
+	private void simdFloor(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] = (float)Math.floor(stacks[i]);
+		}
+	}
+	
+	private void simdCeil(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] = (float)Math.ceil(stacks[i]);
+		}
+	}
+	
 	private void simdSqrt(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
@@ -303,6 +350,13 @@ public class Program implements Serializable {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.cosh(stacks[i]);
+		}
+	}
+	
+	private void simdTanh(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] = (float)Math.tanh(stacks[i]);
 		}
 	}
 	
@@ -345,6 +399,39 @@ public class Program implements Serializable {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Math.atan(stacks[i]);
+		}
+	}
+	
+	private void simdErf(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			try {
+				stacks[i] = (float)Erf.erf(stacks[i]);
+			}
+			catch (Exception ex) {
+				stacks[i] = Float.NaN;
+			}
+		}
+	}
+	
+	private void simdGamma(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] = (float)Gamma.gamma(stacks[i]);
+		}
+	}
+	
+	private void simdLogGamma(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] = (float)Gamma.logGamma(stacks[i]);
+		}
+	}
+	
+	private void simdLogBeta(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 2);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] = (float)Beta.logBeta(stacks[i], stacks[i + n]);
 		}
 	}
 	
@@ -425,6 +512,14 @@ public class Program implements Serializable {
 				sp -= 1;
 				break;
 				
+			case ByteCodes.FLOOR:
+				simdFloor(stacks, n, sp);
+				break;
+				
+			case ByteCodes.CEIL:
+				simdCeil(stacks, n, sp);
+				break;
+				
 			case ByteCodes.SQRT:
 				simdSqrt(stacks, n, sp);
 				break;
@@ -443,6 +538,10 @@ public class Program implements Serializable {
 				
 			case ByteCodes.COSH:
 				simdCosh(stacks, n, sp);
+				break;
+				
+			case ByteCodes.TANH:
+				simdTanh(stacks, n, sp);
 				break;
 				
 			case ByteCodes.SIN:
@@ -467,6 +566,23 @@ public class Program implements Serializable {
 				
 			case ByteCodes.ATAN:
 				simdAtan(stacks, n, sp);
+				break;
+				
+			case ByteCodes.ERF:
+				simdErf(stacks, n, sp);
+				break;
+				
+			case ByteCodes.GAMMA:
+				simdGamma(stacks, n, sp);
+				break;
+				
+			case ByteCodes.LOGGAMMA:
+				simdLogGamma(stacks, n, sp);
+				break;
+				
+			case ByteCodes.LOGBETA:
+				simdLogBeta(stacks, n, sp);
+				sp -= 1;
 				break;
 				
 			case ByteCodes.LOADC:

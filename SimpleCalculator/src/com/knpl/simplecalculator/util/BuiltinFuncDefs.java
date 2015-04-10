@@ -16,18 +16,25 @@ public class BuiltinFuncDefs {
 	{
 		new MinDefinition(),
 		new MaxDefinition(),
+		new CeilDefinition(),
+		new FloorDefinition(),
 		new SqrtDefinition(),
 		new AbsDefinition(),
 		new LogDefinition(),
 		new ExpDefinition(),
 		new SinhDefinition(),
 		new CoshDefinition(),
+		new TanhDefinition(),
 		new SinDefinition(),
 		new CosDefinition(),
 		new TanDefinition(),
 		new AsinDefinition(),
 		new AcosDefinition(),
-		new AtanDefinition()
+		new AtanDefinition(),
+		new ErfDefinition(),
+		new GammaDefinition(),
+		new LogGammaDefinition(),
+		new LogBetaDefinition()
 	};
 	
 	public static class MinDefinition extends FuncDef {
@@ -92,6 +99,74 @@ public class BuiltinFuncDefs {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Max(this, args.get(0), args.get(1));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class FloorDefinition extends FuncDef {
+		public static final String description = "The integer part of x.";
+		
+		private final Signature sig;
+		
+		public FloorDefinition() {
+			sig = new Signature("floor", Arrays.asList(new Var("x")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Floor(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Floor(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class CeilDefinition extends FuncDef {
+		public static final String description = "The nearest integer greater than or equal to x.";
+		
+		private final Signature sig;
+		
+		public CeilDefinition() {
+			sig = new Signature("ceil", Arrays.asList(new Var("x")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Ceil(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Ceil(this, args.get(0));
 		}
 
 		@Override
@@ -269,7 +344,7 @@ public class BuiltinFuncDefs {
 	}
 	
 	public static class CoshDefinition extends FuncDef {
-		public static final String description = "The hyperbolic cosine x.";
+		public static final String description = "The hyperbolic cosine of x.";
 		
 		private final Signature sig;
 		
@@ -294,6 +369,40 @@ public class BuiltinFuncDefs {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Cosh(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class TanhDefinition extends FuncDef {
+		public static final String description = "The hyperbolic tangent of x.";
+		
+		private final Signature sig;
+		
+		public TanhDefinition() {
+			sig = new Signature("tanh", Arrays.asList(new Var("x")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Tanh(this, call.getArguments().get(0));
+		}
+
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Tanh(this, args.get(0));
 		}
 
 		@Override
@@ -498,6 +607,143 @@ public class BuiltinFuncDefs {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Atan(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class ErfDefinition extends FuncDef {
+		public static final String description = "The error function.";
+		
+		private final Signature sig;
+		
+		public ErfDefinition() {
+			sig = new Signature("erf", Arrays.asList(new Var("x")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Erf(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Erf(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class GammaDefinition extends FuncDef {
+		public static final String description = "The gamma function.";
+		
+		private final Signature sig;
+		
+		public GammaDefinition() {
+			sig = new Signature("\u0393", Arrays.asList(new Var("x")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Gamma(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new Gamma(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class LogGammaDefinition extends FuncDef {
+		public static final String description = "The logarithm of the gamma function.";
+		
+		private final Signature sig;
+		
+		public LogGammaDefinition() {
+			sig = new Signature("log\u0393", Arrays.asList(new Var("x")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			return new LogGamma(this, call.getArguments().get(0));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new LogGamma(this, args.get(0));
+		}
+
+		@Override
+		public String getDescription() {
+			return sig + " = " + description;
+		}
+	}
+	
+	public static class LogBetaDefinition extends FuncDef {
+		public static final String description = "The logarithm of the beta function.";
+		
+		private final Signature sig;
+		
+		public LogBetaDefinition() {
+			sig = new Signature("log\u03B2", Arrays.asList(new Var("x"), new Var("y")));
+		}
+
+		@Override
+		public Signature getSignature() {
+			return sig;
+		}
+		
+		@Override
+		public Func createFunction(Call call) throws Exception {
+			if (!call.match(sig))
+				throw new Exception("Signature mismatch");
+			List<Expr> args = call.getArguments();
+			return new LogBeta(this, args.get(0), args.get(1));
+		}
+		
+		@Override
+		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+			if (!this.sig.match(sig))
+				throw new Exception("Signature mismatch");
+			return new LogBeta(this, args.get(0), args.get(1));
 		}
 
 		@Override

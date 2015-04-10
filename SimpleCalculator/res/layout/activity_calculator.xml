@@ -4,18 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <FrameLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+       >
+        
+	    <FrameLayout
+	        android:id="@+id/content_frame"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        />
+        
+	     <com.knpl.simplecalculator.keyboard.MyKeyboardView
+	        android:id="@+id/keyboard"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:focusable="true"
+	        android:focusableInTouchMode="true"
+	        android:popupLayout="@layout/keyboard_popup_layout"
+	        android:visibility="gone" />
+	        
+    </RelativeLayout>
+    
     <ListView
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:choiceMode="singleChoice"
-      	style="@style/drawerBackground"
-        />
+      	style="@style/drawerBackground" />
 
 </android.support.v4.widget.DrawerLayout>

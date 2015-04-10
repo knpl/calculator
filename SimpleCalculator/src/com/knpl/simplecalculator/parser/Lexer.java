@@ -9,7 +9,7 @@ public class Lexer {
 	
 	private static final Pattern tokenPattern = Pattern.compile(
 		"	 (def) 			 |	#Match definition\n" +
-		"	 ([A-Za-z_]\\w*) |	#Match identifier\n" +
+		"	 ([\\p{InGreek}\\p{Alpha}][\\p{InGreek}\\w]*) |	#Match identifier\n" +
 		"	 ( (?: (?: 0|[1-9]\\d* )(?: \\.\\d* )? | (?: \\.\\d+ ) ) (?: [Ee]-?\\d+ )? )" 
 		, Pattern.COMMENTS);
 	

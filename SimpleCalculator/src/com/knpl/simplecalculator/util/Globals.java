@@ -36,9 +36,9 @@ public class Globals {
 			funcDefMap.put(def.getSignature().getName(), def);
 		}
 		
-		constDefMap.put("pi", new Pi());
-		constDefMap.put("e", new Euler());
-		constDefMap.put("i", new Im());
+		constDefMap.put(Pi.NAME, new Pi());
+		constDefMap.put(Euler.NAME, new Euler());
+		constDefMap.put(Im.NAME, new Im());
 	}
 	
 	public Map<String, FuncDef> getFuncDefMap() {

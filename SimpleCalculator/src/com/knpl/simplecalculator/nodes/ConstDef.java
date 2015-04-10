@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.nodes;
 
-import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class ConstDef extends Expr {

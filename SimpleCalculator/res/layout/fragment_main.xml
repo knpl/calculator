@@ -10,26 +10,11 @@
 
     <EditText
         android:id="@+id/input"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:hint="@string/input_hint"
-        android:inputType="textNoSuggestions">
-        
-        <requestFocus />
-    </EditText>
-        
-    <Button
-        android:id="@+id/enter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/input"
-        android:layout_alignBottom="@id/input"
-        android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@id/input"
-        android:text="@string/button_text"
-     	android:onClick="enter" />  
+        android:hint="@string/input_hint" /> 
 
     <TextView
         android:id="@+id/output"
@@ -39,11 +24,4 @@
         android:layout_below="@+id/input"
         android:text="@string/output" />
     
-    <FrameLayout
-        android:id="@+id/frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/output" >
-    </FrameLayout>
-
 </RelativeLayout>

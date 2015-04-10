@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
-import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.util.UserFuncDef;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.Visitor;

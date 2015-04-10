@@ -32,7 +32,17 @@ public class ByteCodes {
 		POP = 0x16,
 		LOADC = 0x17,
 		CALL = 0x18,
-		RET = 0x19;
+		RET = 0x19,
+		
+		FLOOR = 0x1a,
+		CEIL = 0x1b,
+		TANH = 0x1c,
+		
+		ERF = 0x1d,
+		GAMMA = 0x1e,
+		LOGGAMMA = 0x1f,
+		LOGBETA = 0x20;
+		
 	
 		public static String toString(byte code) {
 			String s;
@@ -111,6 +121,28 @@ public class ByteCodes {
 					break;
 				case RET:
 					s = "RET";
+					break;
+				
+				case FLOOR:
+					s = "FLOOR";
+					break;
+				case CEIL:
+					s = "CEIL";
+					break;
+				case TANH:
+					s = "TANH";
+					break;
+				case ERF:
+					s = "ERF";
+					break;
+				case GAMMA:
+					s = "GAMMA";
+					break;
+				case LOGGAMMA:
+					s = "LOGGAMMA";
+					break;
+				case LOGBETA:
+					s = "LOGBETA";
 					break;
 				default:
 					s = "Invalid instruction";

@@ -94,6 +94,16 @@ public class Evaluate extends Visitor<Double, Void> {
 	}
 	
 	@Override
+	public Double visit(Floor node, Void info) throws Exception {
+		return Math.floor((Double)node.getArg(0).accept(this, info));
+	}
+	
+	@Override
+	public Double visit(Ceil node, Void info) throws Exception {
+		return Math.ceil((Double)node.getArg(0).accept(this, info));
+	}
+	
+	@Override
 	public Double visit(Sqrt node, Void info) throws Exception {
 		return Math.sqrt((Double)node.getArg(0).accept(this, info));
 	}
@@ -121,6 +131,11 @@ public class Evaluate extends Visitor<Double, Void> {
 	@Override
 	public Double visit(Cosh node, Void info) throws Exception {
 		return Math.cosh((Double)node.getArg(0).accept(this, info));
+	}
+	
+	@Override
+	public Double visit(Tanh node, Void info) throws Exception {
+		return Math.tanh((Double)node.getArg(0).accept(this, info));
 	}
 	
 	@Override
@@ -154,7 +169,36 @@ public class Evaluate extends Visitor<Double, Void> {
 	}
 	
 	@Override
+	public Double visit(Erf node, Void info) throws Exception {
+		double a = (Double)node.getArg(0).accept(this, info);
+		double b = org.apache.commons.math3.special.Erf.erf(a);
+		return b;
+	}
+	
+	@Override
+	public Double visit(Gamma node, Void info) throws Exception {
+		return org.apache.commons.math3.special.Gamma.gamma((Double)node.getArg(0).accept(this, info));
+	}
+	
+	@Override
+	public Double visit(LogGamma node, Void info) throws Exception {
+		return org.apache.commons.math3.special.Gamma.logGamma((Double)node.getArg(0).accept(this, info));
+	}
+	
+	@Override
+	public Double visit(LogBeta node, Void info) throws Exception {
+		double a = (Double)node.getArg(0).accept(this, info),
+			   b = (Double)node.getArg(1).accept(this, info);
+		return org.apache.commons.math3.special.Beta.logBeta(a, b);
+	}
+	
+	@Override
 	public Double visit(ConstDef node, Void info) throws Exception {
 		return node.getDouble();
 	}
+	
+	@Override
+	public Double visit(Complex node, Void info) throws Exception {
+		return node.im() == 0.0 ? node.re() : Double.NaN;
+	} 
 }

@@ -84,6 +84,14 @@ public class Visitor<O, I> {
 		return visit((Func) node, info);
 	}
 	
+	public O visit(Floor node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
+	
+	public O visit(Ceil node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
+	
 	public O visit(Sqrt node, I info) throws Exception {
 		return visit((Func) node, info);
 	}
@@ -105,6 +113,10 @@ public class Visitor<O, I> {
 	}
 	
 	public O visit(Cosh node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
+	
+	public O visit(Tanh node, I info) throws Exception {
 		return visit((Func) node, info);
 	}
 	
@@ -131,6 +143,22 @@ public class Visitor<O, I> {
 	public O visit(Atan node, I info) throws Exception {
 		return visit((Func) node, info);
 	}
+
+	public O visit(Erf node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
+	
+	public O visit(Gamma node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
+	
+	public O visit(LogGamma node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
+	
+	public O visit(LogBeta node, I info) throws Exception {
+		return visit((Func) node, info);
+	}
 	
 	public O visit(ConstDef node, I info) throws Exception {
 		return visit((Expr) node, info);
@@ -154,5 +182,9 @@ public class Visitor<O, I> {
 	
 	public O visit(UserConstDef node, I info) throws Exception {
 		return visit((ConstDef) node, info);
+	}
+	
+	public O visit(Complex node, I info) throws Exception {
+		return visit((Expr) node, info);
 	}
 }

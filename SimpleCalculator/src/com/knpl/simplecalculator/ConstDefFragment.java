@@ -228,7 +228,7 @@ public class ConstDefFragment extends ListFragment {
 		
 			UserConstDef userConstDef;
 			try {
-				userConstDef = new UserConstDef(constDefNode, false);
+				userConstDef = new UserConstDef(constDefNode);
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
-import com.knpl.simplecalculator.numbers.Complex;
 import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
@@ -14,12 +13,13 @@ public class Builtins {
 	
 	/* Constants */
 	public static class Pi extends ConstDef {
+		public static final String NAME = "\u03C0";
 		public static final String description = 
 				"The ratio of a circle's circumference to its diameter.";
 		
 		@Override
 		public String getName() {
-			return "pi";
+			return NAME;
 		}
 
 		@Override
@@ -44,12 +44,13 @@ public class Builtins {
 	}
 	
 	public static class Euler extends ConstDef {
+		public static final String NAME = "e";
 		public static final String description = 
 				"Euler's constant. The base of the natural logarithm and exponential function.";
 
 		@Override
 		public String getName() {
-			return "e";
+			return NAME;
 		}
 
 		@Override
@@ -74,12 +75,13 @@ public class Builtins {
 	}
 	
 	public static class Im extends ConstDef {
+		public static final String NAME = "i";
 		public static final String description = 
 				"The imaginary unit. The square root of -1.";
 
 		@Override
 		public String getName() {
-			return "i";
+			return NAME;
 		}
 
 		@Override
@@ -159,6 +161,62 @@ public class Builtins {
 		@Override
 		public Expr getArg(int i) {
 			return arguments[i];
+		}
+	}
+	
+	public static class Floor extends Func {
+		private Expr argument;
+		
+		public Floor(FuncDef definition, Expr argument) {
+			this.definition = definition;
+			this.argument = argument;
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			List<Expr> al = new ArrayList<Expr>(1);
+			al.add(argument);
+			return al;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			if (i != 0)
+				throw new IndexOutOfBoundsException();
+			return argument;
+		}
+	}
+	
+	public static class Ceil extends Func {
+		private Expr argument;
+		
+		public Ceil(FuncDef definition, Expr argument) {
+			this.definition = definition;
+			this.argument = argument;
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			List<Expr> al = new ArrayList<Expr>(1);
+			al.add(argument);
+			return al;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			if (i != 0)
+				throw new IndexOutOfBoundsException();
+			return argument;
 		}
 	}
 	
@@ -306,6 +364,34 @@ public class Builtins {
 		private Expr argument;
 		
 		public Cosh(FuncDef definition, Expr argument) {
+			this.definition = definition;
+			this.argument = argument;
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			List<Expr> al = new ArrayList<Expr>(1);
+			al.add(argument);
+			return al;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			if (i != 0)
+				throw new IndexOutOfBoundsException();
+			return argument;
+		}
+	}
+	
+	public static class Tanh extends Func {
+		private Expr argument;
+		
+		public Tanh(FuncDef definition, Expr argument) {
 			this.definition = definition;
 			this.argument = argument;
 		}
@@ -495,6 +581,116 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
+		}
+	}
+	
+	public static class Erf extends Func {
+		private Expr argument;
+		
+		public Erf(FuncDef definition, Expr argument) {
+			this.definition = definition;
+			this.argument = argument;
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			List<Expr> al = new ArrayList<Expr>(1);
+			al.add(argument);
+			return al;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			if (i != 0)
+				throw new IndexOutOfBoundsException();
+			return argument;
+		}
+	}
+	
+	public static class Gamma extends Func {
+		private Expr argument;
+		
+		public Gamma(FuncDef definition, Expr argument) {
+			this.definition = definition;
+			this.argument = argument;
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			List<Expr> al = new ArrayList<Expr>(1);
+			al.add(argument);
+			return al;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			if (i != 0)
+				throw new IndexOutOfBoundsException();
+			return argument;
+		}
+	}
+	
+	public static class LogGamma extends Func {
+		private Expr argument;
+		
+		public LogGamma(FuncDef definition, Expr argument) {
+			this.definition = definition;
+			this.argument = argument;
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			List<Expr> al = new ArrayList<Expr>(1);
+			al.add(argument);
+			return al;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			if (i != 0)
+				throw new IndexOutOfBoundsException();
+			return argument;
+		}
+	}
+	
+	public static class LogBeta extends Func {
+		private List<Expr> arguments;
+		
+		public LogBeta(FuncDef definition, Expr arg1, Expr arg2) {
+			this.definition = definition;
+			arguments = new ArrayList<Expr>(2);
+			arguments.add(arg1);
+			arguments.add(arg2);
+		}
+
+		@Override
+		public List<Expr> getArguments() {
+			return arguments;
+		}
+		
+		@Override
+		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
+			return v.visit(this, info);
+		}
+
+		@Override
+		public Expr getArg(int i) {
+			return arguments.get(i);
 		}
 	}
 }

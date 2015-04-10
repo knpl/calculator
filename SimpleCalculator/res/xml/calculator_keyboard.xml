@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:keyWidth="20%p">
+    <Row android:keyHeight="6.5%p" android:verticalGap="1%p" >
+        <Key android:codes="61440" android:keyLabel="sqrt" />
+        <Key android:codes="61444" android:keyLabel="sin" android:popupKeyboard="@xml/sin_popup" />
+        <Key android:codes="61445" android:keyLabel="cos" android:popupKeyboard="@xml/cos_popup" />
+        <Key android:codes="61446" android:keyLabel="tan" android:popupKeyboard="@xml/tan_popup" />
+        <Key android:codes="37" />
+    </Row>
+    <Row android:keyHeight="6.5%p" android:verticalGap="1%p" >
+        <Key android:codes="61442" android:keyLabel="exp" />
+        <Key android:codes="960" android:popupKeyboard="@xml/popup" android:popupCharacters="\u03C0ei" />
+        <Key android:codes="40" />
+        <Key android:codes="41" />
+        <Key android:codes="47" />
+    </Row>
+    <Row android:keyHeight="6.5%p" android:verticalGap="1%p" >
+        <Key android:codes="61443" android:keyLabel="log" />
+        <Key android:codes="55" />
+        <Key android:codes="56" />
+        <Key android:codes="57" />
+        <Key android:codes="42" />
+    </Row>
+    <Row android:keyHeight="6.5%p" android:verticalGap="1%p" >
+        <Key android:codes="94" />
+        <Key android:codes="52" />
+        <Key android:codes="53" />
+        <Key android:codes="54" />
+        <Key android:codes="45" />
+    </Row>
+    <Row android:keyHeight="6.5%p" android:verticalGap="1%p" >
+        <Key android:codes="61" />
+        <Key android:codes="49" />
+        <Key android:codes="50" />
+        <Key android:codes="51" />
+        <Key android:codes="43" />
+    </Row>
+    <Row android:keyHeight="6.5%p" android:verticalGap="1%p" >
+        <Key android:codes="120" android:keyEdgeFlags="left" 
+             android:popupKeyboard="@xml/popup" android:popupCharacters="xy\u03B8" />
+        <Key android:codes="48" />
+        <Key android:codes="46" />
+        <Key android:codes="69" />
+        <Key android:codes="-5" android:keyIcon="@drawable/sym_keyboard_delete" 
+             android:keyEdgeFlags="right" android:isRepeatable="true"/>
+    </Row>
+    <Row android:keyHeight="10%p" android:rowEdgeFlags="bottom">
+        <Key android:codes="57344"		android:keyLabel="abc"
+             android:keyWidth="15%p" 	android:keyEdgeFlags="left" />
+        <Key android:codes="57345"		android:keyLabel="\u03B1\u03B2\u03B3"
+             android:keyWidth="15%p" />
+        <Key android:codes="32" android:isRepeatable="true"
+             android:keyWidth="40%p" />
+        <Key android:codes="44" android:keyWidth="15%p" />
+        <Key android:codes="57346"		android:keyLabel="OK"
+             android:keyWidth="15%p "	android:keyEdgeFlags="right" />
+    </Row>
+</Keyboard>
