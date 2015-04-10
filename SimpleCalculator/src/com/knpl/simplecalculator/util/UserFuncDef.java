@@ -8,7 +8,6 @@ import java.util.Map;
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
-import com.knpl.simplecalculator.visitors.Evaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 
@@ -21,7 +20,7 @@ public class UserFuncDef extends FuncDef {
 	
 	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
 		Resolve resolve = new Resolve();
-		funcDefNode.accept(resolve, null);
+		funcDefNode.accept(resolve);
 		
 		Map<String, Var> freeVars = resolve.getFreeVarMap();
 		if (!freeVars.isEmpty()) {
@@ -29,7 +28,7 @@ public class UserFuncDef extends FuncDef {
 		}
 		
 		PrettyPrint prettyPrint = new PrettyPrint();
-		funcDefNode.accept(prettyPrint, null);
+		funcDefNode.accept(prettyPrint);
 		this.description = prettyPrint.toString();
 		
 		
@@ -69,7 +68,7 @@ public class UserFuncDef extends FuncDef {
 	public Program compile() throws Exception {
 		if (program == null) {
 			Compile c = new Compile();
-			(new FuncDefNode(sig, expression)).accept(c, null);
+			(new FuncDefNode(sig, expression)).accept(c);
 			program = c.getProgram();
 		}
 		return program;
@@ -96,7 +95,7 @@ public class UserFuncDef extends FuncDef {
 			map.put(itParam.next().getName(), itArg.next());
 		}
 		
-		return expression.accept(new ComplexEvaluate(map), null);
+		return (Complex) expression.accept(new ComplexEvaluate(map));
 	}
 
 	@Override

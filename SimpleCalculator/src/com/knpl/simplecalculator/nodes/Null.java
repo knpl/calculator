@@ -13,7 +13,7 @@ public class Null extends Node {
 	}
 	
 	@Override
-	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
-		return v.visit(this, info);
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

@@ -3,6 +3,7 @@ package com.knpl.simplecalculator.nodes;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
+import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserConstDef extends ConstDef {
 	
@@ -20,14 +21,14 @@ public class UserConstDef extends ConstDef {
 	
 	public UserConstDef(ConstDefNode constDefNode) throws Exception {
 		Resolve resolve = new Resolve();
-		constDefNode.accept(resolve, null);
+		constDefNode.accept(resolve);
 		
 		if (!resolve.getFreeVarMap().isEmpty()) {
 			throw new Exception("Constant expression contains free variables");
 		}
 		
 		PrettyPrint pp = new PrettyPrint();
-		constDefNode.accept(pp, null);
+		constDefNode.accept(pp);
 		
 		this.name = constDefNode.getName();
 		this.expression = constDefNode.getExpression();
@@ -52,7 +53,7 @@ public class UserConstDef extends ConstDef {
 	private void eval() {
 		try {
 			ComplexEvaluate evaluate = new ComplexEvaluate();
-			value = expression.accept(evaluate, null);
+			value = (Complex) expression.accept(evaluate);
 		}
 		catch (Exception ex) {
 			value = new Complex(Double.NaN, Double.NaN);
@@ -71,5 +72,10 @@ public class UserConstDef extends ConstDef {
 		if (value == null)
 			eval();
 		return new Complex(value);
+	}
+	
+	@Override
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

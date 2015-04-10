@@ -36,14 +36,14 @@ public class ConstDefNode extends Node {
 		}
 		
 		Resolve resolve = new Resolve();
-		accept(resolve, null);
+		accept(resolve);
 		
 		if (!resolve.getFreeVarMap().isEmpty()) {
 			throw new Exception("Constant expression contains free variables");
 		}
 		
 		PrettyPrint pp = new PrettyPrint();
-		accept(pp, null);
+		accept(pp);
 		
 		if (defs.putConstDef(new UserConstDef(name, expression, pp.toString())))
 			calculator.print("defined constant "+name);
@@ -52,7 +52,7 @@ public class ConstDefNode extends Node {
 	}
 
 	@Override
-	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
-		return v.visit(this, info);
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

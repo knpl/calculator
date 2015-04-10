@@ -7,7 +7,7 @@ import java.util.Map;
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.util.Globals;
 
-public class Resolve extends Visitor<Node, Void> {
+public class Resolve extends Visitor {
 	
 	private Map<String,Var> freeVarMap;
 	private Map<String,Var> boundedVarMap;
@@ -32,21 +32,21 @@ public class Resolve extends Visitor<Node, Void> {
 	}
 	
 	@Override
-	public Node visit(FuncDefNode node, Void info) throws Exception {
-		node.getSignature().accept(this, info);
-		node.setExpression((Expr) node.getExpression().accept(this, info));
+	public Node visit(FuncDefNode node) throws Exception {
+		node.getSignature().accept(this);
+		node.setExpression((Expr) node.getExpression().accept(this));
 		
 		return node;
 	}
 	
 	@Override
-	public Node visit(ConstDefNode node, Void info) throws Exception {
-		node.setExpression((Expr) node.getExpression().accept(this, info));
+	public Node visit(ConstDefNode node) throws Exception {
+		node.setExpression((Expr) node.getExpression().accept(this));
 		return node;
 	}
 	
 	@Override
-	public Node visit(Signature node, Void info) throws Exception {
+	public Node visit(Signature node) throws Exception {
 		for (Var param : node.getParameters()) {
 			boundedVarMap.put(param.getName(), param);
 		}
@@ -54,25 +54,25 @@ public class Resolve extends Visitor<Node, Void> {
 	}
 	
 	@Override
-	public Node visit(BinOp node, Void info) throws Exception {
-		node.setLHS((Expr) node.getLHS().accept(this, info));
-		node.setRHS((Expr) node.getRHS().accept(this, info));
+	public Node visit(BinOp node) throws Exception {
+		node.setLHS((Expr) node.getLHS().accept(this));
+		node.setRHS((Expr) node.getRHS().accept(this));
 		return node;
 	}
 
 	@Override
-	public Node visit(MonOp node, Void info) throws Exception {
-		node.setOp((Expr) node.getOp().accept(this, info));
+	public Node visit(MonOp node) throws Exception {
+		node.setOp((Expr) node.getOp().accept(this));
 		return node;
 	}
 	
 	@Override
-	public Node visit(Num node, Void info) throws Exception {
+	public Node visit(Num node) throws Exception {
 		return node;
 	}
 	
 	@Override
-	public Node visit(Var node, Void info) throws Exception {
+	public Node visit(Var node) throws Exception {
 		String name = node.getName();
 		
 		Var variable = boundedVarMap.get(name);
@@ -94,29 +94,29 @@ public class Resolve extends Visitor<Node, Void> {
 	}
 	
 	@Override
-	public Node visit(Complex node, Void info) throws Exception {
+	public Node visit(Complex node) throws Exception {
 		return node;
 	}
 	
 	@Override
-	public Node visit(UserConstDef node, Void info) throws Exception {
+	public Node visit(UserConstDef node) throws Exception {
 		return node;
 	}
 	
 	@Override
-	public Node visit(Call node, Void info) throws Exception {
+	public Node visit(Call node) throws Exception {
 		List<Expr> arguments = node.getArguments();
 		for (int i = 0; i < arguments.size(); ++i) {
-			arguments.set(i, (Expr) arguments.get(i).accept(this, info));
+			arguments.set(i, (Expr) arguments.get(i).accept(this));
 		}
 		return Globals.getInstance().createFunction(node);
 	}
 	
 	@Override
-	public Node visit(Func node, Void info) throws Exception {
+	public Node visit(Func node) throws Exception {
 		List<Expr> arguments = node.getArguments();
 		for (int i = 0; i < arguments.size(); ++i) {
-			arguments.set(i, (Expr) arguments.get(i).accept(this, info));
+			arguments.set(i, (Expr) arguments.get(i).accept(this));
 		}
 		return node;
 	}

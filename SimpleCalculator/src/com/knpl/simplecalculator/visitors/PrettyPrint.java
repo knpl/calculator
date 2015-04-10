@@ -5,9 +5,8 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.visitors.PrettyPrint.Info;
 
-public class PrettyPrint extends Visitor<Void, Info> {
+public class PrettyPrint extends Visitor {
 	
 	private ByteArrayOutputStream baos;
 	private PrintStream out;
@@ -15,6 +14,7 @@ public class PrettyPrint extends Visitor<Void, Info> {
 	public PrettyPrint() {
 		baos = new ByteArrayOutputStream();
 		out = new PrintStream(baos);
+		info = null;
 	}
 	
 	public static class Info {
@@ -42,149 +42,203 @@ public class PrettyPrint extends Visitor<Void, Info> {
 		}
 	}
 	
+	private Info info;
+	
+	private void setInfo(Info info) {
+		this.info = info; 
+	}
+	
+	private Info getInfo() {
+		Info buf = info;
+		info = null;
+		return buf;
+	}
+	
 	@Override
-	public Void visit(Add node, Info info) throws Exception {
-		boolean parens = parens(info, 0, true);
+	public Node visit(Add node) throws Exception {
+		boolean parens = parens(getInfo(), 0, true);
 		
 		if (parens) out.print("(");
-		node.getLHS().accept(this, new Info(0, false));
+		
+		setInfo(new Info(0, false));
+		node.getLHS().accept(this);
+		
 		out.print('+');
-		node.getRHS().accept(this, new Info(0, true));
+		
+		setInfo(new Info(0, true));
+		node.getRHS().accept(this);
+		
 		if (parens) out.print(")");
 		return null;
 	}
 	
 	@Override
-	public Void visit(Sub node, Info info) throws  Exception {
-		boolean parens = parens(info, 0, true);
+	public Node visit(Sub node) throws  Exception {
+		boolean parens = parens(getInfo(), 0, true);
 		
 		if (parens) out.print("(");
-		node.getLHS().accept(this, new Info(0, false));
+		
+		setInfo(new Info(0, false));
+		node.getLHS().accept(this);
+		
 		out.print('-');
-		node.getRHS().accept(this, new Info(0, true));
+		
+		setInfo(new Info(0, true));
+		node.getRHS().accept(this);
+		
 		if (parens) out.print(")");
 		return null;
 	}
 	
 	@Override
-	public Void visit(Mul node, Info info) throws  Exception {
-		boolean parens = parens(info, 1, true);
+	public Node visit(Mul node) throws  Exception {
+		boolean parens = parens(getInfo(), 1, true);
 		
 		if (parens) out.print("(");
-		node.getLHS().accept(this, new Info(1, false));
+		
+		setInfo(new Info(1, false));
+		node.getLHS().accept(this);
+		
 		out.print('*');
-		node.getRHS().accept(this, new Info(1, true));
+		
+		setInfo(new Info(1, true));
+		node.getRHS().accept(this);
+		
 		if (parens) out.print(")");
 		return null;
 	}
 	
 	@Override
-	public Void visit(Div node, Info info) throws  Exception {
-		boolean parens = parens(info, 1, true);
+	public Node visit(Div node) throws  Exception {
+		boolean parens = parens(getInfo(), 1, true);
 		
 		if (parens) out.print("(");
-		node.getLHS().accept(this, new Info(1, false));
+		
+		setInfo(new Info(1, false));
+		node.getLHS().accept(this);
+		
 		out.print('/');
-		node.getRHS().accept(this, new Info(1, true));
+		
+		setInfo(new Info(1, true));
+		node.getRHS().accept(this);
+		
 		if (parens) out.print(")");
 		return null;
 	}
 	
 	@Override
-	public Void visit(Pow node, Info info) throws  Exception {
-		boolean parens = parens(info, 3, false);
+	public Node visit(Pow node) throws  Exception {
+		boolean parens = parens(getInfo(), 3, false);
 		
 		if (parens) out.print("(");
-		node.getLHS().accept(this, new Info(3, false));
+		
+		setInfo(new Info(3, false));
+		node.getLHS().accept(this);
+		
 		out.print('^');
-		node.getRHS().accept(this, new Info(3, true));
+		
+		setInfo(new Info(3, true));
+		node.getRHS().accept(this);
+		
 		if (parens) out.print(")");
 		return null;
 	}
 	
-	public Void visit(Minus node, Info info) throws Exception {
-		boolean parens = parens((Info) info, 2, false);
+	public Node visit(Minus node) throws Exception {
+		boolean parens = parens(getInfo(), 2, false);
 		if (parens) out.print("(");
 		out.print('-');
-		node.getOp().accept(this, new Info(2, true));
+		
+		setInfo(new Info(2, true));
+		node.getOp().accept(this);
+		
 		if (parens) out.print(")");
 		return null;
 	}
 	
 	@Override
-	public Void visit(Func node, Info info) throws Exception {
+	public Node visit(Func node) throws Exception {
+		getInfo();
 		out.print(node.getName()+"(");
 		List<Expr> args = node.getArguments();
 		for (int i = 0; i < args.size()-1; ++i) {
-			args.get(i).accept(this, null);
+			args.get(i).accept(this);
 			out.print(",");
 		}
-		args.get(args.size()-1).accept(this, null);
+		args.get(args.size()-1).accept(this);
 		out.print(")");
 		return null;
 	}
 
 	@Override
-	public Void visit(Call node, Info info) throws Exception {
+	public Node visit(Call node) throws Exception {
+		getInfo();
 		out.print(node.getName()+"(");
 		List<Expr> args = node.getArguments();
 		for (int i = 0; i < args.size()-1; ++i) {
-			args.get(i).accept(this, null);
+			args.get(i).accept(this);
 			out.print(",");
 		}
-		args.get(args.size()-1).accept(this, null);
+		args.get(args.size()-1).accept(this);
 		out.print(")");
 		return null;
 	}
 
 	@Override
-	public Void visit(Num node, Info info) throws Exception {
+	public Node visit(Num node) throws Exception {
+		getInfo();
 		out.print(node);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Complex node, Info info) throws Exception {
+	public Node visit(Complex node) throws Exception {
+		getInfo();
 		out.print("("+node.re()+" + "+node.im()+"*i)");
 		return null;
 	}
 	
 	@Override
-	public Void visit(ConstDef node, Info info) throws Exception {
+	public Node visit(ConstDef node) throws Exception {
+		getInfo();
 		out.print(node.getName());
 		return null;
 	}
 
 	@Override
-	public Void visit(Var node, Info info) throws Exception {
+	public Node visit(Var node) throws Exception {
+		getInfo();
 		out.print(node.getName());
 		return null;
 	}
 
 	@Override
-	public Void visit(FuncDefNode node, Info info) throws Exception {
-		node.getSignature().accept(this, null);
+	public Node visit(FuncDefNode node) throws Exception {
+		getInfo();
+		node.getSignature().accept(this);
 		out.print(" = ");
-		node.getExpression().accept(this, null);
+		node.getExpression().accept(this);
 		return null;
 	}
 	
 	@Override
-	public Void visit(ConstDefNode node, Info info) throws Exception {
+	public Node visit(ConstDefNode node) throws Exception {
+		getInfo();
 		out.print(node.getName() + " = ");
-		node.getExpression().accept(this, null);
+		node.getExpression().accept(this);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Signature node, Info info) throws Exception {
+	public Node visit(Signature node) throws Exception {
+		getInfo();
 		out.print(node.getName()+"(");
 		List<Var> params = node.getParameters();
 		for (int i = 0; i < params.size()-1; ++i) {
-			params.get(i).accept(this, null);
+			params.get(i).accept(this);
 			out.print(",");
 		}
-		params.get(params.size()-1).accept(this, null);
+		params.get(params.size()-1).accept(this);
 		out.print(")");
 		
 		return null;

@@ -24,7 +24,7 @@ public abstract class Expr extends Node {
 	@Override
 	public void execute(SimpleCalculatorActivity calculator) throws Exception {
 		Resolve resolve = new Resolve();
-		Expr node = (Expr) accept(resolve, null);
+		Expr node = (Expr) accept(resolve);
 		Map<String, Var> freeVariables = resolve.getFreeVarMap();
 		
 		int n = freeVariables.size();
@@ -32,18 +32,18 @@ public abstract class Expr extends Node {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(calculator);
 			if (prefs.getBoolean("pref_key_complex", false)) {
 				ComplexEvaluate v = new ComplexEvaluate();
-				calculator.print(node.accept(v, null));
+				calculator.print((Complex) node.accept(v));
 			}
 			else {
 				Evaluate v = new Evaluate();
-				calculator.print(node.accept(v, null));
+				calculator.print((Double) node.accept(v));
 			}
 		}
 		else if (n == 1) {
 			Var var = freeVariables.values().iterator().next();
 			FuncDefNode def = new FuncDefNode(new Signature("expression", Arrays.asList(var)), node);
 			Compile compile = new Compile();
-			def.accept(compile, null);
+			def.accept(compile);
 			
 			ArrayList<Pair<Mapper, Integer>> mappers = new ArrayList<Pair<Mapper, Integer>>(1);
 			mappers.add(
@@ -58,7 +58,7 @@ public abstract class Expr extends Node {
 	}
 	
 	@Override
-	public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
-		return v.visit(this, info);
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

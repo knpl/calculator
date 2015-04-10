@@ -3,188 +3,188 @@ package com.knpl.simplecalculator.visitors;
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.nodes.Builtins.*;
 
-public class Visitor<O, I> {
-	public O visit(Node node, I info) throws Exception {
+public class Visitor {
+	public Object visit(Node node) throws Exception {
 		throw new Exception("Not implemented");
 	}
 	
-	public O visit(Null node, I info) throws Exception {
-		return visit((Node) node, info);
+	public Object visit(Null node) throws Exception {
+		return visit((Node) node);
 	}
 	
-	public O visit(Expr node, I info) throws Exception {
-		return visit((Node) node, info);
+	public Object visit(Expr node) throws Exception {
+		return visit((Node) node);
 	}
 	
-	public O visit(BinOp node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(BinOp node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(MonOp node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(MonOp node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(Func node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(Func node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(UserFunc node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(UserFunc node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Call node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(Call node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(Add node, I info) throws Exception {
-		return visit((BinOp) node, info);
+	public Object visit(Add node) throws Exception {
+		return visit((BinOp) node);
 	}
 	
-	public O visit(Sub node, I info) throws Exception {
-		return visit((BinOp) node, info);
+	public Object visit(Sub node) throws Exception {
+		return visit((BinOp) node);
 	}
 	
-	public O visit(Mul node, I info) throws Exception {
-		return visit((BinOp) node, info);
+	public Object visit(Mul node) throws Exception {
+		return visit((BinOp) node);
 	}
 	
-	public O visit(Div node, I info) throws Exception {
-		return visit((BinOp) node, info);
+	public Object visit(Div node) throws Exception {
+		return visit((BinOp) node);
 	}
 	
-	public O visit(Pow node, I info) throws Exception {
-		return visit((BinOp) node, info);
+	public Object visit(Pow node) throws Exception {
+		return visit((BinOp) node);
 	}
 	
-	public O visit(Minus node, I info) throws Exception {
-		return visit((MonOp) node, info);
+	public Object visit(Minus node) throws Exception {
+		return visit((MonOp) node);
 	}
 	
-	public O visit(Num node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(Num node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(Var node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(Var node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(FuncDefNode node, I info) throws Exception {
-		return visit((Node) node, info);
+	public Object visit(FuncDefNode node) throws Exception {
+		return visit((Node) node);
 	}
 	
-	public O visit(Signature node, I info) throws Exception {
-		return visit((Node) node, info);
+	public Object visit(Signature node) throws Exception {
+		return visit((Node) node);
 	}
 	
-	public O visit(Min node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Min node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Max node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Max node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Floor node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Floor node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Ceil node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Ceil node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Sqrt node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Sqrt node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Abs node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Abs node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Log node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Log node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Exp node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Exp node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Sinh node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Sinh node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Cosh node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Cosh node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Tanh node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Tanh node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Sin node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Sin node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Cos node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Cos node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Tan node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Tan node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Asin node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Asin node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Acos node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Acos node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Atan node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Atan node) throws Exception {
+		return visit((Func) node);
 	}
 
-	public O visit(Erf node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Erf node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(Gamma node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(Gamma node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(LogGamma node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(LogGamma node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(LogBeta node, I info) throws Exception {
-		return visit((Func) node, info);
+	public Object visit(LogBeta node) throws Exception {
+		return visit((Func) node);
 	}
 	
-	public O visit(ConstDef node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(ConstDef node) throws Exception {
+		return visit((Expr) node);
 	}
 	
-	public O visit(Pi node, I info) throws Exception {
-		return visit((ConstDef) node, info);
+	public Object visit(Pi node) throws Exception {
+		return visit((ConstDef) node);
 	}
 	
-	public O visit(Euler node, I info) throws Exception {
-		return visit((ConstDef) node, info);
+	public Object visit(Euler node) throws Exception {
+		return visit((ConstDef) node);
 	}
 	
-	public O visit(Im node, I info) throws Exception {
-		return visit((ConstDef) node, info);
+	public Object visit(Im node) throws Exception {
+		return visit((ConstDef) node);
 	}
 	
-	public O visit(ConstDefNode node, I info) throws Exception {
-		return visit((Node) node, info);
+	public Object visit(ConstDefNode node) throws Exception {
+		return visit((Node) node);
 	}
 	
-	public O visit(UserConstDef node, I info) throws Exception {
-		return visit((ConstDef) node, info);
+	public Object visit(UserConstDef node) throws Exception {
+		return visit((ConstDef) node);
 	}
 	
-	public O visit(Complex node, I info) throws Exception {
-		return visit((Expr) node, info);
+	public Object visit(Complex node) throws Exception {
+		return visit((Expr) node);
 	}
 }
