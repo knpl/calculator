@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.nodes.Builtins.*;
+import com.knpl.simplecalculator.util.FuncDef;
+import com.knpl.simplecalculator.util.Globals;
 
 public class ComplexEvaluate extends Visitor<Complex, Void> {
 
@@ -19,7 +20,6 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 	public ComplexEvaluate(Map<String, Complex> map) {
 		this.map = map;
 	}
-	
 	
 	@Override
 	public Complex visit(Add node, Void info) throws Exception {
@@ -74,204 +74,32 @@ public class ComplexEvaluate extends Visitor<Complex, Void> {
 	}
 	
 	@Override
-	public Complex visit(UserFunc node, Void info) throws Exception {
+	public Complex visit(Call node, Void info) throws Exception {
+		FuncDef funcDef = Globals.getInstance().getFuncDef(node.getName());
 		List<Expr> arguments = node.getArguments();
 		List<Complex> args = new ArrayList<Complex>(arguments.size());
 		for (Expr arg : arguments) {
 			args.add(arg.accept(this, info));
 		}
-		return node.complexEvaluate(args);
+		return funcDef.complexEvaluate(args);
+	}
+	
+	@Override
+	public Complex visit(Func node, Void info) throws Exception {
+		List<Expr> arguments = node.getArguments();
+		List<Complex> args = new ArrayList<Complex>(arguments.size());
+		for (Expr arg : arguments) {
+			args.add(arg.accept(this, info));
+		}
+		return node.getDefinition().complexEvaluate(args);
 	}
 
 	@Override
 	public Complex visit(Var node, Void info) throws Exception {
 		Complex result = map.get(node.getName());
 		if (result == null)
-			throw new Exception("No mapping for variable "+node.getName());
+			throw new Exception("Undeclared variable "+node.getName());
 		return new Complex(result);
-	}
-
-	@Override
-	public Complex visit(Min node, Void info) throws Exception {
-		Complex a = node.getArg(0).accept(this, info);
-		if (a.im() != 0.0) {
-			throw new Exception("min only defined for real numbers");
-		}
-		Complex b = node.getArg(1).accept(this, info);
-		if (b.im() != 0.0) {
-			throw new Exception("min only defined for real numbers");
-		}
-		return (b.re() < a.re()) ? b : a;
-	}
-	
-	@Override
-	public Complex visit(Max node, Void info) throws Exception {
-		Complex a = node.getArg(0).accept(this, info);
-		if (a.im() != 0.0) {
-			throw new Exception("max only defined for real numbers");
-		}
-		Complex b = node.getArg(1).accept(this, info);
-		if (b.im() != 0.0) {
-			throw new Exception("max only defined for real numbers");
-		}
-		return (b.re() > a.re()) ? b : a;
-	}
-	
-	@Override
-	public Complex visit(Floor node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		if (z.im() != 0.0) {
-			throw new Exception("floor only defined for real numbers");
-		}
-		return z.setRe(Math.floor(z.re()));
-	}
-	
-	@Override
-	public Complex visit(Ceil node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		if (z.im() != 0.0) {
-			throw new Exception("ceil only defined for real numbers");
-		}
-		return z.setRe(Math.ceil(z.re()));
-	}
-	
-	@Override
-	public Complex visit(Sqrt node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		if (z.im() == 0.0) {
-			double re = z.re();
-			if (re < 0.0) {
-				z.setRe(0.0);
-				z.setIm(Math.sqrt(-re));
-			}
-			else {
-				z.setRe(Math.sqrt(re));
-			}
-			return z;
-		}
-		return z.sqrt();
-	}
-
-	@Override
-	public Complex visit(Abs node, Void info) throws Exception {
-		return new Complex(node.getArg(0).accept(this, info).abs(), 0.0);
-	}
-
-	@Override
-	public Complex visit(Log node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.re() >= 0.0 && z.im() == 0.0) ? z.setRe(Math.log(z.re()))
-							   				    : z.log();
-	}
-
-	@Override
-	public Complex visit(Exp node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.exp(z.re()))
-							   : z.exp();
-	}
-
-	@Override
-	public Complex visit(Sinh node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.sinh(z.re()))
-							   : z.sinh();
-	}
-
-	@Override
-	public Complex visit(Cosh node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.cosh(z.re()))
-							   : z.cosh();
-	}
-	
-	@Override
-	public Complex visit(Tanh node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.tanh(z.re()))
-							   : z.tanh();
-	}
-
-	@Override
-	public Complex visit(Sin node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.sin(z.re()))
-							   : z.sin();
-	}
-
-	@Override
-	public Complex visit(Cos node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.cos(z.re()))
-							   : z.cos();
-	}
-
-	@Override
-	public Complex visit(Tan node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.tan(z.re()))
-							   : z.tan();
-	}
-
-	@Override
-	public Complex visit(Asin node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.asin(z.re()))
-							   : z.asin();
-	}
-
-	@Override
-	public Complex visit(Acos node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.acos(z.re()))
-							   : z.acos();
-	}
-
-	@Override
-	public Complex visit(Atan node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		return (z.im() == 0.0) ? z.setRe(Math.atan(z.re()))
-							   : z.atan();
-	}
-	
-	@Override
-	public Complex visit(Erf node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		if (z.im() != 0.0) {
-			throw new Exception("erf only defined for real numbers");
-		}
-		return z.setRe(org.apache.commons.math3.special.Erf.erf(z.re()));
-	}
-	
-	@Override
-	public Complex visit(Gamma node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		if (z.im() != 0.0) {
-			throw new Exception("gamma only defined for real numbers");
-		}
-		return z.setRe(org.apache.commons.math3.special.Gamma.gamma(z.re()));
-	}
-	
-	@Override
-	public Complex visit(LogGamma node, Void info) throws Exception {
-		Complex z = node.getArg(0).accept(this, info);
-		if (z.im() != 0.0) {
-			throw new Exception("loggamma only defined for real numbers");
-		}
-		return z.setRe(org.apache.commons.math3.special.Gamma.logGamma(z.re()));
-	}
-	
-	@Override
-	public Complex visit(LogBeta node, Void info) throws Exception {
-		Complex a = node.getArg(0).accept(this, info);
-		if (a.im() != 0.0) {
-			throw new Exception("logbeta only defined for real numbers");
-		}
-		Complex b = node.getArg(0).accept(this, info);
-		if (b.im() != 0.0) {
-			throw new Exception("logbeta only defined for real numbers");
-		}
-		return a.setRe(org.apache.commons.math3.special.Beta.logBeta(a.re(), b.re()));
 	}
 
 	@Override

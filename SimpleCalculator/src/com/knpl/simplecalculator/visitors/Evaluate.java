@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knpl.simplecalculator.nodes.Builtins.*;
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.util.Program;
-import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class Evaluate extends Visitor<Double, Void> {
 	
@@ -66,130 +63,18 @@ public class Evaluate extends Visitor<Double, Void> {
 	public Double visit(Var node, Void info) throws Exception {
 		Double result = map.get(node.getName());
 		if (result == null) {
-			throw new Exception("No mapping for variable "+node.getName());
+			throw new Exception("Undeclared variable "+node.getName());
 		}
 		return result;
 	}
 
 	@Override
-	public Double visit(UserFunc node, Void info) throws Exception {
-		Program p = ((UserFuncDef) node.getDefinition()).getProgram();
-		List<Double> arguments = new ArrayList<Double>();
+	public Double visit(Func node, Void info) throws Exception {
+		List<Double> args = new ArrayList<Double>();
 		for (Expr e : node.getArguments()) {
-			arguments.add((Double)e.accept(this, info));
+			args.add((Double)e.accept(this, info));
 		}
-		return p.evaluate(arguments);
-	}
-	
-	@Override
-	public Double visit(Min node, Void info) throws Exception {
-		return Math.min((Double)node.getArg(0).accept(this, info),
-						(Double)node.getArg(1).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Max node, Void info) throws Exception {
-		return Math.max((Double)node.getArg(0).accept(this, info),
-						(Double)node.getArg(1).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Floor node, Void info) throws Exception {
-		return Math.floor((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Ceil node, Void info) throws Exception {
-		return Math.ceil((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Sqrt node, Void info) throws Exception {
-		return Math.sqrt((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Abs node, Void info) throws Exception {
-		return Math.abs((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Log node, Void info) throws Exception {
-		return Math.log((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Exp node, Void info) throws Exception {
-		return Math.exp((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Sinh node, Void info) throws Exception {
-		return Math.sinh((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Cosh node, Void info) throws Exception {
-		return Math.cosh((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Tanh node, Void info) throws Exception {
-		return Math.tanh((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Sin node, Void info) throws Exception {
-		return Math.sin((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Cos node, Void info) throws Exception {
-		return Math.cos((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Tan node, Void info) throws Exception {
-		return Math.tan((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Asin node, Void info) throws Exception {
-		return Math.asin((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Acos node, Void info) throws Exception {
-		return Math.acos((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Atan node, Void info) throws Exception {
-		return Math.atan((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(Erf node, Void info) throws Exception {
-		double a = (Double)node.getArg(0).accept(this, info);
-		double b = org.apache.commons.math3.special.Erf.erf(a);
-		return b;
-	}
-	
-	@Override
-	public Double visit(Gamma node, Void info) throws Exception {
-		return org.apache.commons.math3.special.Gamma.gamma((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(LogGamma node, Void info) throws Exception {
-		return org.apache.commons.math3.special.Gamma.logGamma((Double)node.getArg(0).accept(this, info));
-	}
-	
-	@Override
-	public Double visit(LogBeta node, Void info) throws Exception {
-		double a = (Double)node.getArg(0).accept(this, info),
-			   b = (Double)node.getArg(1).accept(this, info);
-		return org.apache.commons.math3.special.Beta.logBeta(a, b);
+		return node.getDefinition().evaluate(args);
 	}
 	
 	@Override

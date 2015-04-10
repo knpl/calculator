@@ -8,7 +8,6 @@ import com.knpl.simplecalculator.visitors.Visitor;
 public class FuncDefNode extends Node {
 
 	private Expr expression;
-	
 	private Signature sig;
 	
 	public FuncDefNode(Signature sig, Expr expression) {

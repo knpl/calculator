@@ -128,11 +128,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			return arguments[i];
-		}
 	}
 	
 	public static class Max extends Func {
@@ -157,11 +152,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-		
-		@Override
-		public Expr getArg(int i) {
-			return arguments[i];
-		}
 	}
 	
 	public static class Floor extends Func {
@@ -182,13 +172,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -211,13 +194,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Sqrt extends Func {
@@ -238,13 +214,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -267,13 +236,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Log extends Func {
@@ -294,13 +256,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -323,13 +278,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Sinh extends Func {
@@ -350,13 +298,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -379,13 +320,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Tanh extends Func {
@@ -406,13 +340,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -435,13 +362,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Cos extends Func {
@@ -462,13 +382,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -491,13 +404,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Asin extends Func {
@@ -518,13 +424,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -547,13 +446,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Atan extends Func {
@@ -569,13 +461,6 @@ public class Builtins {
 			List<Expr> al = new ArrayList<Expr>(1);
 			al.add(argument);
 			return al;
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 		
 		@Override
@@ -603,13 +488,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class Gamma extends Func {
@@ -630,13 +508,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
 		}
 	}
 	
@@ -659,13 +530,6 @@ public class Builtins {
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
 		}
-
-		@Override
-		public Expr getArg(int i) {
-			if (i != 0)
-				throw new IndexOutOfBoundsException();
-			return argument;
-		}
 	}
 	
 	public static class LogBeta extends Func {
@@ -686,11 +550,6 @@ public class Builtins {
 		@Override
 		public <O, I> O accept(Visitor<O, I> v, I info) throws Exception {
 			return v.visit(this, info);
-		}
-
-		@Override
-		public Expr getArg(int i) {
-			return arguments.get(i);
 		}
 	}
 }

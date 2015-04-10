@@ -29,7 +29,6 @@ public class PrettyPrint extends Visitor<Void, Info> {
 	
 	private static boolean parens(Info info, int precedence, boolean leftAssoc) {
 		if (info == null) {
-			
 			return false;
 		}
 		else if (info.precedence > precedence) {
@@ -195,5 +194,4 @@ public class PrettyPrint extends Visitor<Void, Info> {
 	public String toString() {
 		return baos.toString();
 	}
-
 }

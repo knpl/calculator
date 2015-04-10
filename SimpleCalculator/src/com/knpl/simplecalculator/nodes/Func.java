@@ -14,8 +14,6 @@ public abstract class Func extends Expr {
 		return definition.getSignature().getName();
 	}
 	
-	public abstract Expr getArg(int i);
-	
 	public FuncDef getDefinition() {
 		return definition;
 	}
