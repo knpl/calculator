@@ -113,7 +113,13 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Func node) throws Exception {
+	public Node visit(SVFunc node) throws Exception {
+		node.setArgument((Expr) node.getArgument().accept(this));
+		return node;
+	}
+	
+	@Override
+	public Node visit(MVFunc node) throws Exception {
 		List<Expr> arguments = node.getArguments();
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this));

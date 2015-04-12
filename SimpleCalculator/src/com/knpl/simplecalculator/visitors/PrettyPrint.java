@@ -157,7 +157,16 @@ public class PrettyPrint extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Func node) throws Exception {
+	public Node visit(SVFunc node) throws Exception {
+		getInfo();
+		out.print(node.getName()+"(");
+		node.getArgument().accept(this);
+		out.print(")");
+		return null;
+	}
+	
+	@Override
+	public Node visit(MVFunc node) throws Exception {
 		getInfo();
 		out.print(node.getName()+"(");
 		List<Expr> args = node.getArguments();

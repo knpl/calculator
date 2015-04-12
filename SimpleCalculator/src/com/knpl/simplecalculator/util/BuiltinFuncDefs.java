@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.knpl.simplecalculator.nodes.Complex;
-import com.knpl.simplecalculator.nodes.Func;
+import com.knpl.simplecalculator.nodes.MVFunc;
 import com.knpl.simplecalculator.nodes.Call;
 import com.knpl.simplecalculator.nodes.Expr;
+import com.knpl.simplecalculator.nodes.SVFunc;
 import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.nodes.Var;
 import com.knpl.simplecalculator.nodes.Builtins.*;
@@ -48,11 +49,10 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public MVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
-			List<Expr> args = call.getArguments();
-			return new Min(this, args.get(0), args.get(1));
+			return new Min(this, call.getArguments());
 		}
 
 		@Override
@@ -61,10 +61,10 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
-			return new Min(this, args.get(0), args.get(1));
+			return new Min(this, args);
 		}
 
 		@Override
@@ -101,11 +101,10 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public MVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
-			List<Expr> args = call.getArguments();
-			return new Max(this, args.get(0), args.get(1));
+			return new Max(this, call.getArguments());
 		}
 
 		@Override
@@ -114,10 +113,10 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
-			return new Max(this, args.get(0), args.get(1));
+			return new Max(this, args);
 		}
 
 		@Override
@@ -159,14 +158,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Floor(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Floor(this, args.get(0));
@@ -207,14 +206,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Ceil(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Ceil(this, args.get(0));
@@ -255,14 +254,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Sqrt(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Sqrt(this, args.get(0));
@@ -311,14 +310,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Abs(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Abs(this, args.get(0));
@@ -355,14 +354,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Log(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Log(this, args.get(0));
@@ -400,14 +399,14 @@ public class BuiltinFuncDefs {
 			return sig;
 		}
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Exp(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Exp(this, args.get(0));
@@ -445,14 +444,14 @@ public class BuiltinFuncDefs {
 			return sig;
 		}
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Sinh(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Sinh(this, args.get(0));
@@ -491,14 +490,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Cosh(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Cosh(this, args.get(0));
@@ -537,14 +536,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Tanh(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Tanh(this, args.get(0));
@@ -583,14 +582,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Sin(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Sin(this, args.get(0));
@@ -629,14 +628,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Cos(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Cos(this, args.get(0));
@@ -675,14 +674,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Tan(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Tan(this, args.get(0));
@@ -721,14 +720,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Asin(this, call.getArguments().get(0));
 		}
 
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Asin(this, args.get(0));
@@ -767,14 +766,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Acos(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Acos(this, args.get(0));
@@ -813,14 +812,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Atan(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Atan(this, args.get(0));
@@ -859,14 +858,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Erf(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Erf(this, args.get(0));
@@ -907,14 +906,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Gamma(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new Gamma(this, args.get(0));
@@ -955,14 +954,14 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public SVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
 			return new LogGamma(this, call.getArguments().get(0));
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
 			return new LogGamma(this, args.get(0));
@@ -1003,18 +1002,17 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Func createFunction(Call call) throws Exception {
+		public MVFunc createFunction(Call call) throws Exception {
 			if (!call.match(sig))
 				throw new Exception("Signature mismatch");
-			List<Expr> args = call.getArguments();
-			return new LogBeta(this, args.get(0), args.get(1));
+			return new LogBeta(this, call.getArguments());
 		}
 		
 		@Override
-		public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+		public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 			if (!this.sig.match(sig))
 				throw new Exception("Signature mismatch");
-			return new LogBeta(this, args.get(0), args.get(1));
+			return new LogBeta(this, args);
 		}
 
 		@Override

@@ -38,14 +38,14 @@ public class UserFuncDef extends FuncDef {
 	}
 	
 	@Override
-	public Func createFunction(Call call) throws Exception {
+	public MVFunc createFunction(Call call) throws Exception {
 		if (!call.match(sig))
 			throw new Exception("Signature mismatch");
 		return new UserFunc(this, call.getArguments());
 	}
 	
 	@Override
-	public Func createFunction(Signature sig, List<Expr> args) throws Exception {
+	public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
 		if (!this.sig.match(sig))
 			throw new Exception("Signature mismatch");
 		return new UserFunc(this, args);

@@ -114,7 +114,7 @@ public class Compile extends Visitor {
 			
 			List<Var> oldParameters = parameters;
 			for (UserFunc f : newFunctions) {
-				UserFuncDef ufd = (UserFuncDef) f.getDefinition();
+				UserFuncDef ufd = (UserFuncDef) f.getFuncDef();
 				parameters = ufd.getSignature().getParameters();
 				offsets.add(nbytes);
 				
@@ -274,7 +274,7 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Void visit(Func node) throws Exception {
+	public Void visit(MVFunc node) throws Exception {
 		List<Expr> args = node.getArguments();
 		for (Expr arg : args) {
 			arg.accept(this);
@@ -283,10 +283,16 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
+	public Void visit(SVFunc node) throws Exception {
+		node.getArgument().accept(this);
+		return null;
+	}
+	
+	@Override
 	public Void visit(UserFunc node) throws Exception {
-		visit((Func)node);
+		visit((MVFunc)node);
 		
-		UserFuncDef definition = node.getDefinition();
+		UserFuncDef definition = node.getUserFuncDef();
 		
 		write(ByteCodes.CALL);
 		int pStackSize = definition.getProgram().getStackSize();
@@ -309,7 +315,7 @@ public class Compile extends Visitor {
 	
 	@Override
 	public Void visit(Min node) throws Exception {
-		visit((Func)node);
+		visit((MVFunc)node);
 		write(ByteCodes.MIN);
 		pop();
 		return null;
@@ -317,7 +323,7 @@ public class Compile extends Visitor {
 	
 	@Override
 	public Void visit(Max node) throws Exception {
-		visit((Func)node);
+		visit((MVFunc)node);
 		write(ByteCodes.MAX);
 		pop();
 		return null;
@@ -325,133 +331,133 @@ public class Compile extends Visitor {
 	
 	@Override
 	public Void visit(Floor node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.FLOOR);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Ceil node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.CEIL);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Sqrt node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.SQRT);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Abs node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.ABS);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Log node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.LOG);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Exp node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.EXP);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Sinh node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.SINH);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Cosh node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.COSH);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Tanh node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.TANH);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Sin node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.SIN);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Cos node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.COS);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Tan node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.TAN);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Asin node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.ASIN);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Acos node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.ACOS);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Atan node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.ATAN);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Erf node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.ERF);
 		return null;
 	}
 	
 	@Override
 	public Void visit(Gamma node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.GAMMA);
 		return null;
 	}
 	
 	@Override
 	public Void visit(LogGamma node) throws Exception {
-		visit((Func)node);
+		visit((SVFunc)node);
 		write(ByteCodes.LOGGAMMA);
 		return null;
 	}
 	
 	@Override
 	public Void visit(LogBeta node) throws Exception {
-		visit((Func)node);
+		visit((MVFunc)node);
 		write(ByteCodes.LOGBETA);
 		pop();
 		return null;

@@ -184,20 +184,20 @@ public class Parser {
 	}
 	
 	public boolean term() {
-		if (!prefix())
+		if (!prepost())
 			return false;
 		
 		while (true) {
 			Expr last = (Expr) result;
 			if (match(MUL)){
 				nextToken();
-				if	(!prefix())
+				if	(!prepost())
 					return false;
 				result = new Mul(last, (Expr) result);
 			}
 			else if (match(DIV)) {
 				nextToken();
-				if	(!prefix())
+				if	(!prepost())
 					return false;
 				result = new Div(last, (Expr) result);
 			}
@@ -207,11 +207,10 @@ public class Parser {
 		}
 	}
 	
-	public boolean prefix() {
+	public boolean prepost() {
 		boolean minus = false;
-		if (token(MIN)) {
+		if (token(MIN))
 			minus = true;
-		}
 		if (!factor())
 			return false;
 		if (minus) 
@@ -225,7 +224,7 @@ public class Parser {
 		
 		if (token(POW)){
 			Expr lhs = (Expr) result;
-			if (!prefix())
+			if (!prepost())
 				return false;
 			result = (Node) new Pow(lhs, (Expr) result);
 		}

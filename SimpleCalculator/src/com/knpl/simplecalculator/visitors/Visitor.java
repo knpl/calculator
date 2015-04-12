@@ -24,14 +24,6 @@ public class Visitor {
 		return visit((Expr) node);
 	}
 	
-	public Object visit(Func node) throws Exception {
-		return visit((Expr) node);
-	}
-	
-	public Object visit(UserFunc node) throws Exception {
-		return visit((Func) node);
-	}
-	
 	public Object visit(Call node) throws Exception {
 		return visit((Expr) node);
 	}
@@ -75,89 +67,106 @@ public class Visitor {
 	public Object visit(Signature node) throws Exception {
 		return visit((Node) node);
 	}
+
+	public Object visit(Func node) throws Exception {
+		return visit((Expr) node);
+	}
 	
-	public Object visit(Min node) throws Exception {
+	public Object visit(SVFunc node) throws Exception {
 		return visit((Func) node);
 	}
 	
-	public Object visit(Max node) throws Exception {
+	public Object visit(MVFunc node) throws Exception {
 		return visit((Func) node);
+	}
+	
+	public Object visit(UserFunc node) throws Exception {
+		return visit((MVFunc) node);
+	}
+	
+	public Object visit(Min node) throws Exception {
+		return visit((MVFunc) node);
+	}
+	
+	
+	public Object visit(Max node) throws Exception {
+		return visit((MVFunc) node);
 	}
 	
 	public Object visit(Floor node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Ceil node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Sqrt node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Abs node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Log node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Exp node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Sinh node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Cosh node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Tanh node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Sin node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Cos node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Tan node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Asin node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Acos node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Atan node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 
 	public Object visit(Erf node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(Gamma node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(LogGamma node) throws Exception {
-		return visit((Func) node);
+		return visit((SVFunc) node);
 	}
 	
 	public Object visit(LogBeta node) throws Exception {
-		return visit((Func) node);
+		return visit((MVFunc) node);
 	}
 	
 	public Object visit(ConstDef node) throws Exception {

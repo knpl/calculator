@@ -1,6 +1,7 @@
 package com.knpl.simplecalculator.visitors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,14 +68,21 @@ public class Evaluate extends Visitor {
 		}
 		return result;
 	}
+	
+	@Override
+	public Double visit(SVFunc node) throws Exception {
+		return node.getFuncDef().evaluate(
+				Arrays.asList((Double) node.getArgument().accept(this))
+		);
+	}
 
 	@Override
-	public Double visit(Func node) throws Exception {
+	public Double visit(MVFunc node) throws Exception {
 		List<Double> args = new ArrayList<Double>();
 		for (Expr e : node.getArguments()) {
 			args.add((Double)e.accept(this));
 		}
-		return node.getDefinition().evaluate(args);
+		return node.getFuncDef().evaluate(args);
 	}
 	
 	@Override

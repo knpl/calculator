@@ -93,6 +93,10 @@ public class Lexer {
 				result = new Token(TokenType.EQ, "=");
 				i+=1;
 				break;
+			case '!':
+				result = new Token(TokenType.EXC, "!");
+				i+=1;
+				break;
 			default:
 				result = patternToken();
 			}

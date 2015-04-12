@@ -15,5 +15,6 @@ public enum TokenType {
 	DEF,
 	EQ,
 	EOF,
-	INVALID
+	INVALID,
+	EXC
 }

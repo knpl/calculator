@@ -124,15 +124,6 @@ public class Range implements Serializable {
 		return new Path(p);
 	}
 	
-	public float[] getMarkerInfo2() {
-		float[] result = new float[2];
-		double step = Math.pow(10, Math.floor(Math.log10(max-min)));
-		result[0] = (float)(step*Math.floor(min/step));
-		result[1] = (float)step;
-		
-		return result;
-	}
-	
 	public MarkerInfo getMarkerInfo() {
 		double step = Math.pow(10, Math.floor(Math.log10(max-min)));
 		int firstn = (int) Math.floor(min / step);
