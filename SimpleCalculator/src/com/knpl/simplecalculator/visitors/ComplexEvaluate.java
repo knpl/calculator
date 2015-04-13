@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.special.Gamma;
+
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.util.Globals;
@@ -53,6 +55,19 @@ public class ComplexEvaluate extends Visitor {
 		return (w.im() == 0.0 && z.im() == 0.0) ? w.setRe(w.re() / z.re())
 											    : w.div(z);
 	}
+	
+	@Override
+	public Complex visit(Mod node) throws Exception {
+		Complex a = (Complex) node.getLHS().accept(this);
+		if (a.im() != 0.0) {
+			throw new Exception("operator % does not support complex arguments");
+		}
+		Complex b = (Complex) node.getRHS().accept(this);
+		if (b.im() != 0.0) {
+			throw new Exception("operator % does not support complex arguments");
+		}
+		return a.setRe(a.re() - b.re()*Math.floor(a.re()/b.re()));
+	}
 
 	@Override
 	public Complex visit(Pow node) throws Exception {
@@ -67,6 +82,23 @@ public class ComplexEvaluate extends Visitor {
 		Complex z = (Complex) node.getOp().accept(this);
 		return (z.im() == 0.0) ? z.setRe(-z.re())
 							   : z.neg();
+	}
+	
+	@Override
+	public Complex visit(Factorial node) throws Exception {
+		Complex z = (Complex) node.getOp().accept(this);
+		if (z.im() == 0.0) {
+			return z.setRe(Gamma.gamma(1 + z.re()));
+		}
+		z.setRe(Double.NaN);
+		z.setIm(Double.NaN);
+		return z;
+	}
+	
+	@Override
+	public Complex visit(DegToRad node) throws Exception {
+		Complex z = (Complex) node.getOp().accept(this);
+		return z.mul(new Complex(Math.PI/180, 0));
 	}
 
 	@Override

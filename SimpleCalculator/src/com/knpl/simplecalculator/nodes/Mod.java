@@ -2,12 +2,12 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.visitors.Visitor;
 
+public class Mod extends BinOp {
 
-public class Mul extends BinOp {
-	public Mul(Expr lhs, Expr rhs) {
+	public Mod(Expr lhs, Expr rhs) {
 		super(lhs, rhs);
 	}
-	
+
 	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visit(this);

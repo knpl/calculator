@@ -10,11 +10,6 @@ public class Minus extends MonOp {
 	}
 	
 	@Override
-	public String getOpString() {
-		return "-";
-	}
-	
-	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visit(this);
 	}

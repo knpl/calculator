@@ -3,16 +3,16 @@
     android:keyWidth="10%p"
     android:keyHeight="10%p" >
     <Row>
-        <Key android:codes="113,49" android:keyEdgeFlags="left" />
-        <Key android:codes="119,50" />
-        <Key android:codes="101,51" />
-        <Key android:codes="114,52" />
-        <Key android:codes="116,53" />
-        <Key android:codes="121,54" />
-        <Key android:codes="117,55" />
-        <Key android:codes="105,56" />
-        <Key android:codes="111,57" />
-        <Key android:codes="112,48" android:keyEdgeFlags="right" />
+        <Key android:codes="113" android:popupKeyboard="@xml/popup" android:popupCharacters="q1" android:keyEdgeFlags="left" />
+        <Key android:codes="119" android:popupKeyboard="@xml/popup" android:popupCharacters="w2" />
+        <Key android:codes="101" android:popupKeyboard="@xml/popup" android:popupCharacters="e3" />
+        <Key android:codes="114" android:popupKeyboard="@xml/popup" android:popupCharacters="r4" />
+        <Key android:codes="116" android:popupKeyboard="@xml/popup" android:popupCharacters="t5" />
+        <Key android:codes="121" android:popupKeyboard="@xml/popup" android:popupCharacters="y6" />
+        <Key android:codes="117" android:popupKeyboard="@xml/popup" android:popupCharacters="u7" />
+        <Key android:codes="105" android:popupKeyboard="@xml/popup" android:popupCharacters="i8" />
+        <Key android:codes="111" android:popupKeyboard="@xml/popup" android:popupCharacters="o9" />
+        <Key android:codes="112" android:popupKeyboard="@xml/popup" android:popupCharacters="p0" android:keyEdgeFlags="right" />
     </Row>
     <Row>
         <Key android:codes="97"	android:keyEdgeFlags="left" android:horizontalGap="5%p" />

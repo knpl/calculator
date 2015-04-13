@@ -178,6 +178,14 @@ public class Compile extends Visitor {
 		pop();
 		return null;
 	}
+	
+	@Override
+	public Void visit(Mod node) throws Exception {
+		visit((BinOp)node);
+		write(ByteCodes.MOD);
+		pop();
+		return null;
+	}
 
 	@Override
 	public Void visit(Pow node) throws Exception {
@@ -197,6 +205,21 @@ public class Compile extends Visitor {
 	public Void visit(Minus node) throws Exception {
 		visit((MonOp)node);
 		write(ByteCodes.MINUS);
+		return null;
+	}
+	
+	@Override
+	public Void visit(Factorial node) throws Exception {
+		visit((MonOp)node);
+		write(ByteCodes.INC);
+		write(ByteCodes.GAMMA);
+		return null;
+	}
+	
+	@Override
+	public Void visit(DegToRad node) throws Exception {
+		visit((MonOp)node);
+		write(ByteCodes.D2R);
 		return null;
 	}
 

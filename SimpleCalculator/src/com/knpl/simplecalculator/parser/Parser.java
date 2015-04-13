@@ -184,38 +184,68 @@ public class Parser {
 	}
 	
 	public boolean term() {
-		if (!prepost())
+		if (!prefix())
 			return false;
 		
 		while (true) {
 			Expr last = (Expr) result;
-			if (match(MUL)){
-				nextToken();
-				if	(!prepost())
+			switch (tok.type) {
+			case MUL:
+				token(MUL);
+				if (!prefix())
 					return false;
 				result = new Mul(last, (Expr) result);
-			}
-			else if (match(DIV)) {
-				nextToken();
-				if	(!prepost())
+				break;
+			case DIV:
+				token(DIV);
+				if (!prefix())
 					return false;
 				result = new Div(last, (Expr) result);
-			}
-			else {
+				break;
+			case MOD:
+				token(MOD);
+				if (!prefix())
+					return false;
+				result = new Mod(last, (Expr) result);
+				break;
+			default:
 				return true;
 			}
 		}
 	}
 	
-	public boolean prepost() {
-		boolean minus = false;
-		if (token(MIN))
-			minus = true;
-		if (!factor())
-			return false;
-		if (minus) 
-			result = new Minus((Expr)result);
-		return true;
+	public boolean prefix() {
+		if (token(MIN)) {
+			if (!prefix())
+				return false;
+			result = new Minus((Expr) result);
+			
+			return true;
+		}
+		return postfix();
+	}
+	
+	public boolean postfix() {
+		return factor() && postfixrest();
+	}
+	
+	public boolean postfixrest() {
+		switch (tok.type) {
+		case EXC:
+			token(EXC);
+			if (!postfixrest())
+				return false;
+			result = new Factorial((Expr) result);
+			return true;
+		case D2R:
+			token(D2R);
+			if (!postfixrest())
+				return false;
+			result = new DegToRad((Expr) result);
+			return true;
+		default:
+			return true;
+		}
 	}
 	
 	public boolean factor() {		
@@ -224,7 +254,7 @@ public class Parser {
 		
 		if (token(POW)){
 			Expr lhs = (Expr) result;
-			if (!prepost())
+			if (!prefix())
 				return false;
 			result = (Node) new Pow(lhs, (Expr) result);
 		}
@@ -236,12 +266,12 @@ public class Parser {
 		switch (tok.type) {
 			
 		case NUM:
-			result = new Num(tok.toString());
+			result = new Num(tok.token);
 			nextToken();
 			return true;
 		
 		case ID:
-			String id = tok.toString();
+			String id = tok.token;
 			nextToken();
 			if (!match(LPAR)) {
 				result = new Var(id);

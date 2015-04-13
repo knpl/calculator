@@ -30,8 +30,6 @@ public abstract class BinOp extends Expr {
 		return this;
 	}
 	
-	abstract public String getOpString();
-	
 	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visit(this);

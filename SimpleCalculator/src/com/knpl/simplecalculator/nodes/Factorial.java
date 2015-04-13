@@ -2,10 +2,10 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.visitors.Visitor;
 
+public class Factorial extends MonOp {
 
-public class Mul extends BinOp {
-	public Mul(Expr lhs, Expr rhs) {
-		super(lhs, rhs);
+	public Factorial(Expr op) {
+		super(op);
 	}
 	
 	@Override

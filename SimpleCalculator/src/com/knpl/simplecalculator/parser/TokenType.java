@@ -11,10 +11,11 @@ public enum TokenType {
 	MUL,
 	DIV,
 	MOD,
+	EXC,
+	D2R,
 	POW,
 	DEF,
 	EQ,
 	EOF,
-	INVALID,
-	EXC
+	INVALID
 }

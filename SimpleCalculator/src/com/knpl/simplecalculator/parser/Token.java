@@ -8,10 +8,6 @@ public class Token {
 		this.type = type;
 		this.token = token;
 	}
-//	
-//	public TokenType getType() {
-//		return type;
-//	}
 	
 	public String toString() {
 		return token;

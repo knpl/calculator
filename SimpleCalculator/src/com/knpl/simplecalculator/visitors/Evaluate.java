@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.special.Gamma;
+
 import com.knpl.simplecalculator.nodes.*;
 
 public class Evaluate extends Visitor {
@@ -43,6 +45,13 @@ public class Evaluate extends Visitor {
 		return 	(Double) node.getLHS().accept(this) 
 				/ (Double) node.getRHS().accept(this);
 	}
+	
+	@Override
+	public Double visit(Mod node) throws Exception {
+		double a = (Double) node.getLHS().accept(this);
+		double b = (Double) node.getRHS().accept(this);	
+		return a - b * Math.floor(a/b);
+	}
 
 	@Override
 	public Double visit(Pow node) throws Exception {
@@ -53,6 +62,16 @@ public class Evaluate extends Visitor {
 	@Override
 	public Double visit(Minus node) throws Exception {
 		return 	-((Double) node.getOp().accept(this));
+	}
+	
+	@Override
+	public Double visit(Factorial node) throws Exception {
+		return Gamma.gamma(1 + (Double) node.getOp().accept(this));
+	}
+	
+	@Override
+	public Double visit(DegToRad node) throws Exception {
+		return (Math.PI/180) * (Double) node.getOp().accept(this);
 	}
 
 	@Override

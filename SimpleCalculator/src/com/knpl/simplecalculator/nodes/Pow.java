@@ -7,11 +7,6 @@ public class Pow extends BinOp {
 	public Pow(Expr lhs, Expr rhs) {
 		super(lhs, rhs);
 	}
-
-	@Override
-	public String getOpString() {
-		return "^";
-	}
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {

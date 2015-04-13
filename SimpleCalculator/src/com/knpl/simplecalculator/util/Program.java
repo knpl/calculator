@@ -94,6 +94,18 @@ public class Program implements Serializable {
 				stack[sp-1] = -stack[sp-1];
 				break;
 				
+			case ByteCodes.INC:
+				stack[sp-1]++;
+				break;
+				
+			case ByteCodes.DEC:
+				stack[sp-1]--;
+				break;
+				
+			case ByteCodes.D2R:
+				stack[sp-1] *= Math.PI/180;
+				break;
+				
 			case ByteCodes.ADD:
 				stack[sp-2] += stack[sp-1];
 				sp -= 1;
@@ -111,6 +123,11 @@ public class Program implements Serializable {
 				
 			case ByteCodes.DIV:
 				stack[sp-2] /= stack[sp-1];
+				sp -= 1;
+				break;
+				
+			case ByteCodes.MOD:
+				stack[sp-2] -= stack[sp-1]*Math.floor(stack[sp-2]/stack[sp-1]);
 				sp -= 1;
 				break;
 				
@@ -248,6 +265,27 @@ public class Program implements Serializable {
 		}
 	}
 	
+	private void simdInc(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i]++;
+		}
+	}
+	
+	private void simdDec(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i]--;
+		}
+	}
+	
+	private void simdD2R(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 1);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] *= (float)Math.PI/180;
+		}
+	}
+	
 	private void simdAdd(float[] stacks, int n, int sp) {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
@@ -273,6 +311,13 @@ public class Program implements Serializable {
 		int dstIndex = n * (sp - 2);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] /= stacks[i + n];
+		}
+	}
+	
+	private void simdMod(float[] stacks, int n, int sp) {
+		int dstIndex = n * (sp - 2);
+		for (int i = dstIndex; i < dstIndex + n; i += 1) {
+			stacks[i] -= stacks[i+n] * Math.floor(stacks[i]/stacks[i+n]);
 		}
 	}
 	
@@ -473,6 +518,18 @@ public class Program implements Serializable {
 				simdMinus(stacks, n, sp);
 				break;
 				
+			case ByteCodes.INC:
+				simdInc(stacks, n, sp);
+				break;
+				
+			case ByteCodes.DEC:
+				simdDec(stacks, n, sp);
+				break;
+				
+			case ByteCodes.D2R:
+				simdD2R(stacks, n, sp);
+				break;
+				
 			case ByteCodes.ADD:
 				simdAdd(stacks, n, sp);
 				sp -= 1;
@@ -490,6 +547,11 @@ public class Program implements Serializable {
 				
 			case ByteCodes.DIV:
 				simdDiv(stacks, n, sp);
+				sp -= 1;
+				break;
+				
+			case ByteCodes.MOD:
+				simdMod(stacks, n, sp);
 				sp -= 1;
 				break;
 				

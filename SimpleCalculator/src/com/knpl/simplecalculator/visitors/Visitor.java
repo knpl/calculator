@@ -44,11 +44,23 @@ public class Visitor {
 		return visit((BinOp) node);
 	}
 	
+	public Object visit(Mod node) throws Exception {
+		return visit((BinOp) node);
+	}
+	
 	public Object visit(Pow node) throws Exception {
 		return visit((BinOp) node);
 	}
 	
 	public Object visit(Minus node) throws Exception {
+		return visit((MonOp) node);
+	}
+	
+	public Object visit(Factorial node) throws Exception {
+		return visit((MonOp) node);
+	}
+	
+	public Object visit(DegToRad node) throws Exception {
 		return visit((MonOp) node);
 	}
 	

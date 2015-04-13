@@ -97,6 +97,10 @@ public class Lexer {
 				result = new Token(TokenType.EXC, "!");
 				i+=1;
 				break;
+			case '\u00B0':
+				result = new Token(TokenType.D2R, "\u00B0");
+				i+=1;
+				break;
 			default:
 				result = patternToken();
 			}

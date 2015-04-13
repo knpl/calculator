@@ -127,17 +127,35 @@ public class PrettyPrint extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Pow node) throws  Exception {
-		boolean parens = parens(getInfo(), 3, false);
+	public Node visit(Mod node) throws  Exception {
+		boolean parens = parens(getInfo(), 1, true);
 		
 		if (parens) out.print("(");
 		
-		setInfo(new Info(3, false));
+		setInfo(new Info(1, false));
+		node.getLHS().accept(this);
+		
+		out.print('%');
+		
+		setInfo(new Info(1, true));
+		node.getRHS().accept(this);
+		
+		if (parens) out.print(")");
+		return null;
+	}
+	
+	@Override
+	public Node visit(Pow node) throws  Exception {
+		boolean parens = parens(getInfo(), 4, false);
+		
+		if (parens) out.print("(");
+		
+		setInfo(new Info(4, false));
 		node.getLHS().accept(this);
 		
 		out.print('^');
 		
-		setInfo(new Info(3, true));
+		setInfo(new Info(4, true));
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
@@ -151,6 +169,32 @@ public class PrettyPrint extends Visitor {
 		
 		setInfo(new Info(2, true));
 		node.getOp().accept(this);
+		
+		if (parens) out.print(")");
+		return null;
+	}
+	
+	public Node visit(Factorial node) throws Exception {
+		boolean parens = parens(getInfo(), 3, false);
+		if (parens) out.print("(");
+		
+		setInfo(new Info(3, true));
+		node.getOp().accept(this);
+		
+		out.print('!');
+		
+		if (parens) out.print(")");
+		return null;
+	}
+	
+	public Node visit(DegToRad node) throws Exception {
+		boolean parens = parens(getInfo(), 3, false);
+		if (parens) out.print("(");
+		
+		setInfo(new Info(3, true));
+		node.getOp().accept(this);
+		
+		out.print('\u00B0');
 		
 		if (parens) out.print(")");
 		return null;
