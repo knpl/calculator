@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.math3.special.Gamma;
 
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.util.Globals;
 
 public class ComplexEvaluate extends Visitor {

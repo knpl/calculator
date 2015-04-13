@@ -2,7 +2,6 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.util.Globals;
-import com.knpl.simplecalculator.util.UserFuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class FuncDefNode extends Node {

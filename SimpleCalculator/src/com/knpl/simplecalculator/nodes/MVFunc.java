@@ -2,7 +2,6 @@ package com.knpl.simplecalculator.nodes;
 
 import java.util.List;
 
-import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class MVFunc extends Func {

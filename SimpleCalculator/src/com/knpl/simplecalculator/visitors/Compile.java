@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knpl.simplecalculator.util.BuiltinFuncDefs.*;
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.nodes.BuiltinFuncDefs.*;
 import com.knpl.simplecalculator.util.ByteCodes;
 import com.knpl.simplecalculator.util.Program;
-import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class Compile extends Visitor {
 	
@@ -333,121 +332,121 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Void visit(MinDefinition node) throws Exception {
+	public Void visit(MinDef node) throws Exception {
 		write(ByteCodes.MIN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(MaxDefinition node) throws Exception {
+	public Void visit(MaxDef node) throws Exception {
 		write(ByteCodes.MAX);
 		return null;
 	}
 	
 	@Override
-	public Void visit(FloorDefinition node) throws Exception {
+	public Void visit(FloorDef node) throws Exception {
 		write(ByteCodes.FLOOR);
 		return null;
 	}
 	
 	@Override
-	public Void visit(CeilDefinition node) throws Exception {
+	public Void visit(CeilDef node) throws Exception {
 		write(ByteCodes.CEIL);
 		return null;
 	}
 	
 	@Override
-	public Void visit(SqrtDefinition node) throws Exception {
+	public Void visit(SqrtDef node) throws Exception {
 		write(ByteCodes.SQRT);
 		return null;
 	}
 	
 	@Override
-	public Void visit(AbsDefinition node) throws Exception {
+	public Void visit(AbsDef node) throws Exception {
 		write(ByteCodes.ABS);
 		return null;
 	}
 	
 	@Override
-	public Void visit(LogDefinition node) throws Exception {
+	public Void visit(LogDef node) throws Exception {
 		write(ByteCodes.LOG);
 		return null;
 	}
 	
 	@Override
-	public Void visit(ExpDefinition node) throws Exception {
+	public Void visit(ExpDef node) throws Exception {
 		write(ByteCodes.EXP);
 		return null;
 	}
 	
 	@Override
-	public Void visit(SinhDefinition node) throws Exception {
+	public Void visit(SinhDef node) throws Exception {
 		write(ByteCodes.SINH);
 		return null;
 	}
 	
 	@Override
-	public Void visit(CoshDefinition node) throws Exception {
+	public Void visit(CoshDef node) throws Exception {
 		write(ByteCodes.COSH);
 		return null;
 	}
 	
 	@Override
-	public Void visit(TanhDefinition node) throws Exception {
+	public Void visit(TanhDef node) throws Exception {
 		write(ByteCodes.TANH);
 		return null;
 	}
 	
 	@Override
-	public Void visit(SinDefinition node) throws Exception {
+	public Void visit(SinDef node) throws Exception {
 		write(ByteCodes.SIN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(CosDefinition node) throws Exception {
+	public Void visit(CosDef node) throws Exception {
 		write(ByteCodes.COS);
 		return null;
 	}
 	
 	@Override
-	public Void visit(TanDefinition node) throws Exception {
+	public Void visit(TanDef node) throws Exception {
 		write(ByteCodes.TAN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(AsinDefinition node) throws Exception {
+	public Void visit(AsinDef node) throws Exception {
 		write(ByteCodes.ASIN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(AcosDefinition node) throws Exception {
+	public Void visit(AcosDef node) throws Exception {
 		write(ByteCodes.ACOS);
 		return null;
 	}
 	
 	@Override
-	public Void visit(AtanDefinition node) throws Exception {
+	public Void visit(AtanDef node) throws Exception {
 		write(ByteCodes.ATAN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(ErfDefinition node) throws Exception {
+	public Void visit(ErfDef node) throws Exception {
 		write(ByteCodes.ERF);
 		return null;
 	}
 	
 	@Override
-	public Void visit(GammaDefinition node) throws Exception {
+	public Void visit(GammaDef node) throws Exception {
 		write(ByteCodes.GAMMA);
 		return null;
 	}
 	
 	@Override
-	public Void visit(LogGammaDefinition node) throws Exception {
+	public Void visit(LogGammaDef node) throws Exception {
 		write(ByteCodes.LOGGAMMA);
 		return null;
 	}

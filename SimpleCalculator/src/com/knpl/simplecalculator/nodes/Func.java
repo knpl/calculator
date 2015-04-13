@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.nodes;
 
-import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class Func extends Expr {

@@ -5,12 +5,12 @@ import com.knpl.simplecalculator.CalculatorApplication;
 import com.knpl.simplecalculator.nodes.ConstDefNode;
 import com.knpl.simplecalculator.nodes.FuncDefNode;
 import com.knpl.simplecalculator.nodes.UserConstDef;
+import com.knpl.simplecalculator.nodes.UserFuncDef;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.storage.UCDContract.UCDColumns;
 import com.knpl.simplecalculator.storage.UFDContract.UFDColumns;
 import com.knpl.simplecalculator.util.Globals;
-import com.knpl.simplecalculator.util.UserFuncDef;
 
 import android.content.ContentValues;
 import android.content.Context;

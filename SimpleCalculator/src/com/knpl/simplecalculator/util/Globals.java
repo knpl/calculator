@@ -4,17 +4,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.knpl.simplecalculator.nodes.BuiltinFuncDefs;
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
 import com.knpl.simplecalculator.nodes.Call;
 import com.knpl.simplecalculator.nodes.ConstDef;
+import com.knpl.simplecalculator.nodes.FuncDef;
 import com.knpl.simplecalculator.nodes.MVFunc;
 import com.knpl.simplecalculator.nodes.SVFunc;
 import com.knpl.simplecalculator.nodes.UserConstDef;
+import com.knpl.simplecalculator.nodes.UserFuncDef;
 
-import com.knpl.simplecalculator.nodes.Builtins.Pi;
-import com.knpl.simplecalculator.nodes.Builtins.Euler;
-import com.knpl.simplecalculator.nodes.Builtins.Im;
+import com.knpl.simplecalculator.nodes.BuiltinConstDefs.Pi;
+import com.knpl.simplecalculator.nodes.BuiltinConstDefs.Euler;
+import com.knpl.simplecalculator.nodes.BuiltinConstDefs.Im;
 import com.knpl.simplecalculator.storage.CalculatorDb;
 
 public class Globals {
@@ -38,7 +41,7 @@ public class Globals {
 		funcDefMap = new LinkedHashMap<String, FuncDef>();
 		constDefMap = new LinkedHashMap<String, ConstDef>();
 		
-		FuncDef defs[] = BuiltinFuncDefs.builtinFunctions;
+		FuncDef defs[] = BuiltinFuncDefs.builtinFuncDefs;
 		for (int i = 0; i < defs.length; i++) {
 			FuncDef def = defs[i];
 			funcDefMap.put(def.getSignature().getName(), def);

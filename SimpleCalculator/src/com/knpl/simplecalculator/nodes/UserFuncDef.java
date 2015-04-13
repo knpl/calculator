@@ -1,4 +1,4 @@
-package com.knpl.simplecalculator.util;
+package com.knpl.simplecalculator.nodes;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;

@@ -1,10 +1,7 @@
-package com.knpl.simplecalculator.util;
+package com.knpl.simplecalculator.nodes;
 
 import java.util.List;
 
-import com.knpl.simplecalculator.nodes.Complex;
-import com.knpl.simplecalculator.nodes.Node;
-import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class FuncDef extends Node {

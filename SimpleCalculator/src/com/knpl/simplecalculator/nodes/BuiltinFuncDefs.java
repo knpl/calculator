@@ -1,45 +1,45 @@
-package com.knpl.simplecalculator.util;
+package com.knpl.simplecalculator.nodes;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.knpl.simplecalculator.nodes.Complex;
-import com.knpl.simplecalculator.nodes.Signature;
-import com.knpl.simplecalculator.nodes.Var;
+import org.apache.commons.math3.special.Erf;
+import org.apache.commons.math3.special.Gamma;
+
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class BuiltinFuncDefs {
 	
-	public static final FuncDef builtinFunctions[] = 
+	public static final FuncDef builtinFuncDefs[] = 
 	{
-		new MinDefinition(),
-		new MaxDefinition(),
-		new CeilDefinition(),
-		new FloorDefinition(),
-		new SqrtDefinition(),
-		new AbsDefinition(),
-		new LogDefinition(),
-		new ExpDefinition(),
-		new SinhDefinition(),
-		new CoshDefinition(),
-		new TanhDefinition(),
-		new SinDefinition(),
-		new CosDefinition(),
-		new TanDefinition(),
-		new AsinDefinition(),
-		new AcosDefinition(),
-		new AtanDefinition(),
-		new ErfDefinition(),
-		new GammaDefinition(),
-		new LogGammaDefinition()
+		new MinDef(),
+		new MaxDef(),
+		new CeilDef(),
+		new FloorDef(),
+		new SqrtDef(),
+		new AbsDef(),
+		new LogDef(),
+		new ExpDef(),
+		new SinhDef(),
+		new CoshDef(),
+		new TanhDef(),
+		new SinDef(),
+		new CosDef(),
+		new TanDef(),
+		new AsinDef(),
+		new AcosDef(),
+		new AtanDef(),
+		new ErfDef(),
+		new GammaDef(),
+		new LogGammaDef()
 	};
 	
-	public static class MinDefinition extends FuncDef {
+	public static class MinDef extends FuncDef {
 		public static final String description = "The minimum of a and b.";
 		
 		private final Signature sig;
 		
-		public MinDefinition() {
+		public MinDef() {
 			sig = new Signature("min", Arrays.asList(new Var("a"), new Var("b")));
 		}
 
@@ -77,12 +77,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class MaxDefinition extends FuncDef {
+	public static class MaxDef extends FuncDef {
 		public static final String description = "The maximum of a and b.";
 		
 		private final Signature sig;
 		
-		public MaxDefinition() {
+		public MaxDef() {
 			sig = new Signature("max", Arrays.asList(new Var("a"), new Var("b")));
 		}
 		
@@ -120,12 +120,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class FloorDefinition extends FuncDef {
+	public static class FloorDef extends FuncDef {
 		public static final String description = "The integer part of x.";
 		
 		private final Signature sig;
 		
-		public FloorDefinition() {
+		public FloorDef() {
 			sig = new Signature("floor", Arrays.asList(new Var("x")));
 		}
 
@@ -159,12 +159,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class CeilDefinition extends FuncDef {
+	public static class CeilDef extends FuncDef {
 		public static final String description = "The nearest integer greater than or equal to x.";
 		
 		private final Signature sig;
 		
-		public CeilDefinition() {
+		public CeilDef() {
 			sig = new Signature("ceil", Arrays.asList(new Var("x")));
 		}
 
@@ -198,12 +198,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class SqrtDefinition extends FuncDef {
+	public static class SqrtDef extends FuncDef {
 		public static final String description = "The square root of x.";
 		
 		private final Signature sig;
 		
-		public SqrtDefinition() {
+		public SqrtDef() {
 			sig = new Signature("sqrt", Arrays.asList(new Var("x")));
 		}
 
@@ -245,12 +245,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AbsDefinition extends FuncDef {
+	public static class AbsDef extends FuncDef {
 		public static final String description = "The absolute value of x.";
 		
 		private final Signature sig;
 		
-		public AbsDefinition() {
+		public AbsDef() {
 			sig = new Signature("abs", Arrays.asList(new Var("x")));
 		}
 
@@ -280,12 +280,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class LogDefinition extends FuncDef {
+	public static class LogDef extends FuncDef {
 		public static final String description = "The natural (base e) logarithm of x.";
 		
 		private final Signature sig;
 		
-		public LogDefinition() {
+		public LogDef() {
 			sig = new Signature("log", Arrays.asList(new Var("x")));
 		}
 
@@ -317,12 +317,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ExpDefinition extends FuncDef {
+	public static class ExpDef extends FuncDef {
 		public static final String description = "The exponential (base e) of x.";
 		
 		private final Signature sig;
 		
-		public ExpDefinition() {
+		public ExpDef() {
 			sig = new Signature("exp", Arrays.asList(new Var("x")));
 		}
 
@@ -354,12 +354,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class SinhDefinition extends FuncDef {
+	public static class SinhDef extends FuncDef {
 		public static final String description = "The hyperbolic sine of x.";
 		
 		private final Signature sig;
 		
-		public SinhDefinition() {
+		public SinhDef() {
 			sig = new Signature("sinh", Arrays.asList(new Var("x")));
 		}
 
@@ -391,12 +391,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class CoshDefinition extends FuncDef {
+	public static class CoshDef extends FuncDef {
 		public static final String description = "The hyperbolic cosine of x.";
 		
 		private final Signature sig;
 		
-		public CoshDefinition() {
+		public CoshDef() {
 			sig = new Signature("cosh", Arrays.asList(new Var("x")));
 		}
 
@@ -428,12 +428,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class TanhDefinition extends FuncDef {
+	public static class TanhDef extends FuncDef {
 		public static final String description = "The hyperbolic tangent of x.";
 		
 		private final Signature sig;
 		
-		public TanhDefinition() {
+		public TanhDef() {
 			sig = new Signature("tanh", Arrays.asList(new Var("x")));
 		}
 
@@ -465,12 +465,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class SinDefinition extends FuncDef {
+	public static class SinDef extends FuncDef {
 		public static final String description = "The sine of x.";
 		
 		private final Signature sig;
 		
-		public SinDefinition() {
+		public SinDef() {
 			sig = new Signature("sin", Arrays.asList(new Var("x")));
 		}
 
@@ -502,12 +502,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class CosDefinition extends FuncDef {
+	public static class CosDef extends FuncDef {
 		public static final String description = "The cosine of x.";
 		
 		private final Signature sig;
 		
-		public CosDefinition() {
+		public CosDef() {
 			sig = new Signature("cos", Arrays.asList(new Var("x")));
 		}
 
@@ -539,12 +539,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class TanDefinition extends FuncDef {
+	public static class TanDef extends FuncDef {
 		public static final String description = "The tangent of x.";
 		
 		private final Signature sig;
 		
-		public TanDefinition() {
+		public TanDef() {
 			sig = new Signature("tan", Arrays.asList(new Var("x")));
 		}
 
@@ -576,12 +576,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AsinDefinition extends FuncDef {
+	public static class AsinDef extends FuncDef {
 		public static final String description = "The inverse sine (arcsin) of x.";
 		
 		private final Signature sig;
 		
-		public AsinDefinition() {
+		public AsinDef() {
 			sig = new Signature("asin", Arrays.asList(new Var("x")));
 		}
 
@@ -613,12 +613,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AcosDefinition extends FuncDef {
+	public static class AcosDef extends FuncDef {
 		public static final String description = "The inverse cosine (arccos) of x.";
 		
 		private final Signature sig;
 		
-		public AcosDefinition() {
+		public AcosDef() {
 			sig = new Signature("acos", Arrays.asList(new Var("x")));
 		}
 
@@ -650,12 +650,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AtanDefinition extends FuncDef {
+	public static class AtanDef extends FuncDef {
 		public static final String description = "The inverse tangent (arctan) of x.";
 		
 		private final Signature sig;
 		
-		public AtanDefinition() {
+		public AtanDef() {
 			sig = new Signature("atan", Arrays.asList(new Var("x")));
 		}
 
@@ -687,12 +687,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ErfDefinition extends FuncDef {
+	public static class ErfDef extends FuncDef {
 		public static final String description = "The error function.";
 		
 		private final Signature sig;
 		
-		public ErfDefinition() {
+		public ErfDef() {
 			sig = new Signature("erf", Arrays.asList(new Var("x")));
 		}
 
@@ -712,12 +712,12 @@ public class BuiltinFuncDefs {
 			if (z.im() != 0.0) {
 				throw new Exception("erf only defined for real numbers");
 			}
-			return z.setRe(org.apache.commons.math3.special.Erf.erf(z.re()));
+			return z.setRe(Erf.erf(z.re()));
 		}
 
 		@Override
 		public Double evaluate(List<Double> args) throws Exception {
-			return org.apache.commons.math3.special.Erf.erf(args.get(0));
+			return Erf.erf(args.get(0));
 		}
 		
 		@Override
@@ -726,12 +726,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class GammaDefinition extends FuncDef {
+	public static class GammaDef extends FuncDef {
 		public static final String description = "The gamma function.";
 		
 		private final Signature sig;
 		
-		public GammaDefinition() {
+		public GammaDef() {
 			sig = new Signature("\u0393", Arrays.asList(new Var("x")));
 		}
 
@@ -751,12 +751,12 @@ public class BuiltinFuncDefs {
 			if (z.im() != 0.0) {
 				throw new Exception("gamma only defined for real numbers");
 			}
-			return z.setRe(org.apache.commons.math3.special.Gamma.gamma(z.re()));
+			return z.setRe(Gamma.gamma(z.re()));
 		}
 
 		@Override
 		public Double evaluate(List<Double> args) throws Exception {
-			return org.apache.commons.math3.special.Gamma.gamma(args.get(0));
+			return Gamma.gamma(args.get(0));
 		}
 		
 		@Override
@@ -765,12 +765,12 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class LogGammaDefinition extends FuncDef {
+	public static class LogGammaDef extends FuncDef {
 		public static final String description = "The logarithm of the gamma function.";
 		
 		private final Signature sig;
 		
-		public LogGammaDefinition() {
+		public LogGammaDef() {
 			sig = new Signature("log\u0393", Arrays.asList(new Var("x")));
 		}
 
@@ -790,12 +790,12 @@ public class BuiltinFuncDefs {
 			if (z.im() != 0.0) {
 				throw new Exception("loggamma only defined for real numbers");
 			}
-			return z.setRe(org.apache.commons.math3.special.Gamma.logGamma(z.re()));
+			return z.setRe(Gamma.logGamma(z.re()));
 		}
 
 		@Override
 		public Double evaluate(List<Double> args) throws Exception {
-			return org.apache.commons.math3.special.Gamma.logGamma(args.get(0));
+			return Gamma.logGamma(args.get(0));
 		}
 		
 		@Override

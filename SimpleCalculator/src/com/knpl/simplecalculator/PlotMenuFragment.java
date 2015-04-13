@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.knpl.simplecalculator.nodes.FuncDefNode;
 import com.knpl.simplecalculator.nodes.Signature;
+import com.knpl.simplecalculator.nodes.UserFuncDef;
 import com.knpl.simplecalculator.nodes.Var;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
@@ -34,7 +35,6 @@ import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.util.Program;
-import com.knpl.simplecalculator.util.UserFuncDef;
 
 public class PlotMenuFragment extends ListFragment {
 	

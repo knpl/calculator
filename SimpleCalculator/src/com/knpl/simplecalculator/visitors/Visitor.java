@@ -1,10 +1,8 @@
 package com.knpl.simplecalculator.visitors;
 
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.nodes.Builtins.*;
-import com.knpl.simplecalculator.util.FuncDef;
-import com.knpl.simplecalculator.util.UserFuncDef;
-import com.knpl.simplecalculator.util.BuiltinFuncDefs.*;
+import com.knpl.simplecalculator.nodes.BuiltinFuncDefs.*;
+import com.knpl.simplecalculator.nodes.BuiltinConstDefs.*;
 
 public class Visitor {
 	public Object visit(Node node) throws Exception {
@@ -103,83 +101,83 @@ public class Visitor {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(MinDefinition node) throws Exception {
+	public Object visit(MinDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(MaxDefinition node) throws Exception {
+	public Object visit(MaxDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(FloorDefinition node) throws Exception {
+	public Object visit(FloorDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(CeilDefinition node) throws Exception {
+	public Object visit(CeilDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(SqrtDefinition node) throws Exception {
+	public Object visit(SqrtDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(AbsDefinition node) throws Exception {
+	public Object visit(AbsDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(LogDefinition node) throws Exception {
+	public Object visit(LogDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(ExpDefinition node) throws Exception {
+	public Object visit(ExpDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(SinhDefinition node) throws Exception {
+	public Object visit(SinhDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(CoshDefinition node) throws Exception {
+	public Object visit(CoshDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(TanhDefinition node) throws Exception {
+	public Object visit(TanhDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(SinDefinition node) throws Exception {
+	public Object visit(SinDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(CosDefinition node) throws Exception {
+	public Object visit(CosDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(TanDefinition node) throws Exception {
+	public Object visit(TanDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(AsinDefinition node) throws Exception {
+	public Object visit(AsinDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(AcosDefinition node) throws Exception {
+	public Object visit(AcosDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(AtanDefinition node) throws Exception {
+	public Object visit(AtanDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 
-	public Object visit(ErfDefinition node) throws Exception {
+	public Object visit(ErfDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(GammaDefinition node) throws Exception {
+	public Object visit(GammaDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	
-	public Object visit(LogGammaDefinition node) throws Exception {
+	public Object visit(LogGammaDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
 	

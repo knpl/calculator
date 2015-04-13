@@ -2,13 +2,13 @@ package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
 
+import com.knpl.simplecalculator.nodes.FuncDef;
 import com.knpl.simplecalculator.nodes.FuncDefNode;
+import com.knpl.simplecalculator.nodes.UserFuncDef;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.storage.CalculatorDb;
-import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.util.Globals;
-import com.knpl.simplecalculator.util.UserFuncDef;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;

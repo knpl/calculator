@@ -2,7 +2,13 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public class Builtins {
+public class BuiltinConstDefs {
+	
+	public static final ConstDef[] builtinConstDefs = new ConstDef[] {
+		new Pi(),
+		new Euler(),
+		new Im()
+	};
 	
 	/* Constants */
 	public static class Pi extends ConstDef {
