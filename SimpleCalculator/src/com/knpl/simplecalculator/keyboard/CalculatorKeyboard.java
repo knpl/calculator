@@ -16,7 +16,8 @@ public class CalculatorKeyboard {
 	
 	public static final int QWERTY_TOGGLE_KEY = 57344,
 							GREEK_TOGGLE_KEY  = 57345,
-							ACTION_KEY = 57346;
+							CALC_TOGGLE_KEY = 57346,
+							ACTION_KEY = 57347;
 	
 	
 	private SimpleCalculatorActivity activity;
@@ -50,10 +51,16 @@ public class CalculatorKeyboard {
 		public void onKey(int primaryCode, int[] keyCodes) {
 			switch (primaryCode) {
 			case QWERTY_TOGGLE_KEY:
-				handleQwerty();
+				kbdv.setKeyboard(qwertyKbd);
+				kbdv.setShifted(false);
 				break;
 			case GREEK_TOGGLE_KEY:
-				handleGreek();
+				kbdv.setKeyboard(greekKbd);
+				kbdv.setShifted(false);
+				break;
+			case CALC_TOGGLE_KEY:
+				kbdv.setKeyboard(calculatorKbd);
+				kbdv.setShifted(false);
 				break;
 			case ACTION_KEY:
 				handleAction();
@@ -85,26 +92,6 @@ public class CalculatorKeyboard {
 			return;
 		}
 		kbdv.setShifted(!kbdv.isShifted());
-	}
-	
-	private void handleQwerty() {
-		if (kbdv.getKeyboard() == qwertyKbd) {
-			kbdv.setKeyboard(calculatorKbd);
-		}
-		else {
-			kbdv.setKeyboard(qwertyKbd);
-		}
-		kbdv.setShifted(false);
-	}
-	
-	public void handleGreek() {
-		if (kbdv.getKeyboard() == greekKbd) {
-			kbdv.setKeyboard(calculatorKbd);
-		}
-		else {
-			kbdv.setKeyboard(greekKbd);
-		}
-		kbdv.setShifted(false);
 	}
 	
 	private void handleAction() {
@@ -144,7 +131,11 @@ public class CalculatorKeyboard {
 		int start = editText.getSelectionStart();
 		int end   = editText.getSelectionEnd();
 		
-		editable.replace(start, end, kbdv.getTextFromCode(primaryCode));
+		String text = kbdv.getLabelFromCode(primaryCode);
+		if (MyKeyboardView.isFunction(primaryCode)) {
+			text += "(";
+		}
+		editable.replace(start, end, text);
 		
 		if (kbdv.isShifted()) {
 			kbdv.setShifted(false);

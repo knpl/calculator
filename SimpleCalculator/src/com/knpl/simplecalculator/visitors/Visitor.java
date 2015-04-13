@@ -2,6 +2,9 @@ package com.knpl.simplecalculator.visitors;
 
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.nodes.Builtins.*;
+import com.knpl.simplecalculator.util.FuncDef;
+import com.knpl.simplecalculator.util.UserFuncDef;
+import com.knpl.simplecalculator.util.BuiltinFuncDefs.*;
 
 public class Visitor {
 	public Object visit(Node node) throws Exception {
@@ -92,93 +95,92 @@ public class Visitor {
 		return visit((Func) node);
 	}
 	
-	public Object visit(UserFunc node) throws Exception {
-		return visit((MVFunc) node);
+	public Object visit(FuncDef node) throws Exception {
+		return visit((Node) node);
 	}
 	
-	public Object visit(Min node) throws Exception {
-		return visit((MVFunc) node);
+	public Object visit(UserFuncDef node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	
-	public Object visit(Max node) throws Exception {
-		return visit((MVFunc) node);
+	public Object visit(MinDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Floor node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(MaxDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Ceil node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(FloorDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Sqrt node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(CeilDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Abs node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(SqrtDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Log node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(AbsDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Exp node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(LogDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Sinh node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(ExpDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Cosh node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(SinhDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Tanh node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(CoshDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Sin node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(TanhDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Cos node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(SinDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Tan node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(CosDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Asin node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(TanDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Acos node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(AsinDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Atan node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(AcosDefinition node) throws Exception {
+		return visit((FuncDef) node);
+	}
+	
+	public Object visit(AtanDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 
-	public Object visit(Erf node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(ErfDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(Gamma node) throws Exception {
-		return visit((SVFunc) node);
+	public Object visit(GammaDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
-	public Object visit(LogGamma node) throws Exception {
-		return visit((SVFunc) node);
-	}
-	
-	public Object visit(LogBeta node) throws Exception {
-		return visit((MVFunc) node);
+	public Object visit(LogGammaDefinition node) throws Exception {
+		return visit((FuncDef) node);
 	}
 	
 	public Object visit(ConstDef node) throws Exception {

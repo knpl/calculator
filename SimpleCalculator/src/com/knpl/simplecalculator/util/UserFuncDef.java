@@ -10,6 +10,7 @@ import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
+import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserFuncDef extends FuncDef {
 	
@@ -37,19 +38,19 @@ public class UserFuncDef extends FuncDef {
 		this.program = null;
 	}
 	
-	@Override
-	public MVFunc createFunction(Call call) throws Exception {
-		if (!call.match(sig))
-			throw new Exception("Signature mismatch");
-		return new UserFunc(this, call.getArguments());
-	}
-	
-	@Override
-	public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-		if (!this.sig.match(sig))
-			throw new Exception("Signature mismatch");
-		return new UserFunc(this, args);
-	}
+//	@Override
+//	public MVFunc createFunction(Call call) throws Exception {
+//		if (!call.match(sig))
+//			throw new Exception("Signature mismatch");
+//		return new UserFunc(this, call.getArguments());
+//	}
+//	
+//	@Override
+//	public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
+//		if (!this.sig.match(sig))
+//			throw new Exception("Signature mismatch");
+//		return new UserFunc(this, args);
+//	}
 	
 	public Expr getExpression() {
 		return expression;
@@ -101,5 +102,10 @@ public class UserFuncDef extends FuncDef {
 	@Override
 	public Double evaluate(List<Double> args) throws Exception {
 		return getProgram().evaluate(args);
+	}
+	
+	@Override
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

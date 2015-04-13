@@ -4,13 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.knpl.simplecalculator.nodes.Complex;
-import com.knpl.simplecalculator.nodes.MVFunc;
-import com.knpl.simplecalculator.nodes.Call;
-import com.knpl.simplecalculator.nodes.Expr;
-import com.knpl.simplecalculator.nodes.SVFunc;
 import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.nodes.Var;
-import com.knpl.simplecalculator.nodes.Builtins.*;
+import com.knpl.simplecalculator.visitors.Visitor;
 
 public class BuiltinFuncDefs {
 	
@@ -35,8 +31,7 @@ public class BuiltinFuncDefs {
 		new AtanDefinition(),
 		new ErfDefinition(),
 		new GammaDefinition(),
-		new LogGammaDefinition(),
-		new LogBetaDefinition()
+		new LogGammaDefinition()
 	};
 	
 	public static class MinDefinition extends FuncDef {
@@ -47,24 +42,10 @@ public class BuiltinFuncDefs {
 		public MinDefinition() {
 			sig = new Signature("min", Arrays.asList(new Var("a"), new Var("b")));
 		}
-		
-		@Override
-		public MVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Min(this, call.getArguments());
-		}
 
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-
-		@Override
-		public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Min(this, args);
 		}
 
 		@Override
@@ -89,6 +70,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.min(args.get(0), args.get(1));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class MaxDefinition extends FuncDef {
@@ -101,24 +87,10 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public MVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Max(this, call.getArguments());
-		}
-
-		@Override
 		public Signature getSignature() {
 			return sig;
 		}
-
-		@Override
-		public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Max(this, args);
-		}
-
+		
 		@Override
 		public String getDescription() {
 			return sig + " = " + description;
@@ -141,6 +113,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.max(args.get(0), args.get(1));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class FloorDefinition extends FuncDef {
@@ -155,20 +132,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Floor(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Floor(this, args.get(0));
 		}
 
 		@Override
@@ -189,6 +152,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.floor(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class CeilDefinition extends FuncDef {
@@ -203,20 +171,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Ceil(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Ceil(this, args.get(0));
 		}
 
 		@Override
@@ -237,6 +191,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.ceil(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class SqrtDefinition extends FuncDef {
@@ -251,20 +210,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Sqrt(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Sqrt(this, args.get(0));
 		}
 
 		@Override
@@ -293,6 +238,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.sqrt(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class AbsDefinition extends FuncDef {
@@ -307,20 +257,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Abs(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Abs(this, args.get(0));
 		}
 
 		@Override
@@ -337,6 +273,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.abs(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class LogDefinition extends FuncDef {
@@ -351,20 +292,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Log(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Log(this, args.get(0));
 		}
 
 		@Override
@@ -383,6 +310,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.log(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class ExpDefinition extends FuncDef {
@@ -397,19 +329,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Exp(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Exp(this, args.get(0));
 		}
 
 		@Override
@@ -428,6 +347,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.exp(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class SinhDefinition extends FuncDef {
@@ -442,19 +366,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Sinh(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Sinh(this, args.get(0));
 		}
 
 		@Override
@@ -473,6 +384,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.sinh(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class CoshDefinition extends FuncDef {
@@ -487,20 +403,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Cosh(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Cosh(this, args.get(0));
 		}
 
 		@Override
@@ -519,6 +421,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.cosh(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class TanhDefinition extends FuncDef {
@@ -533,20 +440,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Tanh(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Tanh(this, args.get(0));
 		}
 
 		@Override
@@ -565,6 +458,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.tanh(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class SinDefinition extends FuncDef {
@@ -579,20 +477,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Sin(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Sin(this, args.get(0));
 		}
 
 		@Override
@@ -611,6 +495,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.sin(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class CosDefinition extends FuncDef {
@@ -625,20 +514,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Cos(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Cos(this, args.get(0));
 		}
 
 		@Override
@@ -657,6 +532,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.cos(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class TanDefinition extends FuncDef {
@@ -671,20 +551,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Tan(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Tan(this, args.get(0));
 		}
 
 		@Override
@@ -703,6 +569,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.tan(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class AsinDefinition extends FuncDef {
@@ -717,20 +588,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Asin(this, call.getArguments().get(0));
-		}
-
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Asin(this, args.get(0));
 		}
 
 		@Override
@@ -749,6 +606,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.asin(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class AcosDefinition extends FuncDef {
@@ -763,20 +625,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Acos(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Acos(this, args.get(0));
 		}
 
 		@Override
@@ -795,6 +643,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.acos(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class AtanDefinition extends FuncDef {
@@ -809,20 +662,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Atan(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Atan(this, args.get(0));
 		}
 
 		@Override
@@ -841,6 +680,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return Math.atan(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class ErfDefinition extends FuncDef {
@@ -855,20 +699,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Erf(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Erf(this, args.get(0));
 		}
 
 		@Override
@@ -889,6 +719,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return org.apache.commons.math3.special.Erf.erf(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class GammaDefinition extends FuncDef {
@@ -903,20 +738,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Gamma(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new Gamma(this, args.get(0));
 		}
 
 		@Override
@@ -937,6 +758,11 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return org.apache.commons.math3.special.Gamma.gamma(args.get(0));
 		}
+		
+		@Override
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
+		}
 	}
 	
 	public static class LogGammaDefinition extends FuncDef {
@@ -951,20 +777,6 @@ public class BuiltinFuncDefs {
 		@Override
 		public Signature getSignature() {
 			return sig;
-		}
-		
-		@Override
-		public SVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new LogGamma(this, call.getArguments().get(0));
-		}
-		
-		@Override
-		public SVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new LogGamma(this, args.get(0));
 		}
 
 		@Override
@@ -985,57 +797,10 @@ public class BuiltinFuncDefs {
 		public Double evaluate(List<Double> args) throws Exception {
 			return org.apache.commons.math3.special.Gamma.logGamma(args.get(0));
 		}
-	}
-	
-	public static class LogBetaDefinition extends FuncDef {
-		public static final String description = "The logarithm of the beta function.";
-		
-		private final Signature sig;
-		
-		public LogBetaDefinition() {
-			sig = new Signature("log\u03B2", Arrays.asList(new Var("x"), new Var("y")));
-		}
-
-		@Override
-		public Signature getSignature() {
-			return sig;
-		}
 		
 		@Override
-		public MVFunc createFunction(Call call) throws Exception {
-			if (!call.match(sig))
-				throw new Exception("Signature mismatch");
-			return new LogBeta(this, call.getArguments());
-		}
-		
-		@Override
-		public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-			if (!this.sig.match(sig))
-				throw new Exception("Signature mismatch");
-			return new LogBeta(this, args);
-		}
-
-		@Override
-		public String getDescription() {
-			return sig + " = " + description;
-		}
-
-		@Override
-		public Complex complexEvaluate(List<Complex> args) throws Exception {
-			Complex a = args.get(0);
-			if (a.im() != 0.0) {
-				throw new Exception("logbeta only defined for real numbers");
-			}
-			Complex b = args.get(1);
-			if (b.im() != 0.0) {
-				throw new Exception("logbeta only defined for real numbers");
-			}
-			return a.setRe(org.apache.commons.math3.special.Beta.logBeta(a.re(), b.re()));
-		}
-
-		@Override
-		public Double evaluate(List<Double> args) throws Exception {
-			return org.apache.commons.math3.special.Beta.logBeta(args.get(0), args.get(1));
+		public Object accept(Visitor v) throws Exception {
+			return v.visit(this);
 		}
 	}
 }

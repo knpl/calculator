@@ -1,11 +1,16 @@
 package com.knpl.simplecalculator.util;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Func;
 import com.knpl.simplecalculator.nodes.Call;
 import com.knpl.simplecalculator.nodes.ConstDef;
+import com.knpl.simplecalculator.nodes.MVFunc;
+import com.knpl.simplecalculator.nodes.SVFunc;
+import com.knpl.simplecalculator.nodes.UserConstDef;
 
 import com.knpl.simplecalculator.nodes.Builtins.Pi;
 import com.knpl.simplecalculator.nodes.Builtins.Euler;
@@ -23,8 +28,11 @@ public class Globals {
 		return instance;
 	}
 	
-	private Map<String, FuncDef> funcDefMap;
-	private Map<String, ConstDef> constDefMap;
+	private final Map<String, FuncDef> funcDefMap;
+	private final Map<String, ConstDef> constDefMap;
+	
+	private final Map<String, UserFuncDef> userFuncDefMap;
+	private final Map<String, UserConstDef> userConstDefMap;
 	
 	private Globals() {
 		funcDefMap = new LinkedHashMap<String, FuncDef>();
@@ -39,6 +47,9 @@ public class Globals {
 		constDefMap.put(Pi.NAME, new Pi());
 		constDefMap.put(Euler.NAME, new Euler());
 		constDefMap.put(Im.NAME, new Im());
+		
+		userFuncDefMap = new LinkedHashMap<String, UserFuncDef>();
+		userConstDefMap = new LinkedHashMap<String, UserConstDef>();
 	}
 	
 	public Map<String, FuncDef> getFuncDefMap() {
@@ -54,7 +65,16 @@ public class Globals {
 		if (def == null) {
 			throw new Exception("Function " + call.getName() + " undefined");	
 		}
-		return def.createFunction(call);
+		
+		if (!call.match(def.getSignature())) {
+			throw new Exception("Signature mismatch: "+ call.getName());
+		}
+		
+		List<Expr> args = call.getArguments();
+		if (args.size() == 1)
+			return new SVFunc(def, args.get(0));
+		else
+			return new MVFunc(def, args);
 	}
 	
 	public ConstDef getConstDef(String id) {

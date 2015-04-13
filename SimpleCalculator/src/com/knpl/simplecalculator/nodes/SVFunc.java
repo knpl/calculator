@@ -14,14 +14,14 @@ public class SVFunc extends Func {
 	public Expr getArgument() {
 		return argument;
 	}
+	
+	public SVFunc setArgument(Expr argument) {
+		this.argument = argument;
+		return this;
+	}
 
 	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visit(this);
-	}
-
-	public SVFunc setArgument(Expr argument) {
-		this.argument = argument;
-		return this;
 	}
 }

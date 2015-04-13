@@ -5,7 +5,7 @@ import java.util.List;
 import com.knpl.simplecalculator.util.FuncDef;
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public abstract class MVFunc extends Func {
+public class MVFunc extends Func {
 	protected final List<Expr> arguments;
 	
 	public MVFunc(FuncDef definition, List<Expr> arguments) {

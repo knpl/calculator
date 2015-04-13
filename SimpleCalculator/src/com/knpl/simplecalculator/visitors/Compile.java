@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.knpl.simplecalculator.nodes.Builtins.*;
+import com.knpl.simplecalculator.util.BuiltinFuncDefs.*;
 import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.util.ByteCodes;
 import com.knpl.simplecalculator.util.Program;
@@ -24,8 +24,8 @@ public class Compile extends Visitor {
 	private List<Var> parameters;
 	
 	private Map<Double,Integer> constantMap;
-	private Map<UserFunc, Integer> functionMap;
-	private Map<UserFunc, Integer> newFunctionMap;
+	private Map<UserFuncDef, Integer> functionMap;
+	private Map<UserFuncDef, Integer> newFunctionMap;
 	
 	private Program program;
 	
@@ -34,8 +34,8 @@ public class Compile extends Visitor {
 		nbytes = 0;
 		this.parameters = parameters;
 		constantMap = new HashMap<Double, Integer>();
-		functionMap = new HashMap<UserFunc, Integer>();
-		newFunctionMap = new HashMap<UserFunc, Integer>();
+		functionMap = new HashMap<UserFuncDef, Integer>();
+		newFunctionMap = new HashMap<UserFuncDef, Integer>();
 		program = null;
 		
 		maxStackSize = curStackSize = 0;
@@ -46,8 +46,8 @@ public class Compile extends Visitor {
 		nbytes = 0;
 		parameters = new ArrayList<Var>();
 		constantMap = new HashMap<Double, Integer>();
-		functionMap = new HashMap<UserFunc, Integer>();
-		newFunctionMap = new HashMap<UserFunc, Integer>();
+		functionMap = new HashMap<UserFuncDef, Integer>();
+		newFunctionMap = new HashMap<UserFuncDef, Integer>();
 		program = null;
 		
 		maxStackSize = curStackSize = 0;
@@ -82,9 +82,9 @@ public class Compile extends Visitor {
 		curStackSize -= s;
 	}
 	
-	private void clear(ArrayList<UserFunc> list, int size) {
+	private void clear(ArrayList<UserFuncDef> list, int size) {
 		list.clear();
-		list.addAll(Collections.nCopies(size,(UserFunc) null));
+		list.addAll(Collections.nCopies(size,(UserFuncDef) null));
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public class Compile extends Visitor {
 		write(parameters.size());
 		pop();
 		
-		ArrayList<UserFunc> newFunctions = new ArrayList<UserFunc>(newFunctionMap.size());
+		ArrayList<UserFuncDef> newFunctions = new ArrayList<UserFuncDef>(newFunctionMap.size());
 		clear(newFunctions, newFunctionMap.size());
 		
 		ArrayList<Integer> offsets = new ArrayList<Integer>();
@@ -107,14 +107,13 @@ public class Compile extends Visitor {
 			nfunctions = functionMap.size();
 			functionMap.putAll(newFunctionMap);
 			
-			for (Map.Entry<UserFunc, Integer> e : newFunctionMap.entrySet()) {
+			for (Map.Entry<UserFuncDef, Integer> e : newFunctionMap.entrySet()) {
 				newFunctions.set(e.getValue()-nfunctions, e.getKey());
 			}
 			newFunctionMap.clear();
 			
 			List<Var> oldParameters = parameters;
-			for (UserFunc f : newFunctions) {
-				UserFuncDef ufd = (UserFuncDef) f.getFuncDef();
+			for (UserFuncDef ufd : newFunctions) {
 				parameters = ufd.getSignature().getParameters();
 				offsets.add(nbytes);
 				
@@ -302,26 +301,24 @@ public class Compile extends Visitor {
 		for (Expr arg : args) {
 			arg.accept(this);
 		}
+		node.getFuncDef().accept(this);
+		pop(args.size() - 1);
 		return null;
 	}
 	
 	@Override
 	public Void visit(SVFunc node) throws Exception {
 		node.getArgument().accept(this);
+		node.getFuncDef().accept(this);
 		return null;
 	}
 	
 	@Override
-	public Void visit(UserFunc node) throws Exception {
-		visit((MVFunc)node);
-		
-		UserFuncDef definition = node.getUserFuncDef();
-		
+	public Void visit(UserFuncDef node) throws Exception {
 		write(ByteCodes.CALL);
-		int pStackSize = definition.getProgram().getStackSize();
-		int nargs = definition.getSignature().getParameters().size();
+		int pStackSize = node.getProgram().getStackSize();
 		push(pStackSize);
-		pop(pStackSize + nargs - 1);
+		pop(pStackSize);
 		
 		Integer offset = functionMap.get(this);
 		if (offset == null) {
@@ -332,157 +329,126 @@ public class Compile extends Visitor {
 			}
 		}
 		write(offset);
-
 		return null;
 	}
 	
 	@Override
-	public Void visit(Min node) throws Exception {
-		visit((MVFunc)node);
+	public Void visit(MinDefinition node) throws Exception {
 		write(ByteCodes.MIN);
-		pop();
 		return null;
 	}
 	
 	@Override
-	public Void visit(Max node) throws Exception {
-		visit((MVFunc)node);
+	public Void visit(MaxDefinition node) throws Exception {
 		write(ByteCodes.MAX);
-		pop();
 		return null;
 	}
 	
 	@Override
-	public Void visit(Floor node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(FloorDefinition node) throws Exception {
 		write(ByteCodes.FLOOR);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Ceil node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(CeilDefinition node) throws Exception {
 		write(ByteCodes.CEIL);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Sqrt node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(SqrtDefinition node) throws Exception {
 		write(ByteCodes.SQRT);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Abs node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(AbsDefinition node) throws Exception {
 		write(ByteCodes.ABS);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Log node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(LogDefinition node) throws Exception {
 		write(ByteCodes.LOG);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Exp node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(ExpDefinition node) throws Exception {
 		write(ByteCodes.EXP);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Sinh node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(SinhDefinition node) throws Exception {
 		write(ByteCodes.SINH);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Cosh node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(CoshDefinition node) throws Exception {
 		write(ByteCodes.COSH);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Tanh node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(TanhDefinition node) throws Exception {
 		write(ByteCodes.TANH);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Sin node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(SinDefinition node) throws Exception {
 		write(ByteCodes.SIN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Cos node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(CosDefinition node) throws Exception {
 		write(ByteCodes.COS);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Tan node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(TanDefinition node) throws Exception {
 		write(ByteCodes.TAN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Asin node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(AsinDefinition node) throws Exception {
 		write(ByteCodes.ASIN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Acos node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(AcosDefinition node) throws Exception {
 		write(ByteCodes.ACOS);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Atan node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(AtanDefinition node) throws Exception {
 		write(ByteCodes.ATAN);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Erf node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(ErfDefinition node) throws Exception {
 		write(ByteCodes.ERF);
 		return null;
 	}
 	
 	@Override
-	public Void visit(Gamma node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(GammaDefinition node) throws Exception {
 		write(ByteCodes.GAMMA);
 		return null;
 	}
 	
 	@Override
-	public Void visit(LogGamma node) throws Exception {
-		visit((SVFunc)node);
+	public Void visit(LogGammaDefinition node) throws Exception {
 		write(ByteCodes.LOGGAMMA);
-		return null;
-	}
-	
-	@Override
-	public Void visit(LogBeta node) throws Exception {
-		visit((MVFunc)node);
-		write(ByteCodes.LOGBETA);
-		pop();
 		return null;
 	}
 }
