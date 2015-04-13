@@ -12,18 +12,10 @@ public class Parser {
 	
 	private Node result;
 	
-	private List<Object> mem;
-	
 	public Parser(Lexer lex) {
 		this.lex = lex;
 		nextToken();
 		this.result = Null.NULL;
-		this.mem = new ArrayList<Object>();
-	}
-	
-	private boolean push(Object node) {
-		mem.add(node);
-		return true;
 	}
 	
 	public Token nextToken() {
@@ -59,26 +51,6 @@ public class Parser {
 			return expr();
 		}
 	}
-	
-	private boolean identifier() {
-		push(tok.token);
-		return token(ID);
-	}
-	
-	public boolean def() {
-		return identifier() && params() && token(EQ) && expr(); 
-	}
-	
-	public boolean params() {
-		return token(LPAR) && token(ID) && idlist() && token(RPAR); 
-	}
-	
-	public boolean idlist() {
-		if (token(COMMA)) {
-			return token(ID) && idlist();
-		}
-		return true;
-	}
 
 	public boolean definition() {
 		if (!match(ID))
@@ -88,25 +60,20 @@ public class Parser {
 		nextToken();
 		
 		Signature sig = null;
-		if (match(LPAR)) {
-			nextToken();
-			
+		if (token(LPAR)) {
 			List<Var> params = new ArrayList<Var>();
-			while (match(ID)) {
-				params.add(new Var(tok.toString()));
-				nextToken();
-				if (match(RPAR)) {
-					nextToken();
-					sig = new Signature(id, params);
-					break;
-				}
-				else if (match(COMMA)) {
-					nextToken();
-				}
-				else {
+			do {
+				if (!match(ID))
 					return false;
-				}
+				params.add(new Var(tok.token));
+				nextToken();
 			}
+			while (token(COMMA));
+			
+			if (!token(RPAR)) 
+				return false;
+			
+			sig = new Signature(id, params);
 		}
 		
 		if (!(token(EQ) && expr()))
@@ -145,20 +112,17 @@ public class Parser {
 			return false;
 			
 		List<Var> params = new ArrayList<Var>();
-		while (match(ID)) {
-			params.add(new Var(tok.toString()));
-			nextToken();
-			if (token(RPAR)) {
-				sig = new Signature(id, params);
-				break;
-			}
-			else if (match(COMMA)) {
-				nextToken();
-			}
-			else {
+		do {
+			if (!match(ID))
 				return false;
-			}
+			params.add(new Var(tok.token));
+			nextToken();
 		}
+		while (token(COMMA));
+		if (!token(RPAR)) 
+			return false;
+		
+		sig = new Signature(id, params);
 		
 		if (!(token(EQ) && expr()))
 			return false;
@@ -191,19 +155,19 @@ public class Parser {
 			Expr last = (Expr) result;
 			switch (tok.type) {
 			case MUL:
-				token(MUL);
+				nextToken();
 				if (!prefix())
 					return false;
 				result = new Mul(last, (Expr) result);
 				break;
 			case DIV:
-				token(DIV);
+				nextToken();
 				if (!prefix())
 					return false;
 				result = new Div(last, (Expr) result);
 				break;
 			case MOD:
-				token(MOD);
+				nextToken();
 				if (!prefix())
 					return false;
 				result = new Mod(last, (Expr) result);
@@ -232,17 +196,13 @@ public class Parser {
 	public boolean postfixrest() {
 		switch (tok.type) {
 		case EXC:
-			token(EXC);
-			if (!postfixrest())
-				return false;
+			nextToken();
 			result = new Factorial((Expr) result);
-			return true;
+			return postfixrest();
 		case D2R:
-			token(D2R);
-			if (!postfixrest())
-				return false;
+			nextToken();
 			result = new DegToRad((Expr) result);
-			return true;
+			return postfixrest();
 		default:
 			return true;
 		}
@@ -280,17 +240,15 @@ public class Parser {
 			nextToken();
 			
 			List<Expr> args = new ArrayList<Expr>();
-			while (expr()) {
-				args.add((Expr) result);
-				if (token(RPAR)) {
-					result = new Call(id, args);
-					return true;
-				}
-				if (!token(COMMA))
+			do {
+				if (!expr())
 					return false;
+				args.add((Expr) result);
 			}
-
-			return false;
+			while (token(COMMA));
+			
+			result = new Call(id, args);
+			return token(RPAR);
 		
 		case LPAR:
 			nextToken();

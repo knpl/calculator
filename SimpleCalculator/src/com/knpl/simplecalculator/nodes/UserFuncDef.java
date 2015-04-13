@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.knpl.simplecalculator.nodes.*;
 import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
@@ -38,20 +37,6 @@ public class UserFuncDef extends FuncDef {
 		this.expression = funcDefNode.getExpression();
 		this.program = null;
 	}
-	
-//	@Override
-//	public MVFunc createFunction(Call call) throws Exception {
-//		if (!call.match(sig))
-//			throw new Exception("Signature mismatch");
-//		return new UserFunc(this, call.getArguments());
-//	}
-//	
-//	@Override
-//	public MVFunc createFunction(Signature sig, List<Expr> args) throws Exception {
-//		if (!this.sig.match(sig))
-//			throw new Exception("Signature mismatch");
-//		return new UserFunc(this, args);
-//	}
 	
 	public Expr getExpression() {
 		return expression;
