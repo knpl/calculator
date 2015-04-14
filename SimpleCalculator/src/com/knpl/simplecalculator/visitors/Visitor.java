@@ -185,15 +185,15 @@ public class Visitor {
 		return visit((Expr) node);
 	}
 	
-	public Object visit(Pi node) throws Exception {
+	public Object visit(PiDef node) throws Exception {
 		return visit((ConstDef) node);
 	}
 	
-	public Object visit(Euler node) throws Exception {
+	public Object visit(EDef node) throws Exception {
 		return visit((ConstDef) node);
 	}
 	
-	public Object visit(Im node) throws Exception {
+	public Object visit(IDef node) throws Exception {
 		return visit((ConstDef) node);
 	}
 	

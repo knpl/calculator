@@ -5,6 +5,11 @@
       tools:context="com.knpl.simplecalculator.SimpleCalculatorActivity" >
     
     <item
+        android:id="@+id/action_clear"
+        android:title="@string/action_clear"
+        app:showAsAction="ifRoom" />
+    
+    <item
         android:id="@+id/action_plot"
         android:title="@string/action_plot"
         android:icon="@drawable/ic_action_picture"

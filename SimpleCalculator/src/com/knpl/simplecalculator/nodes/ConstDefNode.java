@@ -45,7 +45,7 @@ public class ConstDefNode extends Node {
 		PrettyPrint pp = new PrettyPrint();
 		accept(pp);
 		
-		if (defs.putConstDef(new UserConstDef(name, expression, pp.toString())))
+		if (defs.putUserConstDef(new UserConstDef(name, expression, pp.toString())))
 			calculator.print("defined constant "+name);
 		else
 			calculator.print("constant "+name+" already defined");

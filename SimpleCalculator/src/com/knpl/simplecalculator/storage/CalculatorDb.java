@@ -75,22 +75,18 @@ public class CalculatorDb {
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		Cursor cursor = db.query(
 				 UFDColumns.TABLE_NAME, 
-				 projection,
-				 null,
-				 null, 
-				 null, 
-				 null, 
-				 null);
+				 projection, null, null, null, null, null);
 		
 		Globals defs = Globals.getInstance();
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			try {
-				String description = cursor.getString(cursor.getColumnIndexOrThrow(UFDColumns.COLUMN_NAME_UFD_DESC));
+				String description = cursor.getString(
+						cursor.getColumnIndexOrThrow(UFDColumns.COLUMN_NAME_UFD_DESC));
 				Parser parser = new Parser(new Lexer(description));
 				if (parser.funcDef()) {
-					UserFuncDef ufd = new UserFuncDef((FuncDefNode)parser.getResult());
-					defs.putFuncDef(ufd);
+					defs.putUserFuncDef(
+						new UserFuncDef((FuncDefNode)parser.getResult()));
 				}
 			}
 			catch (Exception ex) {
@@ -108,22 +104,18 @@ public class CalculatorDb {
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		Cursor cursor = db.query(
 				 UCDColumns.TABLE_NAME, 
-				 projection,
-				 null,
-				 null, 
-				 null, 
-				 null, 
-				 null);
+				 projection, null, null, null, null, null);
 		
 		Globals defs = Globals.getInstance();
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			try {
-				String description = cursor.getString(cursor.getColumnIndexOrThrow(UCDColumns.COLUMN_NAME_UCD_DESC));
+				String description = cursor.getString(
+						cursor.getColumnIndexOrThrow(UCDColumns.COLUMN_NAME_UCD_DESC));
 				Parser parser = new Parser(new Lexer(description));
 				if (parser.constDef()) {
-					UserConstDef ucd = new UserConstDef((ConstDefNode)parser.getResult());
-					defs.putConstDef(ucd);
+					defs.putUserConstDef(
+						new UserConstDef((ConstDefNode)parser.getResult()));
 				}
 			}
 			catch (Exception ex) {
@@ -147,12 +139,7 @@ public class CalculatorDb {
 		
 		Cursor cursor = db.query(
 				 UFDColumns.TABLE_NAME, 
-				 projection,
-				 null,
-				 null, 
-				 null, 
-				 null, 
-				 null);
+				 projection, null, null, null, null, null);
 		
 		long id;
 		String name;
@@ -179,12 +166,7 @@ public class CalculatorDb {
 		
 		cursor = db.query(
 				 UCDColumns.TABLE_NAME, 
-				 projection2,
-				 null,
-				 null, 
-				 null, 
-				 null, 
-				 null);
+				 projection2, null, null, null, null, null);
 		
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {

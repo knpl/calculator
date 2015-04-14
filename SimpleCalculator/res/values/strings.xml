@@ -13,6 +13,7 @@
     <string name="drawerClose">Closed</string>
     
     <string name="action_plot">Plot</string>
+    <string name="action_clear">Clear</string>
     <string name="action_new_function">New function</string>
     
     <string name="function_dialog_title">New function</string>

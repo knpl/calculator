@@ -18,7 +18,7 @@
 	        />
 		    
 	    <EditText
-	        android:id="@+id/dialog_expression"
+	        android:id="@+id/input_definition"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:hint="expression"

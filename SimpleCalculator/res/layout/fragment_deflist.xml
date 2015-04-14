@@ -11,7 +11,7 @@
 	    android:padding="16dp" >
 	    
 	    <EditText
-	        android:id="@+id/dialog_expression"
+	        android:id="@+id/input_definition"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"

@@ -24,7 +24,7 @@ public class FuncDefNode extends Node {
 		UserFuncDef ufd = new UserFuncDef(this);
 		ufd.compile();
 		
-		defs.putFuncDef(ufd);
+		defs.putUserFuncDef(ufd);
 		
 		calculator.print(""+ufd.getProgram());
 	}

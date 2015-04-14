@@ -10,6 +10,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
+import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.util.Pair;
 
@@ -100,7 +101,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
         };
         drawerLayout.setDrawerListener(drawerToggle);
         
-        
+        CalculatorDb.listUserDefs();
         
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

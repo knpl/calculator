@@ -5,12 +5,10 @@ import java.util.List;
 import afzkl.development.colorpickerview.dialog.ColorPickerDialog;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,6 +36,14 @@ import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.util.Program;
 
 public class PlotMenuFragment extends ListFragment {
+	
+	public static final int[] colors = {
+		0xFFFF0000, 0xFF00FF00, 0xFF0000FF, /* Red, Green, Blue */
+		0xFF00FFFF, 0xFFFF00FF, 0xFFFFFF00, /* Cyan, Magenta, Yellow */
+		0xFFFFA500, 0xFF7171C6, 0xFF228B22, /* Orange, Slateblue, Forestgreen */
+		0xFF9ACD32, 0xFF4B0082, 0xFF8A2BE2, /* Olivedrab, Indigo, Blueviolet */
+		0xFFFFD700, 0xFFFF6347, 0xFFFA8072  /* Gold, Tomato, Salmon */
+	};
 	
 	public static class PlotEntry {
 		public final UserFuncDef userFuncDef;
@@ -63,11 +70,15 @@ public class PlotMenuFragment extends ListFragment {
 	private ImageView colorIndicator;
 	private int color;
 	
+	private PlotEntryAdapter adapter;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.fragment_plotmenu, container, false);
+		adapter = new PlotEntryAdapter(activity, plotEntries);
+		setListAdapter(adapter);
 		
 		colorIndicator = (ImageView) view.findViewById(R.id.color_indicator);
 		colorIndicator.setOnClickListener(new View.OnClickListener() {
@@ -76,11 +87,7 @@ public class PlotMenuFragment extends ListFragment {
 				colorPickerDialog.show();
 			}
 		});
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		int color = prefs.getBoolean("pref_key_dark_background", false) ? Color.WHITE : Color.BLACK;
-		setColor(color);
-		
+		setColor(randomColor());
 		colorPickerDialog = createColorPickerDialog();
 		
 		input = (EditText) view.findViewById(R.id.expression);
@@ -96,11 +103,6 @@ public class PlotMenuFragment extends ListFragment {
 		input.setSelection(input.length());
 		
 		return view;
-	}
-	
-	public void setColor(int color) {
-		colorIndicator.getBackground().setColorFilter(color, Mode.MULTIPLY);
-		this.color = color;
 	}
 
 	@Override
@@ -129,8 +131,17 @@ public class PlotMenuFragment extends ListFragment {
 		super.onListItemClick(l, v, position, id);
 	}
 	
+	public void setColor(int color) {
+		this.color = color;
+		colorIndicator.getBackground().setColorFilter(color, Mode.MULTIPLY);
+	}
+	
+	public int randomColor() {
+		return colors[(int)Math.round(Math.random()*(colors.length - 1))];
+	}
+	
 	public void edit(int position) {
-		PlotEntry entry = (PlotEntry) getListAdapter().getItem(position);
+		PlotEntry entry = adapter.getItem(position);
 		setColor(entry.color);
 		input.setText(entry.userFuncDef.getDescription());
 		input.setSelection(input.length());
@@ -138,20 +149,14 @@ public class PlotMenuFragment extends ListFragment {
 		remove(position);
 	}
 	
-	public void add(PlotEntry entry) {
-		plotEntries.add(entry);
-		((PlotEntryAdapter) getListAdapter()).notifyDataSetChanged();
-	}
-	
 	public void remove(int position) {
-		plotEntries.remove(position);
-		((PlotEntryAdapter) getListAdapter()).notifyDataSetChanged();
+		adapter.remove(adapter.getItem(position));
 	}
 	
 	private ColorPickerDialog createColorPickerDialog() {
 		final ColorPickerDialog dialog = new ColorPickerDialog(activity, color);
 		
-		dialog.setAlphaSliderVisible(true);
+		dialog.setAlphaSliderVisible(false);
 		dialog.setTitle("Pick a Color");
 		dialog.setButton(DialogInterface.BUTTON_POSITIVE,
 				getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -199,7 +204,10 @@ public class PlotMenuFragment extends ListFragment {
 			return;
 		}
 		
-		add(new PlotEntry(userFuncDef, color));
+		adapter.add(new PlotEntry(userFuncDef, color));
+		input.setText("f(x) = ");
+		input.setSelection(input.length());
+		setColor(randomColor());
 	}
 	
 	private void compileAndPlot() {
@@ -227,11 +235,12 @@ public class PlotMenuFragment extends ListFragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		
+		case R.id.action_clear:
+			adapter.clear();
+			break;
 		case R.id.action_plot:
 			compileAndPlot();
 			break;
-			
 		default:
 			;
 		}
@@ -245,15 +254,57 @@ public class PlotMenuFragment extends ListFragment {
 			throw new ClassCastException(activity.toString()
 					+ " must implement SimpleCalculatorActivity");
 		}
-		
 		this.activity = (SimpleCalculatorActivity) activity;
-		setListAdapter(new PlotEntryAdapter(activity, plotEntries));
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		activity = null;
+	}
+	
+	public class PlotEntryAdapter extends ArrayAdapter<PlotEntry> {
+		
+		private class ViewHolder {
+			public final TextView tv;
+			public final ImageView iv;
+			
+			public ViewHolder(TextView tv, ImageView iv) {
+				this.tv = tv;
+				this.iv = iv;
+			}
+		}
+		
+		public PlotEntryAdapter(Context context, List<PlotEntry> plotEntries) {
+			super(context, R.layout.plotentry_row_layout, plotEntries);
+		}
+		
+		@Override
+		public PlotEntry getItem(int position) {
+			return super.getItem((getCount()-1) - position);
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				convertView = inflater.inflate(R.layout.plotentry_row_layout, parent, false);
+				
+				ViewHolder viewHolder = new ViewHolder(
+						(TextView) convertView.findViewById(R.id.name),
+						(ImageView) convertView.findViewById(R.id.color));
+				
+				convertView.setTag(viewHolder);
+			}
+			
+			ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+			
+			PlotEntry item = getItem(position);
+			viewHolder.iv.getBackground().setColorFilter(item.color, Mode.MULTIPLY);
+			viewHolder.tv.setText(item.toString());
+			
+			return convertView;
+		}
 	}
 }
 
