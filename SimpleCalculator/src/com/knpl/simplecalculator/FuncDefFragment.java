@@ -1,7 +1,6 @@
 package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
-
 import com.knpl.simplecalculator.nodes.FuncDefNode;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
 import com.knpl.simplecalculator.parser.Lexer;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 public class FuncDefFragment extends ListFragment {
 	private SimpleCalculatorActivity activity;
 	private ArrayAdapter<UserFuncDef> adapter;
-	
 	private EditText input;
 
 	@Override
@@ -36,8 +34,8 @@ public class FuncDefFragment extends ListFragment {
 		View view = inflater.inflate(R.layout.fragment_deflist, container, false);
 		
 		Globals defs = Globals.getInstance();
-		ArrayList<UserFuncDef> userFuncDefs = new ArrayList<UserFuncDef>(
-			defs.getUserFuncDefMap().values());
+		ArrayList<UserFuncDef> userFuncDefs =
+				new ArrayList<UserFuncDef>(defs.getUserFuncDefs());
 		adapter = new ArrayAdapter<UserFuncDef>(getActivity(), 
 			android.R.layout.simple_list_item_1, userFuncDefs);
 		setListAdapter(adapter);

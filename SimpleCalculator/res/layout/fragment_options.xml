@@ -21,15 +21,14 @@
 	    <TextView 
 	   	    android:layout_width="wrap_content"
 	   	    android:layout_height="wrap_content"
-	   	    android:textSize="20dp"
-	   	    android:text="x-axis"/>
+	   	    android:textSize="20sp"
+	   	    android:text="@string/string_x_axis" />
 	    
 	    <Spinner
 	        android:id="@+id/xType"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_margin="10dp"
-	         />
+	        android:layout_margin="10dp" />
 	        
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -43,7 +42,7 @@
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:layout_margin="10dp"
-				android:hint="xmin"
+				android:hint="@string/string_from"
 				android:inputType="textNoSuggestions" />
 	       	
 	       	<EditText
@@ -52,25 +51,24 @@
 	       	    android:layout_height="wrap_content"
 	       	    android:layout_weight="1"
 	       	    android:layout_margin="10dp"
-	       	    android:hint="xmax"
+	       	    android:hint="@string/string_to"
 	       	    android:inputType="textNoSuggestions" />
 	        
 	    </LinearLayout>
 	    <!-- End X axis section -->
 	    
+	    <!-- Y axis section -->
 	    <TextView 
 	   	    android:layout_width="wrap_content"
 	   	    android:layout_height="wrap_content"
-	   	    android:textSize="20dp"
-	   	    android:text="y-axis"/>
+	   	    android:textSize="20sp"
+	   	    android:text="@string/string_y_axis"/>
 	    
-	    <!-- Y axis section -->
 	    <Spinner
-		        android:id="@+id/yType"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_margin="10dp"
-		         />
+	        android:id="@+id/yType"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10dp" />
 	    
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -83,8 +81,7 @@
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:layout_margin="10dp"
-				android:hint="ymin"
-				android:inputType="textNoSuggestions" />
+				android:hint="@string/string_from" />
 	       	
 	       	<EditText
 	       	    android:id="@+id/yMax"
@@ -92,17 +89,47 @@
 	       	    android:layout_height="wrap_content"
 	       	    android:layout_weight="1"
 	       	    android:layout_margin="10dp"
-	       	    android:hint="ymax"
-	       	    android:inputType="textNoSuggestions" />
+	       	    android:hint="@string/string_to" />
 	        
 	    </LinearLayout>
-	    <!-- End X axis section -->
+	    <!-- End Y axis section -->
+	    
+	    <TextView 
+	   	    android:layout_width="wrap_content"
+	   	    android:layout_height="wrap_content"
+	   	    android:textSize="20sp"
+	   	    android:text="@string/string_theta_axis"/>
+	    
+	    <!-- angle section -->
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	        
+	       	<EditText
+				android:id="@+id/thetaMin"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layout_margin="10dp"
+				android:hint="@string/string_from" />
+	       	
+	       	<EditText
+	       	    android:id="@+id/thetaMax"
+	       	    android:layout_width="0dp"
+	       	    android:layout_height="wrap_content"
+	       	    android:layout_weight="1"
+	       	    android:layout_margin="10dp"
+	       	    android:hint="@string/string_to" />
+	        
+	    </LinearLayout>
+	    <!-- End angle section -->
 	    
 	    <Button
 	        android:id="@+id/apply"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Apply" />
+	        android:text="@string/string_save" />
 
 	</LinearLayout>
 </ScrollView>

@@ -9,6 +9,13 @@
     <string name="output">Press enter for answer.</string>
     <string name="title_activity_display_plot">Plot</string>
     
+    <string name="string_from">from</string>
+    <string name="string_to">to</string>
+    <string name="string_x_axis">x-axis</string>
+    <string name="string_y_axis">y-axis</string>
+    <string name="string_theta_axis">\u03B8-axis</string>
+    <string name="string_save">save</string>
+    
     <string name="drawerOpen">Opened</string>
     <string name="drawerClose">Closed</string>
     

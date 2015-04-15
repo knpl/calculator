@@ -1,7 +1,6 @@
 package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
-
 import com.knpl.simplecalculator.nodes.ConstDefNode;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 public class ConstDefFragment extends ListFragment {
 	private SimpleCalculatorActivity activity;
 	private ArrayAdapter<UserConstDef> adapter;
-	
 	private EditText input;
 
 	@Override
@@ -36,8 +34,8 @@ public class ConstDefFragment extends ListFragment {
 		View view = inflater.inflate(R.layout.fragment_deflist, container, false);
 		
 		Globals defs = Globals.getInstance();
-		ArrayList<UserConstDef> userConstDefs = new ArrayList<UserConstDef>(
-			defs.getUserConstDefMap().values());
+		ArrayList<UserConstDef> userConstDefs =
+				new ArrayList<UserConstDef>(defs.getUserConstDefs());
 		adapter = new ArrayAdapter<UserConstDef>(getActivity(), 
 			android.R.layout.simple_list_item_1, userConstDefs);
 		setListAdapter(adapter);

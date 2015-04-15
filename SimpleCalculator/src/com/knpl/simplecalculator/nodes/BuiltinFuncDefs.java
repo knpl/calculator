@@ -10,8 +10,7 @@ import com.knpl.simplecalculator.visitors.Visitor;
 
 public class BuiltinFuncDefs {
 	
-	public static final FuncDef builtinFuncDefs[] = 
-	{
+	public static final FuncDef builtinFuncDefs[] = {
 		new MinDef(), new MaxDef(),
 		new CeilDef(), new FloorDef(),
 		new SqrtDef(), new AbsDef(),
@@ -38,11 +37,11 @@ public class BuiltinFuncDefs {
 		public Complex complexEvaluate(List<Complex> args) throws Exception {
 			Complex a = args.get(0);
 			if (a.im() != 0.0) {
-				throw new Exception("min only defined for real numbers");
+				throw new Exception("min undefined for complex arguments.");
 			}
 			Complex b = args.get(1);
 			if (b.im() != 0.0) {
-				throw new Exception("min only defined for real numbers");
+				throw new Exception("min undefined for complex arguments.");
 			}
 			return (b.re() < a.re()) ? b : a;
 		}
@@ -74,11 +73,11 @@ public class BuiltinFuncDefs {
 		public Complex complexEvaluate(List<Complex> args) throws Exception {
 			Complex a = args.get(0);
 			if (a.im() != 0.0) {
-				throw new Exception("max only defined for real numbers");
+				throw new Exception("max undefined for complex arguments.");
 			}
 			Complex b = args.get(1);
 			if (b.im() != 0.0) {
-				throw new Exception("max only defined for real numbers");
+				throw new Exception("max undefined for complex arguments.");
 			}
 			return (b.re() > a.re()) ? b : a;
 		}
@@ -109,7 +108,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("floor only defined for real numbers");
+				throw new Exception("function floor undefined for complex arguments.");
 			}
 			return z.setRe(Math.floor(z.re()));
 		}
@@ -141,7 +140,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("ceil only defined for real numbers");
+				throw new Exception("function ceil undefined for complex arguments.");
 			}
 			return z.setRe(Math.ceil(z.re()));
 		}
@@ -565,7 +564,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("Complex erf not supported");
+				throw new Exception("Complex erf not supported.");
 			}
 			return z.setRe(Erf.erf(z.re()));
 		}
@@ -596,7 +595,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("Complex gamma not supported");
+				throw new Exception("Complex gamma not supported.");
 			}
 			return z.setRe(Gamma.gamma(z.re()));
 		}
@@ -627,7 +626,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("loggamma only defined for real numbers");
+				throw new Exception("Complex loggamma not supported.");
 			}
 			return z.setRe(Gamma.logGamma(z.re()));
 		}

@@ -8,25 +8,25 @@
 	    <CheckBoxPreference
 	        android:key="pref_key_extend_window"
 	        android:title="Extend plotwindow"
-	        android:summary="Let the current plotwindow occupy a square region in the center of the screen."
+	        android:summary="Make plotwindow occupy a square region in the center of the screen."
 	        android:defaultValue="true" />
 	    
 	    <CheckBoxPreference
 	        android:key="pref_key_extend_grid"
 	        android:title="Display grid"
-	        android:summary="Displays gridlines on plotwindow."
+	        android:summary="Displays a grid on the plotwindow."
 	        android:defaultValue="true" />
 	    
 	    <CheckBoxPreference
 	        android:key="pref_key_dark_background"
 	        android:title="Dark background"
-	        android:summary="Color plot background dark gray"
+	        android:summary="Color plot background black."
 	        android:defaultValue="false" />
 	    
 	    <com.knpl.simplecalculator.RangePreference
 	        android:key="pref_key_line_thickness"
 	        android:title="Plotted line thickness"
-	        android:summary="Plotted lines are currently 1 pixels wide"
+	        android:summary="Plotted lines are currently 1 pixels wide."
 	        android:defaultValue="1"
 	        knpl:min="1"
 	        knpl:max="10"

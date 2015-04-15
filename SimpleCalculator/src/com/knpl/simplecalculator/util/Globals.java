@@ -1,5 +1,7 @@
 package com.knpl.simplecalculator.util;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,20 +50,20 @@ public class Globals {
 		}
 	}
 	
-	public Map<String, FuncDef> getFuncDefMap() {
-		return funcDefMap;
+	public Collection<UserFuncDef> getUserFuncDefs() {
+		return Collections.unmodifiableCollection(userFuncDefMap.values());
 	}
 	
-	public Map<String, ConstDef> getConstDefMap() {
-		return constDefMap;
+	public Collection<UserConstDef> getUserConstDefs() {
+		return Collections.unmodifiableCollection(userConstDefMap.values());
 	}
 	
-	public Map<String, UserFuncDef> getUserFuncDefMap() {
-		return userFuncDefMap;
+	public Collection<FuncDef> getBuiltinFuncDefs() {
+		return Collections.unmodifiableCollection(funcDefMap.values());
 	}
 	
-	public Map<String, UserConstDef> getUserConstDefMap() {
-		return userConstDefMap;
+	public Collection<ConstDef> getBuiltinConstDefs() {
+		return Collections.unmodifiableCollection(constDefMap.values());
 	}
 	
 	public ConstDef getConstDef(String id) {

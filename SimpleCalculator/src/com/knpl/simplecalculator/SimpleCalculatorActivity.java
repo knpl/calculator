@@ -40,9 +40,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
-public class SimpleCalculatorActivity extends ActionBarActivity
-	implements PlotOptionsFragment.OptionsListener
-{
+public class SimpleCalculatorActivity extends ActionBarActivity {
 	
 	public static final String packagePrefix = "com.knpl.simplecalculator.";
 	
@@ -60,7 +58,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	public static final Range DEFAULT_AXIS = new Range(-5, 5);
 	
 	private static Range xaxis = DEFAULT_AXIS,
-						yaxis = DEFAULT_AXIS;
+						 yaxis = DEFAULT_AXIS;
 	
 	private Fragment[] drawerFragments;
 	private String[] items;
@@ -163,27 +161,15 @@ public class SimpleCalculatorActivity extends ActionBarActivity
 	
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	if (keyCode == KeyEvent.KEYCODE_MENU) {
-    		if (drawerLayout.isDrawerOpen(drawerList))
-    			drawerLayout.closeDrawer(drawerList);
-    		else
-    			drawerLayout.openDrawer(drawerList);
-    		return true;
-    	}
-    	else if (keyCode == KeyEvent.KEYCODE_BACK) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK) {
     		if (keyboard.isKeyboardVisible()) 
     	        keyboard.hideKeyboard();
-	        else
-	        	finish();
-    		
 	        if (drawerLayout.isDrawerOpen(drawerList))
 				drawerLayout.closeDrawer(drawerList);
-	        
 	        return true;
     	}
-    	else {
-    		return super.onKeyDown(keyCode, event);
-    	}
+    	
+    	return super.onKeyDown(keyCode, event);
     }
     
     @Override
@@ -269,25 +255,19 @@ public class SimpleCalculatorActivity extends ActionBarActivity
     	output.setText(FormatUtils.format(d, ndecimals, BASE));
     }
     
-	@Override
 	public void setXAxis(Range x) {
 		xaxis = x;
 	}
 
-	@Override
 	public void setYAxis(Range y) {
 		yaxis = y;
 	}
-	
-	@Override 
+	 
 	public Range getXAxis() {
 		return xaxis;
 	}
 	
-	@Override
 	public Range getYAxis() {
 		return yaxis;
 	}
-	
-	
 }

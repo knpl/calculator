@@ -16,7 +16,7 @@ import android.widget.Spinner;
 
 public class PlotOptionsFragment extends Fragment {
 	
-	private OptionsListener listener;
+	private SimpleCalculatorActivity activity;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,30 +32,28 @@ public class PlotOptionsFragment extends Fragment {
 		yaxistype.setAdapter(adapter);
 		
 		Button apply = (Button) view.findViewById(R.id.apply);
-		apply.setOnClickListener(new OnClickListener() {
+		apply.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				apply();
 			}
 		});
 		
-		Range x = listener.getXAxis(),
-			 y = listener.getYAxis();
 		
 		EditText et;
 		et = (EditText) view.findViewById(R.id.xMin);
-		et.setText(""+x.min);
-		
+		activity.registerEditTextToKeyboard(et);
 		et = (EditText) view.findViewById(R.id.xMax);
-		et.setText(""+x.max);
-		
+		activity.registerEditTextToKeyboard(et);
 		et = (EditText) view.findViewById(R.id.yMin);
-		et.setText(""+y.min);
-		
+		activity.registerEditTextToKeyboard(et);
 		et = (EditText) view.findViewById(R.id.yMax);
-		et.setText(""+y.max);
-
-	
+		activity.registerEditTextToKeyboard(et);
+		et = (EditText) view.findViewById(R.id.thetaMin);
+		activity.registerEditTextToKeyboard(et);
+		et = (EditText) view.findViewById(R.id.thetaMax);
+		activity.registerEditTextToKeyboard(et);
+		
 		return view;
 	}
 	
@@ -87,8 +85,8 @@ public class PlotOptionsFragment extends Fragment {
 	public void apply() {
 		View v = getView();
 		
-		Range oldx = listener.getXAxis();
-		Range oldy = listener.getYAxis();
+		Range oldx = activity.getXAxis();
+		Range oldy = activity.getYAxis();
 		
 		float xmin = getNumber((EditText)v.findViewById(R.id.xMin)),
 			  xmax = getNumber((EditText)v.findViewById(R.id.xMax)),
@@ -100,8 +98,8 @@ public class PlotOptionsFragment extends Fragment {
 		if (!ok(ymin)) ymin = oldy.min;
 		if (!ok(ymax)) ymax = oldy.max;
 		
-		listener.setXAxis(getAxis((Spinner) v.findViewById(R.id.xType), xmin, xmax));
-		listener.setYAxis(getAxis((Spinner) v.findViewById(R.id.yType), ymin, ymax));
+		activity.setXAxis(getAxis((Spinner) v.findViewById(R.id.xType), xmin, xmax));
+		activity.setYAxis(getAxis((Spinner) v.findViewById(R.id.yType), ymin, ymax));
 	}
 	
 	public boolean ok(float x) {
@@ -111,24 +109,17 @@ public class PlotOptionsFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if (activity instanceof OptionsListener) {
-			listener = (OptionsListener) activity;
-		} else {
+		if (!(activity instanceof SimpleCalculatorActivity)) {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet OptionsFragment.OptionsListener");
+					+ " must implement SimpleCalculatorActivity.");
+			
 		}
+		this.activity = (SimpleCalculatorActivity) activity;
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		listener = null;
-	}
-	
-	public interface OptionsListener {
-		void setXAxis(Range x);
-		Range getXAxis();
-		void setYAxis(Range y);
-		Range getYAxis();
+		activity = null;
 	}
 }

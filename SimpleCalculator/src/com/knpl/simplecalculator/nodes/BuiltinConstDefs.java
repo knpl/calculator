@@ -4,10 +4,8 @@ import com.knpl.simplecalculator.visitors.Visitor;
 
 public class BuiltinConstDefs {
 	
-	public static final ConstDef[] builtinConstDefs = new ConstDef[] {
-		new PiDef(),
-		new EDef(),
-		new IDef()
+	public static final ConstDef[] builtinConstDefs = {
+		new PiDef(), new EDef(), new IDef()
 	};
 	
 	/* Constants */
