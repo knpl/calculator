@@ -1,18 +1,12 @@
 package com.knpl.simplecalculator.util;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.knpl.simplecalculator.nodes.BuiltinConstDefs;
 import com.knpl.simplecalculator.nodes.BuiltinFuncDefs;
-import com.knpl.simplecalculator.nodes.Expr;
-import com.knpl.simplecalculator.nodes.Func;
-import com.knpl.simplecalculator.nodes.Call;
 import com.knpl.simplecalculator.nodes.ConstDef;
 import com.knpl.simplecalculator.nodes.FuncDef;
-import com.knpl.simplecalculator.nodes.MVFunc;
-import com.knpl.simplecalculator.nodes.SVFunc;
 import com.knpl.simplecalculator.nodes.UserConstDef;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
 
@@ -68,20 +62,6 @@ public class Globals {
 	
 	public Map<String, UserConstDef> getUserConstDefMap() {
 		return userConstDefMap;
-	}
-	
-	public Func createFunction(Call call) throws Exception {
-		FuncDef def = funcDefMap.get(call.getName());
-		if (def == null)
-			throw new Exception("Function " + call.getName() + " undefined");
-		if (!call.match(def.getSignature()))
-			throw new Exception("Signature mismatch: "+ call.getName());
-		
-		List<Expr> args = call.getArguments();
-		if (args.size() == 1)
-			return new SVFunc(def, args.get(0));
-		else
-			return new MVFunc(def, args);
 	}
 	
 	public ConstDef getConstDef(String id) {

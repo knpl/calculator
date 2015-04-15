@@ -97,6 +97,14 @@ public class Visitor {
 		return visit((Node) node);
 	}
 	
+	public Object visit(SVFuncDef node) throws Exception {
+		return visit((FuncDef) node);
+	}
+	
+	public Object visit(MVFuncDef node) throws Exception {
+		return visit((FuncDef) node);
+	}
+	
 	public Object visit(UserFuncDef node) throws Exception {
 		return visit((FuncDef) node);
 	}

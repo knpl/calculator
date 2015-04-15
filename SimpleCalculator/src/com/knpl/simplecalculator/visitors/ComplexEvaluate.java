@@ -1,7 +1,6 @@
 package com.knpl.simplecalculator.visitors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.math3.special.Gamma;
 
 import com.knpl.simplecalculator.nodes.*;
-import com.knpl.simplecalculator.util.Globals;
 
 public class ComplexEvaluate extends Visitor {
 
@@ -106,21 +104,8 @@ public class ComplexEvaluate extends Visitor {
 	}
 	
 	@Override
-	public Complex visit(Call node) throws Exception {
-		FuncDef funcDef = Globals.getInstance().getFuncDef(node.getName());
-		List<Expr> arguments = node.getArguments();
-		List<Complex> args = new ArrayList<Complex>(arguments.size());
-		for (Expr arg : arguments) {
-			args.add((Complex) arg.accept(this));
-		}
-		return funcDef.complexEvaluate(args);
-	}
-	
-	@Override
 	public Complex visit(SVFunc node) throws Exception {
-		return node.getFuncDef().complexEvaluate(
-				Arrays.asList((Complex) node.getArgument().accept(this))
-		);
+		return node.getSVFuncDef().complexEvaluate((Complex) node.getArgument().accept(this));
 	}
 	
 	@Override
@@ -130,7 +115,7 @@ public class ComplexEvaluate extends Visitor {
 		for (Expr arg : arguments) {
 			args.add((Complex) arg.accept(this));
 		}
-		return node.getFuncDef().complexEvaluate(args);
+		return node.getMVFuncDef().complexEvaluate(args);
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import com.knpl.simplecalculator.visitors.Visitor;
 public class SVFunc extends Func {
 	protected Expr argument;
 	
-	public SVFunc(FuncDef definition, Expr argument) {
+	public SVFunc(SVFuncDef definition, Expr argument) {
 		super(definition);
 		this.argument = argument;
 	}
@@ -17,6 +17,10 @@ public class SVFunc extends Func {
 	public SVFunc setArgument(Expr argument) {
 		this.argument = argument;
 		return this;
+	}
+	
+	public SVFuncDef getSVFuncDef() {
+		return (SVFuncDef) definition;
 	}
 
 	@Override

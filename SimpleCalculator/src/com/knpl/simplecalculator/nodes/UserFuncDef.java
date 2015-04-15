@@ -12,14 +12,15 @@ import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public class UserFuncDef extends FuncDef {
+public class UserFuncDef extends MVFuncDef {
 	
-	private final Signature sig;
 	private final String description;
 	private final Expr expression;
 	private Program program;
 	
 	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
+		super(funcDefNode.getSignature());
+		
 		Resolve resolve = new Resolve();
 		funcDefNode.accept(resolve);
 		
@@ -31,9 +32,6 @@ public class UserFuncDef extends FuncDef {
 		PrettyPrint prettyPrint = new PrettyPrint();
 		funcDefNode.accept(prettyPrint);
 		this.description = prettyPrint.toString();
-		
-		
-		this.sig = funcDefNode.getSignature();
 		this.expression = funcDefNode.getExpression();
 		this.program = null;
 	}
@@ -45,11 +43,6 @@ public class UserFuncDef extends FuncDef {
 	@Override
 	public String getDescription() {
 		return description;
-	}
-
-	@Override
-	public Signature getSignature() {
-		return sig;
 	}
 	
 	public Program compile() throws Exception {

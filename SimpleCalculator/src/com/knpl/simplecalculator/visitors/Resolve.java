@@ -109,7 +109,17 @@ public class Resolve extends Visitor {
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this));
 		}
-		return Globals.getInstance().createFunction(node);
+		
+		FuncDef def = Globals.getInstance().getFuncDef(node.getName());
+		if (def == null)
+			throw new Exception("Function " + node.getName() + " undefined");
+		if (!node.match(def.getSignature()))
+			throw new Exception("Signature mismatch: "+ node.getName());
+		
+		if (def instanceof SVFuncDef)
+			return new SVFunc((SVFuncDef) def, arguments.get(0));
+		else
+			return new MVFunc((MVFuncDef) def, arguments);	
 	}
 	
 	@Override
