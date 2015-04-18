@@ -51,8 +51,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
 							CONSTDEF_FRAGMENT_POSITION = 4,
 							PREFERENCES_FRAGMENT_POSITION = 5;
 	
-	public static final int N_DECIMALS = 10,
-							BASE = 10;
+	public static final int N_DECIMALS = 10;
 	
 	public static final String EXTRA_MESSAGE = packagePrefix+"EXTRA_MESSAGE";
 	public static final Range DEFAULT_AXIS = new Range(-5, 5);
@@ -244,7 +243,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     	boolean polar = prefs.getBoolean("pref_key_complex_polar", false);
     	
     	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(z, ndecimals, BASE, polar));
+    	output.setText(FormatUtils.format(z, ndecimals, polar));
     }
     
     public void print(double d) {
@@ -252,7 +251,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     	int ndecimals = prefs.getInt(CalculatorPreferenceFragment.PREF_KEY_PRECISION, 10);
     	
     	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(d, ndecimals, BASE));
+    	output.setText(FormatUtils.format(d, ndecimals));
     }
     
 	public void setXAxis(Range x) {

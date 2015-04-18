@@ -14,7 +14,7 @@
 	        android:id="@+id/input_definition"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:hint="expression"
+	        android:hint="@string/string_enter_expression"
 	        android:inputType="textNoSuggestions" />
 	
 	</LinearLayout>

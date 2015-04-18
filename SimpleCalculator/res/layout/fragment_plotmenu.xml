@@ -15,7 +15,7 @@
 	       	android:layout_width="wrap_content"
 	       	android:layout_height="wrap_content"
 	       	android:background="@drawable/ic_color_indicator"
-	       	android:contentDescription="Selected color" />
+	       	android:contentDescription="@string/color_picker_content_description" />
 	    
 	    <EditText
 	        android:id="@+id/expression"
@@ -24,7 +24,7 @@
 	        android:layout_weight="1"
 	        android:layout_marginLeft="16dp"
 	        android:layout_marginRight="16dp"
-	        android:hint="enter definition" />
+	        android:hint="@string/string_enter_expression" />
 	
 	</LinearLayout>
 

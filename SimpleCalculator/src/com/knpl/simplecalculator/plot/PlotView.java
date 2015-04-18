@@ -321,7 +321,7 @@ public class PlotView extends View {
 			if (cur >= x.min && cur != 0f) {
 				if (grid)
 					c.drawLine(labelPos[0], 0, labelPos[0], height, lightLinePaint);
-				c.drawText(FormatUtils.format(x.viewToModel(cur), 3, 10),
+				c.drawText(FormatUtils.format(x.viewToModel(cur), 3),
 						   labelPos[0], labelPos[1] + yoffset, linePaint);
 			}
 			c.concat(translate);
@@ -362,7 +362,7 @@ public class PlotView extends View {
 			if (cur >= y.min && cur != 0f) {
 				if (grid)
 					c.drawLine(0, labelPos[1], width, labelPos[1], lightLinePaint);
-				c.drawText(FormatUtils.format(y.viewToModel(cur), 3, 10),
+				c.drawText(FormatUtils.format(y.viewToModel(cur), 3),
 						   labelPos[0] + xoffset, labelPos[1] + yoffset, linePaint);
 			}
 			c.concat(translate);

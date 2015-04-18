@@ -5,9 +5,6 @@ import java.util.Arrays;
 import com.knpl.simplecalculator.nodes.Complex;
 
 public class FormatUtils {
-	public static int flog(int base, double x) {
-		return (int) Math.floor(Math.log(x)/Math.log(base));
-	}
 	
 	public static String zeroes(int n) {
 		char[] zeroes = new char[n];
@@ -15,115 +12,120 @@ public class FormatUtils {
 		return new String(zeroes);
 	}
 	
-	public static String format(Complex z, int n, int base, boolean polar) {
-		if (polar) {
-			double mod = z.mod();
-			double arg = z.arg();
-
-			if (arg == 0.0) {
-				return format(mod, n, base);
-			}
-			else if (mod == 0.0) {
-				return "0";
-			}
-			else if (mod == 1.0) {
-				return "e^"+format(arg, n, base)+"*i";
-			}
-			else {
-				return format(mod, n, base) + "*e^" + format(arg, n, base)+"*i";
-			}
+	public static String format(Complex z, int n, boolean polar) {
+		return polar ? polarFormat(z, n) : cartesianFormat(z, n);
+	}
+	
+	public static String cartesianFormat(Complex z, int n) {
+		if (z.im() == 0.0) {
+			return format(z.re(), n);
+		}
+		else if (z.re() == 0.0) {
+			if (z.im() == 1.0)
+				return "i";
+			return format(z.im(), n)+"*i";
 		}
 		else {
-			// Cartesian coordinates
-			if (z.im() == 0.0) {
-				return format(z.re(), n, base);
-			}
-			else if (z.re() == 0.0) {
-				if (z.im() == 1.0)
-					return "i";
-				return format(z.im(), n, base)+"*i";
-			}
-			else {
-				String im = "";
-				if (z.im() != 1.0)
-					im = format(z.im(), n, base)+"*";
-				return format(z.re(), n, base) + " + " + im + "i";
-			}
+			String im = "";
+			if (z.im() != 1.0)
+				im = format(z.im(), n)+"*";
+			return format(z.re(), n) + " + " + im + "i";
 		}
 	}
 	
-	public static String format(double x, int n, int base) {
-		boolean sign = x < 0;
-		if (x == 0.0 || x == -0.0) {
+	public static String polarFormat(Complex z, int n) {
+		double mod = z.mod();
+		double arg = z.arg();
+
+		if (arg == 0.0) {
+			return format(mod, n);
+		}
+		else if (mod == 0.0) {
 			return "0";
 		}
-		if (Double.isNaN(x)) {
-			return "undefined";
-		}
-		if (Double.isInfinite(x)) {
-			return (sign ? "-" : "") + "\u221E";
-		}
-		x = Math.abs(x);
-		
-		// Get the n most significant digits of x and store them in frac.
-		// Round the least significant digit up.
-		int stop = flog(base, x);
-		int start = stop - n + 1;
-		long frac = (long) Math.round(x * Math.pow(base, -start));
-		
-		// Skip over trailing zeroes
-		long quo, rem;
-		while (true) {
-			rem = frac % base;
-			frac = frac / base;
-			if (rem != 0) {
-				break;
-			}
-			start += 1;
-		}
-		// This only occurs when frac was rounded up from 99...9 to 100...0 (in case base = 10)
-		if (start > stop) {
-			stop += 1;
-		}
-		
-		int len = stop - start + 1;
-		int decp = -1;
-		String prefix = "";
-		String postfix = "";
-		if (stop > n-1 || start < -n+1) {
-			if (start < stop) {
-				len += 1;
-				decp = 1;
-			}
-			postfix = "e"+stop;
-		}
-		else if (stop >= 0 && start < 0) {
-			len += 1; 
-			decp = stop + 1;
-		}
-		else if (stop < 0) {
-			prefix = "0."+zeroes(-stop-1);
-		}
-		else if (start >= 0) {
-			postfix = zeroes(start);
+		else if (mod == 1.0) {
+			return "e^("+format(arg, n)+" * i)";
 		}
 		else {
+			return format(mod, n) + " * e^(" + format(arg, n)+" * i)";
+		}
+	}
+	
+	public static String format(double x, int n) {
+		boolean sign = x < 0;
+		if (sign)
+			x = -x;
+		if (x == 0.0)
+			return "0";
+		if (Double.isNaN(x))
 			return "undefined";
+		if (Double.isInfinite(x))
+			return (sign ? "-" : "") + "\u221E";
+		
+		StringBuffer sb = new StringBuffer();
+		if (sign)
+			sb.append('-');
+		
+		// f is the order of the final printed digit.
+		// i is the order of the initial printed digit.
+		int f = (int) Math.floor(Math.log10(x));
+		int i = f - n + 1;
+		long frac = Math.round((x * Math.pow(10, -i)));
+		
+		// The n-digit approximation of x: x = frac * 10^f
+		
+		// Eliminate trailing zeroes.
+		while ((frac % 10) == 0) {
+			frac /= 10;
+			i += 1;
+		}
+		// This only happens when 9..9 is rounded to 10..0
+		if (i > f)
+			f += 1; 
+		
+		// The n-digit approximation of x is still: x = frac * 10^f
+		// Except that frac now does not have a single factor of 10 in it. 
+		
+		// exp is the value of the exponent of 10 in scientific notation.
+		// It only shows up when the number to format has a most significant 
+		// digit with order greater than n - 1 or smaller than -1. 
+		int exp = 0;
+		if (f > n - 1 || (i < 1 - n && f < -1)) {
+			exp = f;
+			i -= f;
+			f = 0;
+		}
+		else if (i > 0) {
+			frac *= (long)Math.pow(10, i);
+			i = 0;
+		}
+		else if (f < 0) {
+			f = 0;
 		}
 		
-		char[] buf = new char[len];
-		buf[len - 1] = (char) ('0' + rem);
-		for (int i = len - 2; i >= 0; i -= 1) {
-			quo = frac / base;
-			rem = frac % base;
-			frac = quo;
-			if (i == decp) {
-				buf[i] = '.';
-				i -= 1;
+		// Format number. Add a space every three orders of magnitude,
+		// and place a decimal point in the appropriate spot.
+		final int len = f - i + 1;
+		char[] buf = new char[len + len/3 + 3]; // On the safe side.
+		int p = buf.length - 1; // Position variable.
+		
+		long digit;
+		for (int k = i; k <= f; ++k) {
+			digit = frac % 10;
+			frac  = frac / 10;
+			if (k != i) {
+				if (k == 0)
+					buf[p--] = '.';
+				else if ((k % 3) == 0)
+					buf[p--] = ' ';
 			}
-			buf[i] = (char) ('0' + rem);
+			buf[p--] = (char) ('0' + digit);
 		}
-	
-		return (sign ? "-" : "") + prefix + new String(buf) + postfix;
+		p++;
+		
+		sb.append(buf, p, buf.length - p);
+		if (exp != 0)
+			sb.append(" E").append(exp);
+		return sb.toString();
 	}
 }

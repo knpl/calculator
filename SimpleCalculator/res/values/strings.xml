@@ -16,6 +16,8 @@
     <string name="string_theta_axis">\u03B8-axis</string>
     <string name="string_save">save</string>
     
+    <string name="string_enter_expression">Enter expression</string>
+    
     <string name="drawerOpen">Opened</string>
     <string name="drawerClose">Closed</string>
     
@@ -46,5 +48,6 @@
         <item>Logarithmic</item>
     </string-array>
   
-
+	<string  name="color_picker_content_description">Color selector</string>
+    
 </resources>

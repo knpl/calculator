@@ -108,7 +108,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("function floor undefined for complex arguments.");
+				throw new Exception("floor undefined for complex arguments.");
 			}
 			return z.setRe(Math.floor(z.re()));
 		}
@@ -140,7 +140,7 @@ public class BuiltinFuncDefs {
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
 			if (z.im() != 0.0) {
-				throw new Exception("function ceil undefined for complex arguments.");
+				throw new Exception("ceil undefined for complex arguments.");
 			}
 			return z.setRe(Math.ceil(z.re()));
 		}
