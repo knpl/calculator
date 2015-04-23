@@ -14,6 +14,20 @@
         android:title="@string/action_plot"
         android:icon="@drawable/ic_action_picture"
         app:showAsAction="ifRoom" />
-        
+    
+    <item
+        android:id="@+id/action_toggle_normal_mode"
+        android:title="@string/action_toggle_normal_mode"
+        app:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_toggle_parametric_mode"
+        android:title="@string/action_toggle_parametric_mode"
+        app:showAsAction="never" />
+    
+    <item
+        android:id="@+id/action_toggle_polar_mode"
+        android:title="@string/action_toggle_polar_mode"
+        app:showAsAction="never" />
 
 </menu>

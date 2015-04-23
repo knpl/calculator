@@ -6,10 +6,7 @@ import java.util.List;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.PlotView;
-import com.knpl.simplecalculator.util.Pair;
-
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +20,24 @@ public class PlotFragment extends Fragment {
 		 return initPlotFragment(v);
 	}
 	
-	public static PlotFragment createPlotFragment(ArrayList<Pair<Mapper, Integer>> mappers, Range x, Range y) {
+	@Override
+	public void onDestroyView() {
+		Bundle args = getArguments();
+		
+		@SuppressWarnings("unchecked")
+		final List<Mapper> paths = (List<Mapper>) args.getSerializable("paths");
+		for (Mapper path : paths) {
+			path.reset();
+		}
+		
+		super.onDestroyView();
+	}
+
+	public static PlotFragment createPlotFragment(ArrayList<Mapper> mappers, Range x, Range y) {
 		PlotFragment fragment = new PlotFragment();
 		Bundle args = new Bundle();
 		
-		args.putParcelableArrayList("paths", mappers);
+		args.putSerializable("paths", mappers);
 		args.putSerializable("xaxis", x);
 		args.putSerializable("yaxis", y);
 		fragment.setArguments(args);
@@ -38,15 +48,11 @@ public class PlotFragment extends Fragment {
 	public PlotView initPlotFragment(PlotView v) {
 		Bundle args = getArguments();
 		
-		// Avert your eyes.
 		@SuppressWarnings("unchecked")
-		final List<Pair<Mapper, Integer>> paths = 
-				(List<Pair<Mapper, Integer>>) 
-					(List<? extends Parcelable>) args.getParcelableArrayList("paths");	
+		final List<Mapper> paths = (List<Mapper>) args.getSerializable("paths");	
 		final Range x = (Range) args.getSerializable("xaxis");
 		final Range y = (Range) args.getSerializable("yaxis");
 		
 		return v.init(paths, x, y);
 	}
-	
 }

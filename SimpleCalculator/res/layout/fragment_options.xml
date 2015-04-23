@@ -14,8 +14,7 @@
 	    android:paddingBottom="@dimen/activity_vertical_margin"
 	    android:paddingLeft="@dimen/activity_horizontal_margin"
 	    android:paddingRight="@dimen/activity_horizontal_margin"
-	    android:paddingTop="@dimen/activity_vertical_margin"
-	    tools:context="com.knpl.simplecalculator.SimpleCalculatorActivity" >   
+	    android:paddingTop="@dimen/activity_vertical_margin" >   
 	    
 	    <!-- X axis section -->
 	    <TextView 
@@ -34,8 +33,7 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="horizontal" >
-	       	
-	        
+	       	    
 	       	<EditText
 				android:id="@+id/xMin"
 				android:layout_width="0dp"
@@ -43,6 +41,7 @@
 				android:layout_weight="1"
 				android:layout_margin="10dp"
 				android:hint="@string/string_from"
+				android:nextFocusRight="@+id/xMax"
 				android:inputType="textNoSuggestions" />
 	       	
 	       	<EditText
@@ -52,6 +51,8 @@
 	       	    android:layout_weight="1"
 	       	    android:layout_margin="10dp"
 	       	    android:hint="@string/string_to"
+	       	    android:nextFocusLeft="@+id/xMin"
+	       	    android:nextFocusRight="@+id/yMin"
 	       	    android:inputType="textNoSuggestions" />
 	        
 	    </LinearLayout>
@@ -81,6 +82,8 @@
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:layout_margin="10dp"
+				android:nextFocusLeft="@+id/xMax"
+				android:nextFocusRight="@+id/yMax"
 				android:hint="@string/string_from" />
 	       	
 	       	<EditText
@@ -89,41 +92,11 @@
 	       	    android:layout_height="wrap_content"
 	       	    android:layout_weight="1"
 	       	    android:layout_margin="10dp"
+	       	    android:nextFocusLeft="@+id/yMin"
 	       	    android:hint="@string/string_to" />
 	        
 	    </LinearLayout>
 	    <!-- End Y axis section -->
-	    
-	    <TextView 
-	   	    android:layout_width="wrap_content"
-	   	    android:layout_height="wrap_content"
-	   	    android:textSize="20sp"
-	   	    android:text="@string/string_theta_axis"/>
-	    
-	    <!-- angle section -->
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal" >
-	        
-	       	<EditText
-				android:id="@+id/thetaMin"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:layout_margin="10dp"
-				android:hint="@string/string_from" />
-	       	
-	       	<EditText
-	       	    android:id="@+id/thetaMax"
-	       	    android:layout_width="0dp"
-	       	    android:layout_height="wrap_content"
-	       	    android:layout_weight="1"
-	       	    android:layout_margin="10dp"
-	       	    android:hint="@string/string_to" />
-	        
-	    </LinearLayout>
-	    <!-- End angle section -->
 	    
 	    <Button
 	        android:id="@+id/apply"

@@ -18,10 +18,17 @@ public class ProgramMapper implements Mapper {
 	private float[] scratch;
 	private int scratchBound;
 	private int bufferIndex;
+	private int color;
 	private boolean initialized;
 	
-	public ProgramMapper(Program program) {
+	public ProgramMapper(Program program, int color) {
 		this.program = program;
+		this.color = color;
+		reset();
+	}
+
+	@Override
+	public void reset() {
 		range = null;
 		buffers = null;
 		scratch = null;
@@ -31,14 +38,14 @@ public class ProgramMapper implements Mapper {
 	}
 	
 	@Override
-	public void initialize() {
-		destruct();
+	public int getColor() {
+		return color;
 	}
 	
 	public void initialize(int buffersize, Range range) {
 		this.range = range;
-		buffers = new float[NBUFFERS][2*buffersize];
-		scratch = new float[4*buffersize];
+		buffers = new float[NBUFFERS][2 * buffersize];
+		scratch = new float[4 * buffersize];
 		scratchBound = 0;
 		bufferIndex = 1;
 		
@@ -57,14 +64,6 @@ public class ProgramMapper implements Mapper {
 		initialized = true;
 	}
 	
-	public void destruct() {
-		range = null;
-		buffers = null;
-		scratch = null;
-		scratchBound = 0;
-		bufferIndex = 1;
-		initialized = false;
-	}
 	
 	public void goLeft() {
 		bufferIndex = (bufferIndex + (NBUFFERS - 1)) % NBUFFERS;

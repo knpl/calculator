@@ -2,7 +2,7 @@
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android" 
     android:keyWidth="10%p" >
     
-    <Row android:keyHeight="9.5%p" android:verticalGap="0.5%p">
+    <Row android:keyHeight="10%p" >
         <Key android:codes="113" android:popupKeyboard="@xml/popup" android:popupCharacters="q1" android:keyEdgeFlags="left" />
         <Key android:codes="119" android:popupKeyboard="@xml/popup" android:popupCharacters="w2" />
         <Key android:codes="101" android:popupKeyboard="@xml/popup" android:popupCharacters="e3" />
@@ -15,7 +15,7 @@
         <Key android:codes="112" android:popupKeyboard="@xml/popup" android:popupCharacters="p0" android:keyEdgeFlags="right" />
     </Row>
     
-    <Row android:keyHeight="9.5%p" android:verticalGap="0.5%p">
+    <Row android:keyHeight="10%p" >
         <Key android:codes="97"	android:keyEdgeFlags="left" android:horizontalGap="5%p" />
         <Key android:codes="115" />
         <Key android:codes="100" />
@@ -27,7 +27,7 @@
         <Key android:codes="108" android:keyEdgeFlags="right" />
     </Row>
     
-    <Row android:keyHeight="9.5%p" android:verticalGap="0.5%p">
+    <Row android:keyHeight="10%p" >
         <Key android:codes="-1" android:keyIcon="@drawable/sym_keyboard_shift" 
              android:keyWidth="15%p" android:isModifier="true"
              android:isSticky="true" android:keyEdgeFlags="left" />

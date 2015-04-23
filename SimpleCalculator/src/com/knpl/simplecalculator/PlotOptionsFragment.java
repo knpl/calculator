@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,19 +38,17 @@ public class PlotOptionsFragment extends Fragment {
 			}
 		});
 		
-		
 		EditText et;
 		et = (EditText) view.findViewById(R.id.xMin);
 		activity.registerEditTextToKeyboard(et);
+		
 		et = (EditText) view.findViewById(R.id.xMax);
 		activity.registerEditTextToKeyboard(et);
+		
 		et = (EditText) view.findViewById(R.id.yMin);
 		activity.registerEditTextToKeyboard(et);
+		
 		et = (EditText) view.findViewById(R.id.yMax);
-		activity.registerEditTextToKeyboard(et);
-		et = (EditText) view.findViewById(R.id.thetaMin);
-		activity.registerEditTextToKeyboard(et);
-		et = (EditText) view.findViewById(R.id.thetaMax);
 		activity.registerEditTextToKeyboard(et);
 		
 		return view;
@@ -112,7 +109,6 @@ public class PlotOptionsFragment extends Fragment {
 		if (!(activity instanceof SimpleCalculatorActivity)) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement SimpleCalculatorActivity.");
-			
 		}
 		this.activity = (SimpleCalculatorActivity) activity;
 	}

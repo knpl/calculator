@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Keyboard xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:keyWidth="16.7%p">
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android" android:keyWidth="16.7%p">
     <Row android:keyHeight="10%p" android:rowEdgeFlags="top" >
         <Key android:codes="176" android:keyEdgeFlags="left" />
         <Key android:codes="55" android:popupKeyboard="@xml/popup" android:popupCharacters="7\uF004\uF007\uF00a" />
@@ -30,7 +29,7 @@
     </Row>
     <Row android:keyHeight="10%p" >
        	<Key android:codes="120" android:keyEdgeFlags="left" 
-             android:popupKeyboard="@xml/popup" android:popupCharacters="xy\u03B8" />
+             android:popupKeyboard="@xml/popup" android:popupCharacters="xyt\u03B8" />
         <Key android:codes="48" />
         <Key android:codes="46" />
         <Key android:codes="69" />

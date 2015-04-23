@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.nodes;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -12,7 +11,6 @@ import android.preference.PreferenceManager;
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
-import com.knpl.simplecalculator.util.Pair;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.Evaluate;
@@ -45,11 +43,8 @@ public abstract class Expr extends Node {
 			Compile compile = new Compile();
 			def.accept(compile);
 			
-			ArrayList<Pair<Mapper, Integer>> mappers = new ArrayList<Pair<Mapper, Integer>>(1);
-			mappers.add(
-				new Pair<Mapper, Integer>(new ProgramMapper(compile.getProgram()), Color.BLUE)
-			);
-			
+			ArrayList<Mapper> mappers = new ArrayList<Mapper>(1);
+			mappers.add(new ProgramMapper(compile.getProgram(), Color.BLUE));
 			calculator.plot(mappers);
 		}
 		else {

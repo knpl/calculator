@@ -1,19 +1,18 @@
 package com.knpl.simplecalculator;
 
-
 import java.util.ArrayList;
 
 import com.knpl.simplecalculator.keyboard.CalculatorKeyboard;
+import com.knpl.simplecalculator.keyboard.MyKeyboardView;
 import com.knpl.simplecalculator.nodes.Complex;
 import com.knpl.simplecalculator.nodes.Node;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.FormatUtils;
-import com.knpl.simplecalculator.util.Pair;
-
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -36,9 +35,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 
 public class SimpleCalculatorActivity extends ActionBarActivity {
 	
@@ -71,19 +70,29 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_calculator);
+        
+        final LinearLayout container = (LinearLayout) findViewById(R.id.container);
         
         keyboard = new CalculatorKeyboard(this, R.id.keyboard, 
         		R.xml.qwerty_keyboard, R.xml.greek_keyboard, R.xml.calculator_keyboard);
         
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        final MyKeyboardView kbdv = keyboard.getKeyboardView();
+        LayoutTransition trans = container.getLayoutTransition();
+		if (trans != null) {
+			trans.disableTransitionType(LayoutTransition.APPEARING);
+			trans.setAnimator(LayoutTransition.DISAPPEARING, 
+					ObjectAnimator.ofFloat(kbdv, "alpha", 1f, 0f));
+			trans.disableTransitionType(LayoutTransition.CHANGE_APPEARING);
+			trans.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
+	        container.setLayoutTransition(trans);
+		}
 		
         items = getResources().getStringArray(R.array.listitems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(
-        		this, drawerLayout,
-        		R.string.drawerOpen, R.string.drawerClose
-        		) {
+        		this, drawerLayout, R.string.drawerOpen, R.string.drawerClose) {
         	@Override
         	public void onDrawerClosed(View v) {
         		super.onDrawerClosed(v);
@@ -97,8 +106,6 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
         	}
         };
         drawerLayout.setDrawerListener(drawerToggle);
-        
-        CalculatorDb.listUserDefs();
         
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -118,19 +125,20 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
         });
         
         drawerFragments = new Fragment[] {
-        		new MainFragment(),
-        		new PlotOptionsFragment(),
-        		new PlotMenuFragment(),
-        		new FuncDefFragment(),
-        		new ConstDefFragment(),
-        		new CalculatorPreferenceFragment()
+    		new MainFragment(),
+    		new PlotOptionsFragment(),
+    		new PlotMenuFragment(),
+    		new FuncDefFragment(),
+    		new ConstDefFragment(),
+    		new CalculatorPreferenceFragment()
         };
         
         if (savedInstanceState == null) {	
         	setFragment(drawerFragments[MAIN_FRAGMENT_POSITION], false);
         }
     }
-    public boolean isKeyboardVisible() {
+    
+	public boolean isKeyboardVisible() {
     	return keyboard.isKeyboardVisible();
     }
     
@@ -145,7 +153,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     public void hideSoftKeyboard(View v) {
     	if (v != null) {
     		((InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE))
-			.hideSoftInputFromWindow(v.getWindowToken(), 0);
+				.hideSoftInputFromWindow(v.getWindowToken(), 0);
     	}
     }
     
@@ -210,15 +218,14 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     }
     
     public void enter(String inputString) {
-    	Parser parser = new Parser(new Lexer(inputString));
-    	if (!parser.start()) {
-    		print("Syntax error");
-    		return;
-    	}
-    	
-    	Node parseResult = parser.getResult();
-    	
     	try {
+    		Parser parser = new Parser(new Lexer(inputString));
+        	if (!parser.start()) {
+        		print("Syntax error");
+        		return;
+        	}
+        	
+    		Node parseResult = parser.getResult();
 	    	parseResult.execute(this);
     	}
     	catch (Exception e) {
@@ -227,7 +234,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     	}
     }
     
-    public void plot(ArrayList<Pair<Mapper, Integer>> mappers) {
+    public void plot(ArrayList<Mapper> mappers) {
     	PlotFragment fragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
     	setFragment(fragment, false);
     }

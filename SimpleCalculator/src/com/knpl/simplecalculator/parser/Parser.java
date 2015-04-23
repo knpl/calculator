@@ -92,7 +92,7 @@ public class Parser {
 		String id = tok.toString();
 		nextToken();
 		
-		if (!(token(EQ) && expr()))
+		if (!(token(EQ) && expr() && token(EOF)))
 			return false;
 		
 		result = new ConstDefNode(id, (Expr) result);
@@ -124,7 +124,7 @@ public class Parser {
 		
 		sig = new Signature(id, params);
 		
-		if (!(token(EQ) && expr()))
+		if (!(token(EQ) && expr() && token(EOF)))
 			return false;
 		
 		result = new FuncDefNode(sig, (Expr) result);

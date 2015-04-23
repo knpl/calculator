@@ -13,10 +13,9 @@
     <string name="string_to">to</string>
     <string name="string_x_axis">x-axis</string>
     <string name="string_y_axis">y-axis</string>
-    <string name="string_theta_axis">\u03B8-axis</string>
     <string name="string_save">save</string>
     
-    <string name="string_enter_expression">Enter expression</string>
+    <string name="string_enter_expression">Enter expression here.</string>
     
     <string name="drawerOpen">Opened</string>
     <string name="drawerClose">Closed</string>
@@ -24,6 +23,10 @@
     <string name="action_plot">Plot</string>
     <string name="action_clear">Clear</string>
     <string name="action_new_function">New function</string>
+    
+    <string name="action_toggle_normal_mode">Toggle regular input.</string>
+    <string name="action_toggle_parametric_mode">Toggle parametric input.</string>
+    <string name="action_toggle_polar_mode">Toggle polar input.</string>
     
     <string name="function_dialog_title">New function</string>
     
@@ -34,13 +37,6 @@
         <item>Function definitions</item>
         <item>Constant definitions</item>
         <item>Preferences</item>
-    </string-array>
-    
-    <string-array name="mappertypes">
-        <item>x to y</item>
-        <item>y to x</item>
-        <item>theta to r</item>
-        <item>parametric</item>
     </string-array>
     
     <string-array name="axistypes">

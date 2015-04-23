@@ -87,33 +87,6 @@ public class MyKeyboardView extends KeyboardView {
 		return result;
 	}
 	
-//	public void setBackgroundColor(int code) {
-//		if (MyKeyboardView.isAction(code)) {
-//			backgroundPaint.setColor(Color.BLUE);
-//			return;
-//		}
-//		
-//		if (code < 0) {
-//			backgroundPaint.setColor(Color.RED);
-//			return;
-//		}
-//		
-//		switch ((char) code) {
-//		case '+':
-//		case '-':
-//		case '*':
-//		case '/':
-//		case '=':
-//		case '^':
-//		case '!':
-//		case '%':
-//			backgroundPaint.setColor(Color.GREEN);
-//			break;
-//		default:
-//			backgroundPaint.setColor(Color.DKGRAY);
-//		}
-//	}
-	
 	public void drawIcon(Drawable icon, Canvas canvas, Rect r, int xc, int yc) {
 		int w = icon.getIntrinsicWidth();
 		int h = icon.getIntrinsicHeight();
@@ -142,7 +115,6 @@ public class MyKeyboardView extends KeyboardView {
 			Drawable icon = key.icon;
 
 			paint = key.pressed ? pressedBackgroundPaint : backgroundPaint;
-//			setBackgroundColor(key.codes[0]);
 			canvas.drawRect(rect, paint);
 			
 			// Draw center label

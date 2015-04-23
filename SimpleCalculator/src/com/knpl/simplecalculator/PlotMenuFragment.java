@@ -20,22 +20,22 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.knpl.simplecalculator.nodes.FuncDefNode;
-import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
 import com.knpl.simplecalculator.nodes.Var;
-import com.knpl.simplecalculator.parser.Lexer;
-import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Mapper;
+import com.knpl.simplecalculator.plot.ParametricMapper;
+import com.knpl.simplecalculator.plot.PolarMapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
-import com.knpl.simplecalculator.util.Pair;
+import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.util.Program;
+import com.knpl.simplecalculator.visitors.Evaluate;
 
-public class PlotMenuFragment extends ListFragment {
+public class PlotMenuFragment extends ListFragment implements TextView.OnEditorActionListener {
 	
 	public static final int[] colors = {
 		0xFFFF0000, 0xFF00FF00, 0xFF0000FF, /* Red, Green, Blue */
@@ -45,38 +45,44 @@ public class PlotMenuFragment extends ListFragment {
 		0xFFFFD700, 0xFFFF6347, 0xFFFA8072  /* Gold, Tomato, Salmon */
 	};
 	
-	public static class PlotEntry {
-		public final UserFuncDef userFuncDef;
-		public final int color;
-		
-		public PlotEntry(UserFuncDef userFuncDef, int color) {
-			this.userFuncDef = userFuncDef;
-			this.color = color;
-		}
-		
-		@Override
-		public String toString() {
-			return userFuncDef.toString();
-		}
-	}
-	
 	private static final ArrayList<PlotEntry> plotEntries = new ArrayList<PlotEntry>();
 	
 	private SimpleCalculatorActivity activity;
 	
 	private ColorPickerDialog colorPickerDialog;
 	
-	private EditText input;
+	private LinearLayout range;
+	private TextView rangeLabel;
+	private EditText rangeFrom,
+					 rangeTo;
+	
+	private EditText input,
+					 secondInput;
 	private ImageView colorIndicator;
 	private int color;
 	
 	private PlotEntryAdapter adapter;
+	private PlotMode mode;
+	
+	private NormalMode normalMode;
+	private PolarMode polarMode;
+	private ParametricMode parametricMode;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.fragment_plotmenu, container, false);
+		
+		range = (LinearLayout) view.findViewById(R.id.range);
+		rangeLabel = (TextView) range.findViewById(R.id.range_label);
+		rangeFrom = (EditText) range.findViewById(R.id.range_from);
+		rangeTo = (EditText) range.findViewById(R.id.range_to);
+		rangeFrom.setOnEditorActionListener(this);
+		rangeTo.setOnEditorActionListener(this);
+		activity.registerEditTextToKeyboard(rangeFrom);
+		activity.registerEditTextToKeyboard(rangeTo);
+		
 		adapter = new PlotEntryAdapter(activity, plotEntries);
 		setListAdapter(adapter);
 		
@@ -91,20 +97,32 @@ public class PlotMenuFragment extends ListFragment {
 		colorPickerDialog = createColorPickerDialog();
 		
 		input = (EditText) view.findViewById(R.id.expression);
+		input.setOnEditorActionListener(this);
 		activity.registerEditTextToKeyboard(input);
-		input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				validate(v.getText().toString());
-				return true;
-			}
-		});
-		input.setText("f(x) = ");
-		input.setSelection(input.length());
+			
+		secondInput = (EditText) view.findViewById(R.id.expression2);
+		secondInput.setOnEditorActionListener(this);
+		activity.registerEditTextToKeyboard(secondInput);
+		
+		normalMode = new NormalMode();
+		polarMode = new PolarMode();
+		parametricMode = new ParametricMode();
+		setMode(normalMode);
 		
 		return view;
 	}
+	
+	
 
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		input.setText("");
+		secondInput.setText("");
+		rangeFrom.setText("");
+		rangeTo.setText("");
+		super.onSaveInstanceState(outState);
+	}
+	
 	@Override
 	public void onListItemClick(ListView l, View v, final int position, long id) {	
 		final CharSequence[] options = new CharSequence[]{"Edit", "Remove", "Cancel"};
@@ -119,7 +137,7 @@ public class PlotMenuFragment extends ListFragment {
 					edit(position);
 					break;
 				case 1: // Remove
-					remove(position);
+					adapter.remove(adapter.getItem(position));
 					break;
 				default:
 					;
@@ -140,17 +158,35 @@ public class PlotMenuFragment extends ListFragment {
 		return colors[(int)Math.round(Math.random()*(colors.length - 1))];
 	}
 	
-	public void edit(int position) {
-		PlotEntry entry = adapter.getItem(position);
-		setColor(entry.color);
-		input.setText(entry.userFuncDef.getDescription());
-		input.setSelection(input.length());
-		input.requestFocus();
-		remove(position);
+	public void setMode(PlotMode mode) {
+		this.mode = mode;
+		mode.init();
 	}
 	
-	public void remove(int position) {
-		adapter.remove(adapter.getItem(position));
+	public void edit(int position) {
+		PlotEntry entry = adapter.getItem(position);
+		switch (entry.type) {
+		case NORMAL:
+			setMode(normalMode);
+			break;
+		case POLAR:
+			setMode(polarMode);
+			rangeFrom.setText(""+entry.range.min);
+			rangeTo.setText(""+entry.range.max);
+			break;
+		case PARAMETRIC:
+			setMode(parametricMode);
+			secondInput.setText(entry.ufd2.getDescription());
+			rangeFrom.setText(""+entry.range.min);
+			rangeTo.setText(""+entry.range.max);
+			break;
+		default:
+			;
+		}
+		setColor(entry.color);
+		input.setText(entry.ufd.getDescription());
+		input.setSelection(input.length());
+		adapter.remove(entry);
 	}
 	
 	private ColorPickerDialog createColorPickerDialog() {
@@ -158,15 +194,15 @@ public class PlotMenuFragment extends ListFragment {
 		
 		dialog.setAlphaSliderVisible(false);
 		dialog.setTitle("Pick a Color");
-		dialog.setButton(DialogInterface.BUTTON_POSITIVE,
-				getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+		dialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(android.R.string.ok),
+				new DialogInterface.OnClickListener() {
 			@Override 
 			public void onClick(DialogInterface unused, int which) {
 				setColor(dialog.getColor());
 			}
 		});
-		dialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-				getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+		dialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(android.R.string.cancel),
+				new DialogInterface.OnClickListener() {
 			@Override 
 			public void onClick(DialogInterface dialog, int which) {}
 		});
@@ -177,50 +213,33 @@ public class PlotMenuFragment extends ListFragment {
 	private void displayMessage(String message) {
 		Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 	}
-
-	private void validate(String source) {
-		Parser parser = new Parser(new Lexer(source));
-		if (!parser.funcDef()) {
-			displayMessage("Syntax error");
-			return;
-		}
-		
-		FuncDefNode funcDefNode = (FuncDefNode) parser.getResult();
-		Signature signature = funcDefNode.getSignature();
-		
-		List<Var> parameters = signature.getParameters();
-		if (parameters.size() != 1 || !parameters.get(0).getName().equals("x")) {
-			displayMessage("Invalid signature: "+signature);
-			return;
-		}
-		
-		UserFuncDef userFuncDef;
-		try {
-			userFuncDef = new UserFuncDef(funcDefNode);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			displayMessage(ex.getMessage());
-			return;
-		}
-		
-		adapter.add(new PlotEntry(userFuncDef, color));
-		input.setText("f(x) = ");
-		input.setSelection(input.length());
-		setColor(randomColor());
-	}
 	
 	private void compileAndPlot() {
-		ArrayList<Pair<Mapper, Integer>> mappers 
-			= new ArrayList<Pair<Mapper, Integer>>(plotEntries.size());
-		Program p;
+		ArrayList<Mapper> mappers = new ArrayList<Mapper>(plotEntries.size());
+		Program px, py;
 		for (PlotEntry entry : plotEntries) {
 			try {
-				p = entry.userFuncDef.getProgram();
-				mappers.add(new Pair<Mapper, Integer>(new ProgramMapper(p), entry.color));
+				switch (entry.type) {
+				case NORMAL:
+					px = entry.ufd.getProgram();
+					mappers.add(new ProgramMapper(px, entry.color));
+					break;
+				case POLAR:
+					px = entry.ufd.getProgram();
+					mappers.add(new PolarMapper(px, entry.range, entry.color));
+					break;
+				case PARAMETRIC:
+					px = entry.ufd.getProgram();
+					py = entry.ufd2.getProgram();
+					mappers.add(new ParametricMapper(px, py, entry.range, entry.color));
+					break;
+				default:
+					;
+				}
 			}
-			catch (Exception e) {
-	    		e.printStackTrace();
+			catch (Exception ex) {
+	    		ex.printStackTrace();
+	    		displayMessage(ex.getMessage());
 			}
 		}
 		activity.plot(mappers);
@@ -241,10 +260,25 @@ public class PlotMenuFragment extends ListFragment {
 		case R.id.action_plot:
 			compileAndPlot();
 			break;
+		case R.id.action_toggle_normal_mode:
+			setMode(normalMode);
+			break;
+		case R.id.action_toggle_parametric_mode:
+			setMode(parametricMode);
+			break;
+		case R.id.action_toggle_polar_mode:
+			setMode(polarMode);
+			break;
 		default:
 			;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		mode.addPlotEntry();
+		return true;
 	}
 
 	@Override
@@ -263,7 +297,222 @@ public class PlotMenuFragment extends ListFragment {
 		activity = null;
 	}
 	
-	public class PlotEntryAdapter extends ArrayAdapter<PlotEntry> {
+	private enum PlotType {NORMAL, POLAR, PARAMETRIC};
+	
+	interface PlotMode {
+		PlotType getType();
+		void addPlotEntry();
+		void init();
+	}
+	
+	private class NormalMode implements PlotMode {	
+		@Override
+		public void addPlotEntry() {
+			String source = input.getText().toString();
+			UserFuncDef ufd;
+			try {
+				ufd = UserFuncDef.fromSource(source);
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				displayMessage(ex.getMessage());
+				return;
+			}
+			
+			List<Var> params = ufd.getSignature().getParameters();
+			if (params.size() != 1) {
+				displayMessage("Function must have a single parameter. (Named x or \u03B8)");
+				return;
+			}
+			
+			String param = params.get(0).getName();
+			if (!param.equals("x") && !param.equals("\u03B8")) {
+				displayMessage("Parameter must be named x or \u03B8.");
+				return;
+			}
+			
+			adapter.add(new PlotEntry(PlotType.NORMAL, ufd, color));
+			input.setText("f(x) = ");
+			input.setSelection(input.length());
+			setColor(randomColor());
+		}
+
+		@Override
+		public void init() {
+			secondInput.setVisibility(View.GONE);
+			range.setVisibility(View.GONE);
+			
+			input.setText("f(x) = ");
+			input.setSelection(input.length());
+		}
+
+		@Override
+		public PlotType getType() {
+			return PlotType.NORMAL;
+		}
+	}
+	
+	private class PolarMode implements PlotMode {
+		@Override
+		public void addPlotEntry() {
+			String source = input.getText().toString();
+			
+			UserFuncDef ufd;
+			try {
+				ufd = UserFuncDef.fromSource(source);
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				displayMessage(ex.getMessage());
+				return;
+			}
+			
+			List<Var> params = ufd.getSignature().getParameters();
+			if (params.size() != 1) {
+				displayMessage("function must have a single parameter. (Named \u03B8)");
+				return;
+			}
+			
+			String param = params.get(0).getName();
+			if (!param.equals("\u03B8")) {
+				displayMessage("Parameter must be named \u03B8.");
+				return;
+			}
+			
+			float from = (float) Evaluate.fromString(rangeFrom.getText().toString());
+			float to = (float) Evaluate.fromString(rangeTo.getText().toString());
+			if (Float.isNaN(from) || Float.isNaN(to)) {
+				displayMessage("Invalid range.");
+				return;
+			}
+			
+			adapter.add(new PlotEntry(PlotType.POLAR, ufd, new Range(from, to), color));
+			input.setText("r(\u03B8) = ");
+			input.setSelection(input.length());
+			setColor(randomColor());
+		}
+
+		@Override
+		public void init() {
+			secondInput.setVisibility(View.GONE);
+			rangeLabel.setText("\u03B8");
+			range.setVisibility(View.VISIBLE);
+			
+			input.setText("r(\u03B8) = ");
+			input.setSelection(input.length());
+			rangeFrom.setText("0");
+			rangeTo.setText("2*\u03C0");
+		}
+
+		@Override
+		public PlotType getType() {
+			return PlotType.POLAR;
+		}
+	}
+	
+	private class ParametricMode implements PlotMode {
+		@Override
+		public void addPlotEntry() {
+			String xsource = input.getText().toString(),
+				   ysource = secondInput.getText().toString();
+			
+			UserFuncDef xufd, yufd;
+			try {
+				xufd = UserFuncDef.fromSource(xsource);
+				yufd = UserFuncDef.fromSource(ysource);
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				displayMessage(ex.getMessage());
+				return;
+			}
+			
+			List<Var> xparams = xufd.getSignature().getParameters(),
+					  yparams = yufd.getSignature().getParameters();
+			if (xparams.size() != 1 || yparams.size() != 1) {
+				displayMessage("Both functions must have a single parameter. (Named t)");
+				return;
+			}
+			
+			String xparam = xparams.get(0).getName(),
+				   yparam = yparams.get(0).getName();
+			if (!xparam.equals("t") || !yparam.equals("t")) {
+				displayMessage("Parameter must be named t.");
+				return;
+			}
+			
+			float from = (float) Evaluate.fromString(rangeFrom.getText().toString());
+			float to = (float) Evaluate.fromString(rangeTo.getText().toString());
+			if (Float.isNaN(from) || Float.isNaN(to)) {
+				displayMessage("Invalid range.");
+				return;
+			}
+			
+			adapter.add(new PlotEntry(PlotType.PARAMETRIC, xufd, yufd,
+									  new Range(from, to), color));
+			input.setText("x(t) = ");
+			secondInput.setText("y(t) = ");
+			input.setSelection(input.length());
+			setColor(randomColor());
+		}
+		
+		@Override
+		public void init() {
+			secondInput.setVisibility(View.VISIBLE);
+			rangeLabel.setText("t");
+			range.setVisibility(View.VISIBLE);
+			
+			input.setText("x(t) = ");
+			input.setSelection(input.length());
+			secondInput.setText("y(t) = ");
+			rangeFrom.setText("0");
+			rangeTo.setText("10");
+		}
+		
+		@Override
+		public PlotType getType() {
+			return PlotType.PARAMETRIC;
+		}
+	}
+	
+	public static class PlotEntry {
+		public final PlotType type;
+		public final UserFuncDef ufd;
+		public final UserFuncDef ufd2;
+		public final Range range;
+		public final int color;
+		
+		public PlotEntry(PlotType type, UserFuncDef ufd, UserFuncDef ufd2, Range range, int color) {
+			this.ufd = ufd;
+			this.ufd2 = ufd2;
+			this.range = range;
+			this.type = type;
+			this.color = color;
+		}
+		
+		public PlotEntry(PlotType type, UserFuncDef ufd, int color) {
+			this(type, ufd, null, null, color);
+		}
+		
+		public PlotEntry(PlotType type, UserFuncDef ufd, Range range, int color) {
+			this(type, ufd, null, range, color);
+		}
+		
+		@Override
+		public String toString() {
+			StringBuffer buf = new StringBuffer();
+			buf.append(ufd.toString());
+			if (ufd2 != null) {
+				buf.append(", ").append(ufd2.toString());
+			}
+			if (range != null) {
+				buf.append(", ").append(range.toString());
+			}
+			return buf.toString();
+		}
+	}
+	
+	public static class PlotEntryAdapter extends ArrayAdapter<PlotEntry> {
 		
 		private class ViewHolder {
 			public final TextView tv;

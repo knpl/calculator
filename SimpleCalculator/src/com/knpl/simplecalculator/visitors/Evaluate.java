@@ -8,6 +8,9 @@ import java.util.Map;
 import org.apache.commons.math3.special.Gamma;
 
 import com.knpl.simplecalculator.nodes.*;
+import com.knpl.simplecalculator.parser.Lexer;
+import com.knpl.simplecalculator.parser.Parser;
+import com.knpl.simplecalculator.parser.TokenType;
 
 public class Evaluate extends Visitor {
 	
@@ -19,6 +22,26 @@ public class Evaluate extends Visitor {
 	
 	public Evaluate(Map<String, Double> map) {
 		this.map = map;
+	}
+	
+	public static double fromString(String input) {
+		Parser parser = new Parser(new Lexer(input));
+		if (!(parser.expr() && parser.token(TokenType.EOF))) {
+			return Double.NaN;
+		}
+		
+		Expr expr = (Expr) parser.getResult();
+		
+		try {
+			Resolve resolve = new Resolve();
+			expr = (Expr) expr.accept(resolve);
+			Evaluate evaluate = new Evaluate();
+			return (Double) expr.accept(evaluate);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return Double.NaN;
+		}
 	}
 	
 	@Override

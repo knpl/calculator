@@ -7,5 +7,6 @@ import android.graphics.Path;
 
 public interface Mapper extends Serializable {
 	public Path map(Matrix ctm, Range xrange, Range yrange);
-	public void initialize();
+	public void reset();
+	public int getColor();
 }

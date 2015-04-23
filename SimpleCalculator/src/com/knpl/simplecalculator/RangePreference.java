@@ -27,8 +27,6 @@ public class RangePreference extends DialogPreference implements SeekBar.OnSeekB
 		
 		setDialogIcon(null);
 		
-		
-		
 		min = attrs.getAttributeIntValue("http://knpl.com", "min", 0);	
 		max = attrs.getAttributeIntValue("http://knpl.com", "max", 100);
 		defaultt = attrs.getAttributeIntValue("http://knpl.com", "default", 50);

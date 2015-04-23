@@ -5,8 +5,6 @@ import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.plot.PlotStates.PlotState;
 import com.knpl.simplecalculator.plot.Range.MarkerInfo;
 import com.knpl.simplecalculator.util.FormatUtils;
-import com.knpl.simplecalculator.util.Pair;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -31,7 +29,7 @@ public class PlotView extends View {
 				  linePaint,
 				  lightLinePaint;
 	
-	private List<Pair<Mapper, Integer>> mappers;
+	private List<Mapper> mappers;
 	
 	private Range xaxis,
 				  yaxis;
@@ -56,7 +54,6 @@ public class PlotView extends View {
 	
 	public PlotView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
 		mappers = null;
 		
 		xaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
@@ -66,10 +63,9 @@ public class PlotView extends View {
 		scalecenter = new float[]{0f,0f};
 		scalefactor = 1f;
 		
-		plotState = PlotState.STATIC;
+		setState(PlotState.STATIC);
 		
 		ctm = new Matrix();
-		
 		viewToNormal = new Matrix();
 		normalToView = new Matrix();
 		normalToScreen = new Matrix();
@@ -132,16 +128,10 @@ public class PlotView extends View {
 		width = w;
 	}
 
-	public PlotView init(List<Pair<Mapper, Integer>> paths, Range x, Range y) {
-		for (Pair<Mapper, Integer> pair : paths) {
-			pair.getFirst().initialize();
-		}
+	public PlotView init(List<Mapper> paths, Range x, Range y) {
 		this.mappers = paths;
 		this.xaxis = x;
 		this.yaxis = y;
-		
-		setState(PlotState.STATIC);
-		
 		return this;
 	}
 	
@@ -257,12 +247,8 @@ public class PlotView extends View {
 		}
 		
 		drawAxes(c, ctm, xrange, yrange);
-
-		for (Pair<Mapper, Integer> pair : mappers) {
-			Mapper mapper = pair.getFirst();
-			int color = pair.getLast();
-
-			plotPaint.setColor(color);
+		for (Mapper mapper : mappers) {
+			plotPaint.setColor(mapper.getColor());
 			c.drawPath(mapper.map(ctm, xrange, yrange), plotPaint);
 		}
 	}
@@ -375,5 +361,4 @@ public class PlotView extends View {
 	public boolean performClick() {
 		return super.performClick();
 	}
-
 }

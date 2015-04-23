@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.knpl.simplecalculator.parser.Lexer;
+import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.visitors.Compile;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
@@ -34,6 +36,13 @@ public class UserFuncDef extends MVFuncDef {
 		this.description = prettyPrint.toString();
 		this.expression = funcDefNode.getExpression();
 		this.program = null;
+	}
+	
+	public static UserFuncDef fromSource(String source) throws Exception {
+		Parser parser = new Parser(new Lexer(source));
+		if (!parser.funcDef())
+			throw new Exception("Syntax error");
+		return new UserFuncDef((FuncDefNode) parser.getResult());
 	}
 	
 	public Expr getExpression() {

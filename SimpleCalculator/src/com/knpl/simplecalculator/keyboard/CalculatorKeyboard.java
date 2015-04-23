@@ -2,8 +2,6 @@ package com.knpl.simplecalculator.keyboard;
 
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.text.Editable;
@@ -11,14 +9,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
-
 public class CalculatorKeyboard {
 	
 	public static final int QWERTY_TOGGLE_KEY = 57344,
 							GREEK_TOGGLE_KEY  = 57345,
 							CALC_TOGGLE_KEY = 57346,
 							ACTION_KEY = 57347;
-	
 	
 	private SimpleCalculatorActivity activity;
 
@@ -87,6 +83,10 @@ public class CalculatorKeyboard {
 		@Override public void swipeUp() {}
 	}
 	
+	public MyKeyboardView getKeyboardView() {
+		return kbdv;
+	}
+	
 	private void handleShift() {
 		if (kbdv.getKeyboard() == calculatorKbd) {
 			return;
@@ -144,43 +144,23 @@ public class CalculatorKeyboard {
 	
 	public boolean isKeyboardVisible() {
     	return kbdv.getVisibility() == View.VISIBLE;
-    }
+	}
     
     public void showKeyboard(View v) {
     	activity.hideSoftKeyboard(v);
     	if (isKeyboardVisible()) {
     		return;
     	}
-    	
+    	kbdv.setEnabled(true);
 		kbdv.setVisibility(View.VISIBLE);
-		kbdv.setEnabled(true);
-		
-		kbdv.animate()
-			.translationY(0)
-			.alpha(1)
-			.setListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-				}
-			});
     }
     
     public void hideKeyboard() {
     	if (!isKeyboardVisible()) {
     		return;
     	}
-		kbdv.animate()
-			.translationY(kbdv.getHeight())
-			.alpha(0)
-			.setListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					kbdv.setVisibility(View.GONE);
-	    			kbdv.setEnabled(false);
-				}
-			});
+    	kbdv.setEnabled(false);
+		kbdv.setVisibility(View.GONE);
     }
     
     public void registerEditText(EditText input) {
@@ -201,6 +181,8 @@ public class CalculatorKeyboard {
 		input.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (!v.hasFocus())
+					v.requestFocus();
 				showKeyboard(v);
 			}
 		});
