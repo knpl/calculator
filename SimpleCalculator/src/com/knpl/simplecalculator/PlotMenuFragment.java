@@ -32,7 +32,6 @@ import com.knpl.simplecalculator.plot.ParametricMapper;
 import com.knpl.simplecalculator.plot.PolarMapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.plot.Range;
-import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.visitors.Evaluate;
 
 public class PlotMenuFragment extends ListFragment implements TextView.OnEditorActionListener {
@@ -110,17 +109,6 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		setMode(normalMode);
 		
 		return view;
-	}
-	
-	
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		input.setText("");
-		secondInput.setText("");
-		rangeFrom.setText("");
-		rangeTo.setText("");
-		super.onSaveInstanceState(outState);
 	}
 	
 	@Override
@@ -216,26 +204,9 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 	
 	private void compileAndPlot() {
 		ArrayList<Mapper> mappers = new ArrayList<Mapper>(plotEntries.size());
-		Program px, py;
 		for (PlotEntry entry : plotEntries) {
 			try {
-				switch (entry.type) {
-				case NORMAL:
-					px = entry.ufd.getProgram();
-					mappers.add(new ProgramMapper(px, entry.color));
-					break;
-				case POLAR:
-					px = entry.ufd.getProgram();
-					mappers.add(new PolarMapper(px, entry.range, entry.color));
-					break;
-				case PARAMETRIC:
-					px = entry.ufd.getProgram();
-					py = entry.ufd2.getProgram();
-					mappers.add(new ParametricMapper(px, py, entry.range, entry.color));
-					break;
-				default:
-					;
-				}
+				mappers.add(entry.getMapper());
 			}
 			catch (Exception ex) {
 	    		ex.printStackTrace();
@@ -496,6 +467,19 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		
 		public PlotEntry(PlotType type, UserFuncDef ufd, Range range, int color) {
 			this(type, ufd, null, range, color);
+		}
+		
+		public Mapper getMapper() throws Exception {
+			switch (type) {
+			case NORMAL:
+				return new ProgramMapper(ufd.getProgram(), color);
+			case POLAR:
+				return new PolarMapper(ufd.getProgram(), range, color);
+			case PARAMETRIC:
+				return new ParametricMapper(ufd.getProgram(), ufd2.getProgram(), range, color);
+			default:
+				return new ProgramMapper(ufd.getProgram(), color);
+			}
 		}
 		
 		@Override
