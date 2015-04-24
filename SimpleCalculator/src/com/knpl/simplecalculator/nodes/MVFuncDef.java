@@ -5,8 +5,8 @@ import java.util.List;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class MVFuncDef extends FuncDef {
-	public MVFuncDef(Signature sig) {
-		super(sig);
+	public MVFuncDef(Signature sig, String description) {
+		super(sig, description);
 	}
 	
 	public abstract Num numEvaluate(List<Num> args) throws Exception;

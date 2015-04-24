@@ -122,7 +122,7 @@ public class RealDouble extends Num {
 	@Override
 	public Num sqrt() {
 		if (val < 0)
-			return toComplex().sqrt();
+			return new Complex(0, Math.sqrt(-val));
 		val = Math.sqrt(val);
 		return this;
 	}
@@ -141,15 +141,19 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num log() {
-		if (val < 0)
-			return toComplex().log();
+		if (val < 0) {
+			return new Complex(Math.log(val), Math.PI);
+		}
 		val = Math.log(val);
 		return this;
 	}
 
 	@Override
 	public Num sin() {
-		val = Math.sin(val);
+		if (val == Math.PI)
+			val = 0;
+		else
+			val = Math.sin(val);
 		return this;
 	}
 
@@ -161,7 +165,10 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num tan() {
-		val = Math.tan(val);
+		if (val == Math.PI)
+			val = 0;
+		else
+			val = Math.tan(val);
 		return this;
 	}
 

@@ -15,26 +15,12 @@ import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserFuncDef extends MVFuncDef {
-	
-	private final String description;
 	private final Expr expression;
 	private Program program;
 	
-	public UserFuncDef(FuncDefNode funcDefNode) throws Exception {
-		super(funcDefNode.getSignature());
-		
-		Resolve resolve = new Resolve();
-		funcDefNode.accept(resolve);
-		
-		Map<String, Var> freeVars = resolve.getFreeVarMap();
-		if (!freeVars.isEmpty()) {
-			throw new Exception("Resolve error: undeclared variables");
-		}
-		
-		PrettyPrint prettyPrint = new PrettyPrint();
-		funcDefNode.accept(prettyPrint);
-		this.description = prettyPrint.toString();
-		this.expression = funcDefNode.getExpression();
+	private UserFuncDef(Signature sig, Expr expr, String description) throws Exception {
+		super(sig, description);
+		this.expression = expr;
 		this.program = null;
 	}
 	
@@ -42,7 +28,22 @@ public class UserFuncDef extends MVFuncDef {
 		Parser parser = new Parser(new Lexer(source));
 		if (!parser.funcDef())
 			throw new Exception("Syntax error");
-		return new UserFuncDef((FuncDefNode) parser.getResult());
+		return fromFuncDefNode((FuncDefNode) parser.getResult());
+	}
+	
+	public static UserFuncDef fromFuncDefNode(FuncDefNode fdn) throws Exception {
+		Resolve resolve = new Resolve();
+		fdn = (FuncDefNode) fdn.accept(resolve);
+		
+		Map<String, Var> freeVars = resolve.getFreeVarMap();
+		if (!freeVars.isEmpty()) {
+			throw new Exception("Resolve error: undeclared variables");
+		}
+		
+		PrettyPrint prettyPrint = new PrettyPrint();
+		fdn.accept(prettyPrint);
+		
+		return new UserFuncDef(fdn.getSignature(), fdn.getExpression(), prettyPrint.toString());
 	}
 	
 	public Expr getExpression() {

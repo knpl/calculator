@@ -71,7 +71,7 @@ public class FuncDefFragment extends ListFragment {
 		
 		UserFuncDef userFuncDef;
 		try {
-			userFuncDef = new UserFuncDef(funcDefNode);
+			userFuncDef = UserFuncDef.fromFuncDefNode(funcDefNode);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

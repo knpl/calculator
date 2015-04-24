@@ -21,7 +21,7 @@ public class FuncDefNode extends Node {
 			throw new Exception("Function \""+sig+"\" already defined");
 		}
 		
-		UserFuncDef ufd = new UserFuncDef(this);
+		UserFuncDef ufd = UserFuncDef.fromFuncDefNode(this);
 		ufd.compile();
 		
 		defs.putUserFuncDef(ufd);

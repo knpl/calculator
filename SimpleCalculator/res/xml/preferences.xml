@@ -48,14 +48,7 @@
 	        knpl:default="10" />
 	    
 	    <CheckBoxPreference
-	        android:key="pref_key_complex"
-	        android:title="Complex numbers"
-	        android:summary="Enables calculations involving complex numbers. (Experimental)"
-	        android:defaultValue="false" />
-	    
-	    <CheckBoxPreference
 	        android:key="pref_key_complex_polar"
-	        android:dependency="pref_key_complex"
 	        android:title="Polar notation"
 	        android:summary="Displays complex results in polar notation, instead of cartesian notation."
 	        android:defaultValue="false" />
