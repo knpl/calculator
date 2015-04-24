@@ -147,10 +147,23 @@ public class Complex extends Num {
 		return this;
 	}
 	
+	// tanh = -i*tan(i*z)
 	@Override
 	public Complex tanh() {
-		re = Double.NaN;
-		im = Double.NaN;
+		double tmp;
+		
+		// multiply by i
+		tmp = im;
+		im = re;
+		re = -tmp;
+		
+		tan();
+		
+		// multiply by -i
+		tmp = im;
+		im = -re;
+		re = tmp;
+		
 		return this;
 	}
 	
@@ -303,6 +316,11 @@ public class Complex extends Num {
 						   0.5*(ea - eainv)*Math.sin(z.im));
 	}
 	
+	public static Complex tanh(Complex z) {
+		Complex copy = new Complex(z);
+		return copy.tanh();
+	}
+	
 	public static Complex sin(Complex z) {
 		double eb 	 = Math.exp(z.im),
 			   ebinv = 1/eb;
@@ -375,56 +393,6 @@ public class Complex extends Num {
 		w.im = 0.5*tmp;
 		
 		return w;
-	}
-
-	@Override
-	public Num mod(Num a) {
-		throw new ArithmeticException("Complex mod not implemented.");
-	}
-
-	@Override
-	public Num deg2rad() {
-		throw new ArithmeticException("Complex radian to degree conversion not implemented.");
-	}
-	
-	@Override
-	public Num factorial() {
-		throw new ArithmeticException("Complex factorial not implemented.");
-	}
-
-	@Override
-	public Num max(Num a) {
-		throw new ArithmeticException("Complex max not implemented.");
-	}
-
-	@Override
-	public Num min(Num a) {
-		throw new ArithmeticException("Complex min not implemented.");
-	}
-
-	@Override
-	public Num floor() {
-		throw new ArithmeticException("Complex floor not implemented.");
-	}
-
-	@Override
-	public Num ceil() {
-		throw new ArithmeticException("Complex ceil not implemented.");
-	}
-
-	@Override
-	public Num erf() {
-		throw new ArithmeticException("Complex erf not implemented.");
-	}
-
-	@Override
-	public Num gamma() {
-		throw new ArithmeticException("Complex gamma not implemented.");
-	}
-
-	@Override
-	public Num loggamma() {
-		throw new ArithmeticException("Complex loggamma not implemented.");
 	}
 	
 	public String toString(boolean polar) {

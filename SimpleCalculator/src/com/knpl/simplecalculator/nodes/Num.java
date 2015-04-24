@@ -3,35 +3,94 @@ package com.knpl.simplecalculator.nodes;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class Num extends Expr {
-	public abstract Num add(Num a);
-	public abstract Num sub(Num a);
-	public abstract Num mul(Num a);
-	public abstract Num div(Num a);
-	public abstract Num mod(Num a);
-	public abstract Num pow(Num a);
-	public abstract Num neg();
-	public abstract Num deg2rad();
-	public abstract Num factorial();
-	public abstract Num max(Num a);
-	public abstract Num min(Num a);
-	public abstract Num floor();
-	public abstract Num ceil();
-	public abstract Num sqrt();
-	public abstract Num abs();
-	public abstract Num exp();
-	public abstract Num log();
-	public abstract Num sin();
-	public abstract Num cos();
-	public abstract Num tan();
-	public abstract Num asin();
-	public abstract Num acos();
-	public abstract Num atan();
-	public abstract Num sinh();
-	public abstract Num cosh();
-	public abstract Num tanh();
-	public abstract Num erf();
-	public abstract Num gamma();
-	public abstract Num loggamma();
+	public Num add(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num sub(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num mul(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num div(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num mod(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num pow(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num neg() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num deg2rad() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num factorial() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num max(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num min(Num a) {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num floor() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num ceil() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num sqrt() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num abs() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num exp() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num log() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num sin() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num cos() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num tan() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num asin() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num acos() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num atan() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num sinh() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num cosh() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num tanh() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num erf() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num gamma() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num loggamma() {
+		throw new ArithmeticException("Not implemented");
+	}
+	
 	public abstract Complex toComplex();
 	
 	public abstract Num copy();
