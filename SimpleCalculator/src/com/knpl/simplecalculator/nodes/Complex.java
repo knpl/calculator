@@ -1,8 +1,10 @@
 package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.visitors.Visitor;
+import com.knpl.simplecalculator.util.MyNumber;
+import com.knpl.simplecalculator.util.RealDouble;
 
-public class Complex extends Expr {
+public class Complex extends Expr implements MyNumber {
 	
 	private double re,
 				   im;
@@ -46,44 +48,55 @@ public class Complex extends Expr {
 		return Math.hypot(re, im);
 	}
 	
-	public Complex add(Complex z) {
+	@Override
+	public Complex add(MyNumber a) {
+		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		re += z.re;
 		im += z.im;
 		return this;
 	}
 
-	public Complex sub(Complex z) {
+	@Override
+	public Complex sub(MyNumber a) {
+		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		re -= z.re;
 		im -= z.im;
 		return this;
 	}
 
-	public Complex mul(Complex z) {
+	@Override
+	public Complex mul(MyNumber a) {
+		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		double oldre = re;
 		re = oldre*z.re - im*z.im;
 		im = oldre*z.im + im*z.re;
 		return this;
 	}
 
-	
-	public Complex div(Complex z) {
+	@Override
+	public Complex div(MyNumber a) {
+		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		double mod = z.re*z.re + z.im*z.im,
 			   oldre = re;
 		re = (oldre*z.re + im*z.im)/mod;
 		im = (im*z.re - oldre*z.im)/mod;
 		return this;
 	}
-
-	public Complex pow(Complex z) {
+	
+	@Override
+	public Complex pow(MyNumber a) {
+		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		return log().mul(z).exp(); /* exp(z*log(x)) */
 	}
 	
+	@Override
 	public Complex neg() {
 		re = -re;
 		im = -im;
 		return this;
 	}
 	
+	@Override
 	public Complex exp() {
 		double r = Math.exp(re);
 		re = r*Math.cos(im);
@@ -91,7 +104,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
-	
+	@Override
 	public Complex log() {
 		double mod = mod(),
 			   arg = arg();
@@ -100,6 +113,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
+	@Override
 	public Complex sqrt() {
 		double mod = Math.sqrt(mod()),
 			   arg = 0.5*arg();
@@ -108,11 +122,12 @@ public class Complex extends Expr {
 		return this;
 	}
 	
-
-	public double abs() {
-		return Math.hypot(re, im);
+	@Override
+	public RealDouble abs() {
+		return new RealDouble(Math.hypot(re, im));
 	}
 	
+	@Override
 	public Complex sinh() {
 		double ea 	 = Math.exp(re),
 			   eainv = 1/ea;
@@ -121,6 +136,7 @@ public class Complex extends Expr {
 		return this;
 	}
 	
+	@Override
 	public Complex cosh() {
 		double ea	 = Math.exp(re),
 			   eainv = 1/ea;
@@ -129,12 +145,14 @@ public class Complex extends Expr {
 		return this;
 	}
 	
+	@Override
 	public Complex tanh() {
 		re = Double.NaN;
 		im = Double.NaN;
 		return this;
 	}
 	
+	@Override
 	public Complex sin() {
 		double eb 	 = Math.exp(im),
 			   ebinv = 1/eb;
@@ -143,7 +161,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
-	
+	@Override
 	public Complex cos() {
 		double eb 	 = Math.exp(im),
 			   ebinv = 1/eb;
@@ -152,7 +170,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
-	
+	@Override
 	public Complex tan() {
 		double e2b 		= Math.exp(2*im),
 			   e2binv	= 1/e2b,
@@ -165,7 +183,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
-	
+	@Override
 	public Complex asin() {
 		double oldre = re,
 			   oldim = im;
@@ -187,7 +205,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
-	
+	@Override
 	public Complex acos() {
 		double oldre = re,
 			   oldim = im;
@@ -206,7 +224,7 @@ public class Complex extends Expr {
 		return this;
 	}
 
-	
+	@Override
 	public Complex atan() {
 		double oldre = re,
 			   oldim = im;
@@ -356,14 +374,55 @@ public class Complex extends Expr {
 		
 		return w;
 	}
+
+	@Override
+	public MyNumber mod(MyNumber a) {
+		throw new ArithmeticException("Complex mod not implemented.");
+	}
+
+	@Override
+	public MyNumber deg2rad() {
+		throw new ArithmeticException("Complex radian to degree conversion not implemented.");
+	}
 	
 	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof Complex)) {
-			return false;
-		}
-		Complex other = (Complex) o;
-		return re == other.re && im == other.im;
+	public MyNumber factorial() {
+		throw new ArithmeticException("Complex factorial not implemented.");
+	}
+
+	@Override
+	public MyNumber max(MyNumber a) {
+		throw new ArithmeticException("Complex max not implemented.");
+	}
+
+	@Override
+	public MyNumber min(MyNumber a) {
+		throw new ArithmeticException("Complex min not implemented.");
+	}
+
+	@Override
+	public MyNumber floor() {
+		throw new ArithmeticException("Complex floor not implemented.");
+	}
+
+	@Override
+	public MyNumber ceil() {
+		throw new ArithmeticException("Complex ceil not implemented.");
+	}
+
+	@Override
+	public MyNumber erf() {
+		throw new ArithmeticException("Complex erf not implemented.");
+	}
+
+	@Override
+	public MyNumber gamma() {
+		throw new ArithmeticException("Complex gamma not implemented.");
+	}
+
+	@Override
+	public MyNumber loggamma() {
+		throw new ArithmeticException("Complex loggamma not implemented.");
 	}
 	
 	public String toString(boolean polar) {
@@ -373,6 +432,11 @@ public class Complex extends Expr {
 	@Override
 	public String toString() {
 		return re+" + "+im+"*i";
+	}
+	
+	@Override
+	public Complex toComplex() {
+		return this;
 	}
 	
 	@Override

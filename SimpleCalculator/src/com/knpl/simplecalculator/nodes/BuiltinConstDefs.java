@@ -1,5 +1,7 @@
 package com.knpl.simplecalculator.nodes;
 
+import com.knpl.simplecalculator.util.MyNumber;
+import com.knpl.simplecalculator.util.RealDouble;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class BuiltinConstDefs {
@@ -10,14 +12,18 @@ public class BuiltinConstDefs {
 	
 	/* Constants */
 	public static class PiDef extends ConstDef {
-		public static final String 
-			NAME = "\u03C0",
-			DESCRIPTION = "The ratio of a " +
+
+		public static final String NAME = "\u03C0";
+		public static final String DESCRIPTION = "The ratio of a " +
 						  "circle's circumference to its diameter.";
 		
+		public PiDef() {
+			super(NAME, DESCRIPTION);
+		}
+		
 		@Override
-		public String getName() {
-			return NAME;
+		public MyNumber getNumber() {
+			return new RealDouble(Math.PI);
 		}
 
 		@Override
@@ -31,25 +37,22 @@ public class BuiltinConstDefs {
 		}
 
 		@Override
-		public String getDescription() {
-			return getName() + " = " + DESCRIPTION;
-		}
-		
-		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
 		}
 	}
 	
 	public static class EDef extends ConstDef {
-		public static final String 
-			NAME = "e",
-			DESCRIPTION = "Euler's constant. The base of " +
-						  "the natural logarithm and exponential function.";
-
+		public static final String NAME = "e";
+		public static final String DESCRIPTION = "Base of the natural logarithm.";
+		
+		public EDef() {
+			super(NAME, DESCRIPTION);
+		}
+		
 		@Override
-		public String getName() {
-			return NAME;
+		public MyNumber getNumber() {
+			return new RealDouble(Math.E);
 		}
 
 		@Override
@@ -61,12 +64,7 @@ public class BuiltinConstDefs {
 		public Complex getComplex() {
 			return new Complex(Math.E, 0);
 		}
-
-		@Override
-		public String getDescription() {
-			return getName() + " = " + DESCRIPTION;
-		}
-
+		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
@@ -74,13 +72,16 @@ public class BuiltinConstDefs {
 	}
 	
 	public static class IDef extends ConstDef {
-		public static final String 
-			NAME = "i",
-			DESCRIPTION = "The imaginary unit. The square root of -1.";
+		public static final String NAME = "i";
+		public static final String DESCRIPTION = "The imaginary unit.";
 
+		public IDef() {
+			super(NAME, DESCRIPTION);
+		}
+		
 		@Override
-		public String getName() {
-			return NAME;
+		public MyNumber getNumber() {
+			return new Complex(0, 1);
 		}
 
 		@Override
@@ -91,11 +92,6 @@ public class BuiltinConstDefs {
 		@Override
 		public Complex getComplex() {
 			return new Complex(0, 1);
-		}
-
-		@Override
-		public String getDescription() {
-			return getName() + " = " + DESCRIPTION;
 		}
 
 		@Override

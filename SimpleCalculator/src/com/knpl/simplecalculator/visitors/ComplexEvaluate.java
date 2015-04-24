@@ -99,7 +99,7 @@ public class ComplexEvaluate extends Visitor {
 	}
 
 	@Override
-	public Complex visit(Num node) throws Exception {
+	public Complex visit(NumTok node) throws Exception {
 		return new Complex(node.getDouble(), 0.0);
 	}
 	

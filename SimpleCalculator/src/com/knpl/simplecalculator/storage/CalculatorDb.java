@@ -115,7 +115,7 @@ public class CalculatorDb {
 				Parser parser = new Parser(new Lexer(description));
 				if (parser.constDef()) {
 					defs.putUserConstDef(
-						new UserConstDef((ConstDefNode)parser.getResult()));
+						UserConstDef.fromConstDefNode((ConstDefNode)parser.getResult()));
 				}
 			}
 			catch (Exception ex) {

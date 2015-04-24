@@ -1,14 +1,19 @@
 package com.knpl.simplecalculator.nodes;
 
+import com.knpl.simplecalculator.util.RealDouble;
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public class Num extends Expr {
+public class NumTok extends Expr {
 	private String token;
 	
-	public Num(String token) {
+	public NumTok(String token) {
 		this.token = token;
 	}
 
+	public RealDouble getRealDouble() {
+		return new RealDouble(Double.parseDouble(token));
+	}
+	
 	public double getDouble() {
 		return Double.parseDouble(token);
 	}

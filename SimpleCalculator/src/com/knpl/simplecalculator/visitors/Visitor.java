@@ -65,7 +65,7 @@ public class Visitor {
 		return visit((MonOp) node);
 	}
 	
-	public Object visit(Num node) throws Exception {
+	public Object visit(NumTok node) throws Exception {
 		return visit((Expr) node);
 	}
 	

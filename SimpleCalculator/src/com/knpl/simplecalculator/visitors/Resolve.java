@@ -67,7 +67,7 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Num node) throws Exception {
+	public Node visit(NumTok node) throws Exception {
 		return node;
 	}
 	

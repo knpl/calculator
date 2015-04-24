@@ -97,7 +97,7 @@ public class Evaluate extends Visitor {
 	}
 
 	@Override
-	public Double visit(Num node) throws Exception {
+	public Double visit(NumTok node) throws Exception {
 		return node.getDouble();
 	}
 	

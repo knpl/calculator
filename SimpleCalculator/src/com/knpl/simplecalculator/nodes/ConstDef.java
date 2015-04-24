@@ -1,13 +1,30 @@
 package com.knpl.simplecalculator.nodes;
 
+import com.knpl.simplecalculator.util.MyNumber;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class ConstDef extends Expr {
 	
-	public abstract String getName();
+	protected final String name,
+						   description;
+	
+	public ConstDef(String name, String description) {
+		this.name = name;
+		this.description = description;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
 	public abstract double getDouble();
 	public abstract Complex getComplex();
-	public abstract String getDescription();
+	
+	public abstract MyNumber getNumber();
 	
 	@Override
 	public String toString() {

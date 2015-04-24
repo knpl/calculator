@@ -73,6 +73,14 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.fragment_plotmenu, container, false);
 		
+		input = (EditText) view.findViewById(R.id.expression);
+		input.setOnEditorActionListener(this);
+		activity.registerEditTextToKeyboard(input);
+			
+		secondInput = (EditText) view.findViewById(R.id.expression2);
+		secondInput.setOnEditorActionListener(this);
+		activity.registerEditTextToKeyboard(secondInput);
+		
 		range = (LinearLayout) view.findViewById(R.id.range);
 		rangeLabel = (TextView) range.findViewById(R.id.range_label);
 		rangeFrom = (EditText) range.findViewById(R.id.range_from);
@@ -95,14 +103,6 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		setColor(randomColor());
 		colorPickerDialog = createColorPickerDialog();
 		
-		input = (EditText) view.findViewById(R.id.expression);
-		input.setOnEditorActionListener(this);
-		activity.registerEditTextToKeyboard(input);
-			
-		secondInput = (EditText) view.findViewById(R.id.expression2);
-		secondInput.setOnEditorActionListener(this);
-		activity.registerEditTextToKeyboard(secondInput);
-		
 		normalMode = new NormalMode();
 		polarMode = new PolarMode();
 		parametricMode = new ParametricMode();
@@ -111,6 +111,12 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		return view;
 	}
 	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putString("state", mode.getType().name());
+		super.onSaveInstanceState(outState);
+	}
+
 	@Override
 	public void onListItemClick(ListView l, View v, final int position, long id) {	
 		final CharSequence[] options = new CharSequence[]{"Edit", "Remove", "Cancel"};
@@ -122,7 +128,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0: // Edit
-					edit(position);
+					mode.edit(adapter.getItem(position));
 					break;
 				case 1: // Remove
 					adapter.remove(adapter.getItem(position));
@@ -149,32 +155,6 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 	public void setMode(PlotMode mode) {
 		this.mode = mode;
 		mode.init();
-	}
-	
-	public void edit(int position) {
-		PlotEntry entry = adapter.getItem(position);
-		switch (entry.type) {
-		case NORMAL:
-			setMode(normalMode);
-			break;
-		case POLAR:
-			setMode(polarMode);
-			rangeFrom.setText(""+entry.range.min);
-			rangeTo.setText(""+entry.range.max);
-			break;
-		case PARAMETRIC:
-			setMode(parametricMode);
-			secondInput.setText(entry.ufd2.getDescription());
-			rangeFrom.setText(""+entry.range.min);
-			rangeTo.setText(""+entry.range.max);
-			break;
-		default:
-			;
-		}
-		setColor(entry.color);
-		input.setText(entry.ufd.getDescription());
-		input.setSelection(input.length());
-		adapter.remove(entry);
 	}
 	
 	private ColorPickerDialog createColorPickerDialog() {
@@ -273,6 +253,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 	interface PlotMode {
 		PlotType getType();
 		void addPlotEntry();
+		void edit(PlotEntry entry);
 		void init();
 	}
 	
@@ -320,6 +301,14 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		@Override
 		public PlotType getType() {
 			return PlotType.NORMAL;
+		}
+
+		@Override
+		public void edit(PlotEntry entry) {
+			setColor(entry.color);
+			input.setText(entry.ufd.getDescription());
+			input.setSelection(input.length());
+			adapter.remove(entry);
 		}
 	}
 	
@@ -378,6 +367,16 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		@Override
 		public PlotType getType() {
 			return PlotType.POLAR;
+		}
+
+		@Override
+		public void edit(PlotEntry entry) {
+			setColor(entry.color);
+			rangeFrom.setText(""+entry.range.min);
+			rangeTo.setText(""+entry.range.max);
+			input.setText(entry.ufd.getDescription());
+			input.setSelection(input.length());
+			adapter.remove(entry);
 		}
 	}
 	
@@ -443,6 +442,19 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		@Override
 		public PlotType getType() {
 			return PlotType.PARAMETRIC;
+		}
+
+		@Override
+		public void edit(PlotEntry entry) {
+			setColor(entry.color);
+			
+			secondInput.setText(entry.ufd2.getDescription());
+			rangeFrom.setText(""+entry.range.min);
+			rangeTo.setText(""+entry.range.max);
+			
+			input.setText(entry.ufd.getDescription());
+			input.setSelection(input.length());
+			adapter.remove(entry);
 		}
 	}
 	

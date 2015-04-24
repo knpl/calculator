@@ -214,7 +214,7 @@ public class BuiltinFuncDefs {
 
 		@Override
 		public Complex complexEvaluate(Complex z) throws Exception {
-			z.setRe(z.abs());
+			z.setRe(z.abs().getValue());
 			z.setIm(0);
 			return z;
 		}

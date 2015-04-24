@@ -1,5 +1,6 @@
 package com.knpl.simplecalculator.nodes;
 
+import com.knpl.simplecalculator.util.MyNumber;
 import com.knpl.simplecalculator.visitors.ComplexEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
@@ -7,49 +8,34 @@ import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserConstDef extends ConstDef {
 	
-	private String name;
 	private Expr expression;
-	private String description;
 	private Complex value;
 
-	public UserConstDef(String name, Expr expression, String description) {
-		this.name = name;
+	private UserConstDef(String name, Expr expression, String description) {
+		super(name, description);
 		this.expression = expression;
-		this.description = description;
 		this.value = null;
 	}
 	
-	public UserConstDef(ConstDefNode constDefNode) throws Exception {
+	public static UserConstDef fromConstDefNode(ConstDefNode constDefNode) throws Exception {
 		Resolve resolve = new Resolve();
-		constDefNode.accept(resolve);
+		constDefNode = (ConstDefNode) constDefNode.accept(resolve);
 		
 		if (!resolve.getFreeVarMap().isEmpty()) {
 			throw new Exception("Constant expression contains free variables");
 		}
 		
 		PrettyPrint pp = new PrettyPrint();
-		constDefNode.accept(pp);
+		Expr expr = constDefNode.getExpression();
+		expr.accept(pp);
 		
-		this.name = constDefNode.getName();
-		this.expression = constDefNode.getExpression();
-		this.description = pp.toString();
-		this.value = null;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
+		return new UserConstDef(constDefNode.getName(), expr, pp.toString());
 	}
 	
 	public Expr getExpression() {
 		return expression;
 	}
-	
-	@Override
-	public String getDescription() {
-		return description;
-	}
-	
+
 	private void eval() {
 		try {
 			ComplexEvaluate evaluate = new ComplexEvaluate();
@@ -58,6 +44,11 @@ public class UserConstDef extends ConstDef {
 		catch (Exception ex) {
 			value = new Complex(Double.NaN, Double.NaN);
 		}
+	}
+	
+	@Override
+	public MyNumber getNumber() {
+		return getComplex();
 	}
 
 	@Override

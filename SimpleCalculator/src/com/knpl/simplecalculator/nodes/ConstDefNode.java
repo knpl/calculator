@@ -2,8 +2,6 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.SimpleCalculatorActivity;
 import com.knpl.simplecalculator.util.Globals;
-import com.knpl.simplecalculator.visitors.PrettyPrint;
-import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class ConstDefNode extends Node {
@@ -35,20 +33,7 @@ public class ConstDefNode extends Node {
 			throw new Exception("Constant "+name+" already defined");
 		}
 		
-		Resolve resolve = new Resolve();
-		accept(resolve);
-		
-		if (!resolve.getFreeVarMap().isEmpty()) {
-			throw new Exception("Constant expression contains free variables");
-		}
-		
-		PrettyPrint pp = new PrettyPrint();
-		accept(pp);
-		
-		if (defs.putUserConstDef(new UserConstDef(name, expression, pp.toString())))
-			calculator.print("defined constant "+name);
-		else
-			calculator.print("constant "+name+" already defined");
+		defs.putUserConstDef(UserConstDef.fromConstDefNode(this));
 	}
 
 	@Override

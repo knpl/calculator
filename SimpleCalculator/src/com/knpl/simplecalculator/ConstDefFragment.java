@@ -70,7 +70,7 @@ public class ConstDefFragment extends ListFragment {
 		
 		UserConstDef userConstDef;
 		try {
-			userConstDef = new UserConstDef(constDefNode);
+			userConstDef = UserConstDef.fromConstDefNode(constDefNode);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

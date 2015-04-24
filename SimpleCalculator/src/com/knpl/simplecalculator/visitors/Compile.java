@@ -222,7 +222,7 @@ public class Compile extends Visitor {
 	}
 
 	@Override
-	public Void visit(Num node) throws Exception {
+	public Void visit(NumTok node) throws Exception {
 		Double val = node.getDouble();
 		
 		write(ByteCodes.LOADC);

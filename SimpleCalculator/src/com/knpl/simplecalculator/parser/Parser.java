@@ -226,7 +226,7 @@ public class Parser {
 		switch (tok.type) {
 			
 		case NUM:
-			result = new Num(tok.token);
+			result = new NumTok(tok.token);
 			nextToken();
 			return true;
 		
