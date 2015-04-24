@@ -7,8 +7,7 @@ public abstract class SVFuncDef extends FuncDef {
 		super(sig);
 	}
 	
-	public abstract Complex complexEvaluate(Complex arg) throws Exception;
-	public abstract double evaluate(double arg) throws Exception;
+	public abstract Num numEvaluate(Num arg) throws Exception;
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {

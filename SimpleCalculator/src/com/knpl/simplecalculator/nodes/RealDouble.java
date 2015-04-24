@@ -1,11 +1,11 @@
-package com.knpl.simplecalculator.util;
+package com.knpl.simplecalculator.nodes;
 
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
 
-import com.knpl.simplecalculator.nodes.Complex;
+import com.knpl.simplecalculator.visitors.Visitor;
 
-public class RealDouble implements MyNumber {
+public class RealDouble extends Num {
 
 	private double val;
 	
@@ -14,7 +14,12 @@ public class RealDouble implements MyNumber {
 	}
 	
 	@Override
-	public MyNumber add(MyNumber a) {
+	public Num copy() {
+		return new RealDouble(val);
+	}
+	
+	@Override
+	public Num add(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().add(a);
 		val += ((RealDouble)a).val;
@@ -22,7 +27,7 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber sub(MyNumber a) {
+	public Num sub(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().sub(a);
 		val -= ((RealDouble)a).val;
@@ -30,7 +35,7 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber mul(MyNumber a) {
+	public Num mul(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().mul(a);
 		val *= ((RealDouble)a).val;
@@ -38,7 +43,7 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber div(MyNumber a) {
+	public Num div(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().div(a);
 		val /= ((RealDouble)a).val;
@@ -46,7 +51,7 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber mod(MyNumber a) {
+	public Num mod(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().mod(a);
 		double b = ((RealDouble) a).val;
@@ -55,7 +60,7 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber pow(MyNumber a) {
+	public Num pow(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().pow(a);
 		
@@ -67,25 +72,25 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber neg() {
+	public Num neg() {
 		val = -val;
 		return this;
 	}
 
 	@Override
-	public MyNumber deg2rad() {
+	public Num deg2rad() {
 		val *= 180.0/Math.PI;
 		return this;
 	}
 	
 	@Override
-	public MyNumber factorial() {
+	public Num factorial() {
 		val = Gamma.gamma(val + 1);
 		return this;
 	}
 
 	@Override
-	public MyNumber max(MyNumber a) {
+	public Num max(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().max(a);
 		double b = ((RealDouble) a).val;
@@ -94,7 +99,7 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber min(MyNumber a) {
+	public Num min(Num a) {
 		if (!(a instanceof RealDouble))
 			return toComplex().min(a);
 		double b = ((RealDouble) a).val;
@@ -103,19 +108,19 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber floor() {
+	public Num floor() {
 		val = Math.floor(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber ceil() {
+	public Num ceil() {
 		val = Math.ceil(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber sqrt() {
+	public Num sqrt() {
 		if (val < 0)
 			return toComplex().sqrt();
 		val = Math.sqrt(val);
@@ -123,19 +128,19 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber abs() {
+	public Num abs() {
 		val = Math.abs(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber exp() {
+	public Num exp() {
 		val = Math.exp(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber log() {
+	public Num log() {
 		if (val < 0)
 			return toComplex().log();
 		val = Math.log(val);
@@ -143,73 +148,73 @@ public class RealDouble implements MyNumber {
 	}
 
 	@Override
-	public MyNumber sin() {
+	public Num sin() {
 		val = Math.sin(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber cos() {
+	public Num cos() {
 		val = Math.cos(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber tan() {
+	public Num tan() {
 		val = Math.tan(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber asin() {
+	public Num asin() {
 		val = Math.asin(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber acos() {
+	public Num acos() {
 		val = Math.acos(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber atan() {
+	public Num atan() {
 		val = Math.atan(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber sinh() {
+	public Num sinh() {
 		val = Math.sinh(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber cosh() {
+	public Num cosh() {
 		val = Math.cosh(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber tanh() {
+	public Num tanh() {
 		val = Math.tanh(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber erf() {
+	public Num erf() {
 		val = Erf.erf(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber gamma() {
+	public Num gamma() {
 		val = Gamma.gamma(val);
 		return this;
 	}
 
 	@Override
-	public MyNumber loggamma() {
+	public Num loggamma() {
 		val = Gamma.logGamma(val);
 		return this;
 	}
@@ -221,5 +226,10 @@ public class RealDouble implements MyNumber {
 	
 	public double getValue() {
 		return val;
+	}
+	
+	@Override
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

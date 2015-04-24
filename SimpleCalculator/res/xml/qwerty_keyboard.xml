@@ -9,10 +9,10 @@
         <Key android:codes="114" android:popupKeyboard="@xml/popup" android:popupCharacters="r4" />
         <Key android:codes="116" android:popupKeyboard="@xml/popup" android:popupCharacters="t5" />
         <Key android:codes="121" android:popupKeyboard="@xml/popup" android:popupCharacters="y6" />
-        <Key android:codes="117" android:popupKeyboard="@xml/popup" android:popupCharacters="u7" />
-        <Key android:codes="105" android:popupKeyboard="@xml/popup" android:popupCharacters="i8" />
-        <Key android:codes="111" android:popupKeyboard="@xml/popup" android:popupCharacters="o9" />
-        <Key android:codes="112" android:popupKeyboard="@xml/popup" android:popupCharacters="p0" android:keyEdgeFlags="right" />
+        <Key android:codes="117" android:popupKeyboard="@xml/popup" android:popupCharacters="u7=" />
+        <Key android:codes="105" android:popupKeyboard="@xml/popup" android:popupCharacters="i8_" />
+        <Key android:codes="111" android:popupKeyboard="@xml/popup" android:popupCharacters="o9(" />
+        <Key android:codes="112" android:popupKeyboard="@xml/popup" android:popupCharacters="p0)" android:keyEdgeFlags="right" />
     </Row>
     
     <Row android:keyHeight="10%p" >

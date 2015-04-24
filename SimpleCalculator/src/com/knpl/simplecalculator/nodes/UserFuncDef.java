@@ -9,7 +9,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.util.Program;
 import com.knpl.simplecalculator.visitors.Compile;
-import com.knpl.simplecalculator.visitors.ComplexEvaluate;
+import com.knpl.simplecalculator.visitors.NumEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
@@ -69,31 +69,26 @@ public class UserFuncDef extends MVFuncDef {
 		}
 		return program;
 	}
+	
+	@Override
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
+	}
 
 	@Override
-	public Complex complexEvaluate(List<Complex> args) throws Exception {
+	public Num numEvaluate(List<Num> args) throws Exception {
 		List<Var> params = sig.getParameters();
 		if (params.size() != args.size()) {
 			throw new Exception("Argument mismatch while evaluating function " + sig.getName());
 		}
 		
-		Map<String, Complex> map  = new HashMap<String, Complex>(params.size());
-		Iterator<Complex> itArg   = args.iterator();
-		Iterator<Var>  	  itParam = params.iterator();
+		Map<String, Num> map  = new HashMap<String, Num>(params.size());
+		Iterator<Num> itArg   = args.iterator();
+		Iterator<Var> itParam = params.iterator();
 		while (itParam.hasNext()) {
 			map.put(itParam.next().getName(), itArg.next());
 		}
 		
-		return (Complex) expression.accept(new ComplexEvaluate(map));
-	}
-
-	@Override
-	public Double evaluate(List<Double> args) throws Exception {
-		return getProgram().evaluate(args);
-	}
-	
-	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return (Num) expression.accept(new NumEvaluate(map));
 	}
 }

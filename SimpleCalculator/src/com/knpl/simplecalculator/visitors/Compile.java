@@ -260,7 +260,11 @@ public class Compile extends Visitor {
 
 	@Override
 	public Void visit(ConstDef node) throws Exception {
-		double val = node.getDouble();
+		Num num = node.getNum();
+		if (num instanceof Complex) {
+			throw new Exception("Program can't do complex calculations");
+		}
+		double val = ((RealDouble) num).getValue();
 		
 		write(ByteCodes.LOADC);
 		push();

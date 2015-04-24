@@ -1,7 +1,6 @@
 package com.knpl.simplecalculator.nodes;
 
-import com.knpl.simplecalculator.util.MyNumber;
-import com.knpl.simplecalculator.visitors.ComplexEvaluate;
+import com.knpl.simplecalculator.visitors.NumEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
@@ -9,12 +8,12 @@ import com.knpl.simplecalculator.visitors.Visitor;
 public class UserConstDef extends ConstDef {
 	
 	private Expr expression;
-	private Complex value;
+	private Num val;
 
 	private UserConstDef(String name, Expr expression, String description) {
 		super(name, description);
 		this.expression = expression;
-		this.value = null;
+		this.val = null;
 	}
 	
 	public static UserConstDef fromConstDefNode(ConstDefNode constDefNode) throws Exception {
@@ -35,34 +34,19 @@ public class UserConstDef extends ConstDef {
 	public Expr getExpression() {
 		return expression;
 	}
-
-	private void eval() {
-		try {
-			ComplexEvaluate evaluate = new ComplexEvaluate();
-			value = (Complex) expression.accept(evaluate);
-		}
-		catch (Exception ex) {
-			value = new Complex(Double.NaN, Double.NaN);
-		}
-	}
 	
 	@Override
-	public MyNumber getNumber() {
-		return getComplex();
-	}
-
-	@Override
-	public double getDouble() {
-		if (value == null)
-			eval();
-		return (value.im() == 0.0) ? value.re() : Double.NaN;
-	}
-
-	@Override
-	public Complex getComplex() {
-		if (value == null)
-			eval();
-		return new Complex(value);
+	public Num getNum() {
+		if (val == null) {
+			try {
+				NumEvaluate evaluate = new NumEvaluate();
+				val = (Num) expression.accept(evaluate);
+			}
+			catch (Exception ex) {
+				val = new RealDouble(Double.NaN);
+			}
+		}
+		return val;
 	}
 	
 	@Override

@@ -32,7 +32,7 @@ import com.knpl.simplecalculator.plot.ParametricMapper;
 import com.knpl.simplecalculator.plot.PolarMapper;
 import com.knpl.simplecalculator.plot.ProgramMapper;
 import com.knpl.simplecalculator.plot.Range;
-import com.knpl.simplecalculator.visitors.Evaluate;
+import com.knpl.simplecalculator.visitors.NumEvaluate;
 
 public class PlotMenuFragment extends ListFragment implements TextView.OnEditorActionListener {
 	
@@ -339,8 +339,8 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 				return;
 			}
 			
-			float from = (float) Evaluate.fromString(rangeFrom.getText().toString());
-			float to = (float) Evaluate.fromString(rangeTo.getText().toString());
+			float from = (float) NumEvaluate.fromString(rangeFrom.getText().toString());
+			float to = (float) NumEvaluate.fromString(rangeTo.getText().toString());
 			if (Float.isNaN(from) || Float.isNaN(to)) {
 				displayMessage("Invalid range.");
 				return;
@@ -411,8 +411,8 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 				return;
 			}
 			
-			float from = (float) Evaluate.fromString(rangeFrom.getText().toString());
-			float to = (float) Evaluate.fromString(rangeTo.getText().toString());
+			float from = (float) NumEvaluate.fromString(rangeFrom.getText().toString());
+			float to = (float) NumEvaluate.fromString(rangeTo.getText().toString());
 			if (Float.isNaN(from) || Float.isNaN(to)) {
 				displayMessage("Invalid range.");
 				return;

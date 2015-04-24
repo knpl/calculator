@@ -1,10 +1,8 @@
 package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.visitors.Visitor;
-import com.knpl.simplecalculator.util.MyNumber;
-import com.knpl.simplecalculator.util.RealDouble;
 
-public class Complex extends Expr implements MyNumber {
+public class Complex extends Num {
 	
 	private double re,
 				   im;
@@ -16,6 +14,10 @@ public class Complex extends Expr implements MyNumber {
 	
 	public Complex(Complex that) {
 		this(that.re, that.im);
+	}
+	
+	public Complex copy() {
+		return new Complex(this);
 	}
 	
 	public static Complex fromPolar(double mod, double arg) {
@@ -49,7 +51,7 @@ public class Complex extends Expr implements MyNumber {
 	}
 	
 	@Override
-	public Complex add(MyNumber a) {
+	public Complex add(Num a) {
 		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		re += z.re;
 		im += z.im;
@@ -57,7 +59,7 @@ public class Complex extends Expr implements MyNumber {
 	}
 
 	@Override
-	public Complex sub(MyNumber a) {
+	public Complex sub(Num a) {
 		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		re -= z.re;
 		im -= z.im;
@@ -65,7 +67,7 @@ public class Complex extends Expr implements MyNumber {
 	}
 
 	@Override
-	public Complex mul(MyNumber a) {
+	public Complex mul(Num a) {
 		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		double oldre = re;
 		re = oldre*z.re - im*z.im;
@@ -74,7 +76,7 @@ public class Complex extends Expr implements MyNumber {
 	}
 
 	@Override
-	public Complex div(MyNumber a) {
+	public Complex div(Num a) {
 		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		double mod = z.re*z.re + z.im*z.im,
 			   oldre = re;
@@ -84,7 +86,7 @@ public class Complex extends Expr implements MyNumber {
 	}
 	
 	@Override
-	public Complex pow(MyNumber a) {
+	public Complex pow(Num a) {
 		Complex z = (a instanceof Complex) ? (Complex) a : a.toComplex();
 		return log().mul(z).exp(); /* exp(z*log(x)) */
 	}
@@ -376,52 +378,52 @@ public class Complex extends Expr implements MyNumber {
 	}
 
 	@Override
-	public MyNumber mod(MyNumber a) {
+	public Num mod(Num a) {
 		throw new ArithmeticException("Complex mod not implemented.");
 	}
 
 	@Override
-	public MyNumber deg2rad() {
+	public Num deg2rad() {
 		throw new ArithmeticException("Complex radian to degree conversion not implemented.");
 	}
 	
 	@Override
-	public MyNumber factorial() {
+	public Num factorial() {
 		throw new ArithmeticException("Complex factorial not implemented.");
 	}
 
 	@Override
-	public MyNumber max(MyNumber a) {
+	public Num max(Num a) {
 		throw new ArithmeticException("Complex max not implemented.");
 	}
 
 	@Override
-	public MyNumber min(MyNumber a) {
+	public Num min(Num a) {
 		throw new ArithmeticException("Complex min not implemented.");
 	}
 
 	@Override
-	public MyNumber floor() {
+	public Num floor() {
 		throw new ArithmeticException("Complex floor not implemented.");
 	}
 
 	@Override
-	public MyNumber ceil() {
+	public Num ceil() {
 		throw new ArithmeticException("Complex ceil not implemented.");
 	}
 
 	@Override
-	public MyNumber erf() {
+	public Num erf() {
 		throw new ArithmeticException("Complex erf not implemented.");
 	}
 
 	@Override
-	public MyNumber gamma() {
+	public Num gamma() {
 		throw new ArithmeticException("Complex gamma not implemented.");
 	}
 
 	@Override
-	public MyNumber loggamma() {
+	public Num loggamma() {
 		throw new ArithmeticException("Complex loggamma not implemented.");
 	}
 	

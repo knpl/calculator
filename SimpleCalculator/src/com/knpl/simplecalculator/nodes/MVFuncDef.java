@@ -9,8 +9,7 @@ public abstract class MVFuncDef extends FuncDef {
 		super(sig);
 	}
 	
-	public abstract Complex complexEvaluate(List<Complex> args) throws Exception;
-	public abstract Double evaluate(List<Double> args) throws Exception;
+	public abstract Num numEvaluate(List<Num> args) throws Exception;
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {

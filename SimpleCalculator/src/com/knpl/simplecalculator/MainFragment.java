@@ -15,7 +15,7 @@ public class MainFragment extends Fragment {
 	private SimpleCalculatorActivity activity;
 	
 	private EditText input;
-	private TextView output;
+//	private TextView output;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,7 +23,7 @@ public class MainFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_main, container, false);
 		
 		input  = (EditText) v.findViewById(R.id.input);
-		output = (TextView) v.findViewById(R.id.output);
+//		output = (TextView) v.findViewById(R.id.output);
 		
 		activity.registerEditTextToKeyboard(input);
 		input.setOnEditorActionListener(new TextView.OnEditorActionListener() {

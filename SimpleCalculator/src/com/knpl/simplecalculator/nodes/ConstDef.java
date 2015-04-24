@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.nodes;
 
-import com.knpl.simplecalculator.util.MyNumber;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class ConstDef extends Expr {
@@ -21,10 +20,7 @@ public abstract class ConstDef extends Expr {
 		return description;
 	}
 	
-	public abstract double getDouble();
-	public abstract Complex getComplex();
-	
-	public abstract MyNumber getNumber();
+	public abstract Num getNum();
 	
 	@Override
 	public String toString() {

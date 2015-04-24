@@ -1,6 +1,5 @@
 package com.knpl.simplecalculator.nodes;
 
-import com.knpl.simplecalculator.util.RealDouble;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class NumTok extends Expr {

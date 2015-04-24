@@ -29,7 +29,7 @@
     </Row>
     <Row android:keyHeight="10%p" >
        	<Key android:codes="120" android:keyEdgeFlags="left" 
-             android:popupKeyboard="@xml/popup" android:popupCharacters="xyt\u03B8" />
+             android:popupKeyboard="@xml/popup" android:popupCharacters="xt\u03B8" />
         <Key android:codes="48" />
         <Key android:codes="46" />
         <Key android:codes="69" />

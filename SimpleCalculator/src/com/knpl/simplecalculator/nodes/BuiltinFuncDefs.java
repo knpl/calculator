@@ -3,9 +3,6 @@ package com.knpl.simplecalculator.nodes;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math3.special.Erf;
-import org.apache.commons.math3.special.Gamma;
-
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class BuiltinFuncDefs {
@@ -32,28 +29,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(List<Complex> args) throws Exception {
-			Complex a = args.get(0);
-			if (a.im() != 0.0) {
-				throw new Exception("min undefined for complex arguments.");
-			}
-			Complex b = args.get(1);
-			if (b.im() != 0.0) {
-				throw new Exception("min undefined for complex arguments.");
-			}
-			return (b.re() < a.re()) ? b : a;
-		}
-		
-		@Override
-		public Double evaluate(List<Double> args) throws Exception {
-			return Math.min(args.get(0), args.get(1));
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).min(args.get(1));
 		}
 	}
 	
@@ -68,28 +52,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(List<Complex> args) throws Exception {
-			Complex a = args.get(0);
-			if (a.im() != 0.0) {
-				throw new Exception("max undefined for complex arguments.");
-			}
-			Complex b = args.get(1);
-			if (b.im() != 0.0) {
-				throw new Exception("max undefined for complex arguments.");
-			}
-			return (b.re() > a.re()) ? b : a;
-		}
-
-		@Override
-		public Double evaluate(List<Double> args) throws Exception {
-			return Math.max(args.get(0), args.get(1));
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).max(args.get(1));
 		}
 	}
 	
@@ -104,23 +75,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			if (z.im() != 0.0) {
-				throw new Exception("floor undefined for complex arguments.");
-			}
-			return z.setRe(Math.floor(z.re()));
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.floor(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.floor();
 		}
 	}
 
@@ -136,23 +99,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			if (z.im() != 0.0) {
-				throw new Exception("ceil undefined for complex arguments.");
-			}
-			return z.setRe(Math.ceil(z.re()));
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.ceil(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.ceil();
 		}
 	}
 	
@@ -167,31 +122,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			if (z.im() == 0.0) {
-				double re = z.re();
-				if (re < 0.0) {
-					z.setRe(0.0);
-					z.setIm(Math.sqrt(-re));
-				}
-				else {
-					z.setRe(Math.sqrt(re));
-				}
-				return z;
-			}
-			return z.sqrt();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.sqrt(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.sqrt();
 		}
 	}
 	
@@ -211,22 +150,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			z.setRe(z.abs().getValue());
-			z.setIm(0);
-			return z;
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.abs(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.abs();
 		}
 	}
 	
@@ -241,21 +173,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.re() >= 0.0 && z.im() == 0.0) ? z.setRe(Math.log(z.re()))
-								   				    : z.log();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.log(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.log();
 		}
 	}
 	
@@ -270,21 +196,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.exp(z.re()))
-								   : z.exp();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.exp(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.exp();
 		}
 	}
 	
@@ -299,21 +219,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.sinh(z.re()))
-								   : z.sinh();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.sinh(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.sinh();
 		}
 	}
 	
@@ -328,21 +242,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.cosh(z.re()))
-								   : z.cosh();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.cosh(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.cosh();
 		}
 	}
 	
@@ -357,21 +265,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.tanh(z.re()))
-								   : z.tanh();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.tanh(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.tanh();
 		}
 	}
 	
@@ -386,21 +288,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.sin(z.re()))
-								   : z.sin();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.sin(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.sin();
 		}
 	}
 	
@@ -415,21 +311,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.cos(z.re()))
-								   : z.cos();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.cos(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.cos();
 		}
 	}
 	
@@ -444,21 +334,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.tan(z.re()))
-								   : z.tan();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.tan(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.tan();
 		}
 	}
 	
@@ -473,21 +357,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.asin(z.re()))
-								   : z.asin();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.asin(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.asin();
 		}
 	}
 	
@@ -502,21 +380,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.acos(z.re()))
-								   : z.acos();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.acos(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.acos();
 		}
 	}
 	
@@ -531,21 +403,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			return (z.im() == 0.0) ? z.setRe(Math.atan(z.re()))
-								   : z.atan();
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Math.atan(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.atan();
 		}
 	}
 	
@@ -560,23 +426,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			if (z.im() != 0.0) {
-				throw new Exception("Complex erf not supported.");
-			}
-			return z.setRe(Erf.erf(z.re()));
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Erf.erf(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.erf();
 		}
 	}
 	
@@ -591,23 +449,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			if (z.im() != 0.0) {
-				throw new Exception("Complex gamma not supported.");
-			}
-			return z.setRe(Gamma.gamma(z.re()));
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Gamma.gamma(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.gamma();
 		}
 	}
 	
@@ -622,23 +472,15 @@ public class BuiltinFuncDefs {
 		public String getDescription() {
 			return sig + " = " + description;
 		}
-
-		@Override
-		public Complex complexEvaluate(Complex z) throws Exception {
-			if (z.im() != 0.0) {
-				throw new Exception("Complex loggamma not supported.");
-			}
-			return z.setRe(Gamma.logGamma(z.re()));
-		}
-
-		@Override
-		public double evaluate(double x) throws Exception {
-			return Gamma.logGamma(x);
-		}
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
 			return v.visit(this);
+		}
+
+		@Override
+		public Num numEvaluate(Num arg) throws Exception {
+			return arg.loggamma();
 		}
 	}
 }

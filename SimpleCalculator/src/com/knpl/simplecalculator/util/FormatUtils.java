@@ -3,6 +3,8 @@ package com.knpl.simplecalculator.util;
 import java.util.Arrays;
 
 import com.knpl.simplecalculator.nodes.Complex;
+import com.knpl.simplecalculator.nodes.Num;
+import com.knpl.simplecalculator.nodes.RealDouble;
 
 public class FormatUtils {
 	
@@ -10,6 +12,17 @@ public class FormatUtils {
 		char[] zeroes = new char[n];
 		Arrays.fill(zeroes, '0');
 		return new String(zeroes);
+	}
+	
+	public static String format(Num a, int n, boolean polar) {
+		if (a instanceof Complex) {
+			Complex z = (Complex) a;
+			return polar ? polarFormat(z, n) : cartesianFormat(z, n);
+		}
+		else if (a instanceof RealDouble) {
+			return format(((RealDouble)a).getValue(), n);
+		}
+		return "What kind of number is this?";
 	}
 	
 	public static String format(Complex z, int n, boolean polar) {

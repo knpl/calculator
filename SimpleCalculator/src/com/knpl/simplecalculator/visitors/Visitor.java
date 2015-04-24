@@ -213,7 +213,15 @@ public class Visitor {
 		return visit((ConstDef) node);
 	}
 	
-	public Object visit(Complex node) throws Exception {
+	public Object visit(Num node) throws Exception {
 		return visit((Expr) node);
+	}
+	
+	public Object visit(RealDouble node) throws Exception {
+		return visit((Num) node);
+	}
+	
+	public Object visit(Complex node) throws Exception {
+		return visit((Num) node);
 	}
 }

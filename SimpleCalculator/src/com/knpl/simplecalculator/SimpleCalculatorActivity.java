@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import com.knpl.simplecalculator.keyboard.CalculatorKeyboard;
 import com.knpl.simplecalculator.keyboard.MyKeyboardView;
-import com.knpl.simplecalculator.nodes.Complex;
 import com.knpl.simplecalculator.nodes.Node;
+import com.knpl.simplecalculator.nodes.Num;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
 import com.knpl.simplecalculator.util.FormatUtils;
+
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -244,21 +245,13 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     	output.setText(s);
     }
     
-    public void print(Complex z) {
+    public void print(Num n) {
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	int ndecimals = prefs.getInt(CalculatorPreferenceFragment.PREF_KEY_PRECISION, 10);
     	boolean polar = prefs.getBoolean("pref_key_complex_polar", false);
     	
     	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(z, ndecimals, polar));
-    }
-    
-    public void print(double d) {
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	int ndecimals = prefs.getInt(CalculatorPreferenceFragment.PREF_KEY_PRECISION, 10);
-    	
-    	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(d, ndecimals));
+    	output.setText(FormatUtils.format(n, ndecimals, polar));
     }
     
 	public void setXAxis(Range x) {
