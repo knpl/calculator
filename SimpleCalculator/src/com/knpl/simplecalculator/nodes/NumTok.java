@@ -13,10 +13,6 @@ public class NumTok extends Expr {
 		return new RealDouble(Double.parseDouble(token));
 	}
 	
-	public double getDouble() {
-		return Double.parseDouble(token);
-	}
-	
 	@Override
 	public String toString() {
 		return token;

@@ -223,7 +223,7 @@ public class Compile extends Visitor {
 
 	@Override
 	public Void visit(NumTok node) throws Exception {
-		Double val = node.getDouble();
+		Double val = node.getRealDouble().getValue();
 		
 		write(ByteCodes.LOADC);
 		push();
@@ -239,14 +239,11 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Void visit(Complex node) throws Exception {
-		if (node.im() != 0.0) {
-			throw new Exception("Program can't do complex calculations");
-		}
-		Double val = node.re();
-		
+	public Void visit(RealDouble node) throws Exception {
 		write(ByteCodes.LOADC);
 		push();
+		
+		double val = node.getValue();
 		
 		Integer index = constantMap.get(val);
 		if (index == null) {
@@ -319,9 +316,6 @@ public class Compile extends Visitor {
 	@Override
 	public Void visit(UserFuncDef node) throws Exception {
 		write(ByteCodes.CALL);
-		int pStackSize = node.getProgram().getStackSize();
-		push(pStackSize);
-		pop(pStackSize);
 		
 		Integer offset = functionMap.get(this);
 		if (offset == null) {
@@ -331,7 +325,12 @@ public class Compile extends Visitor {
 				newFunctionMap.put(node, offset);
 			}
 		}
+		
+		int pStackSize = node.getProgram().getStackSize();
 		write(offset);
+		push(pStackSize);
+		pop(pStackSize);
+		
 		return null;
 	}
 	

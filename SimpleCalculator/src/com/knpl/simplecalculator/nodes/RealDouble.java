@@ -3,6 +3,7 @@ package com.knpl.simplecalculator.nodes;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
 
+import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class RealDouble extends Num {
@@ -20,40 +21,45 @@ public class RealDouble extends Num {
 	
 	@Override
 	public Num add(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().add(a);
+		}
 		val += ((RealDouble)a).val;
 		return this;
 	}
 
 	@Override
 	public Num sub(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().sub(a);
+		}
 		val -= ((RealDouble)a).val;
 		return this;
 	}
 
 	@Override
 	public Num mul(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().mul(a);
+		}
 		val *= ((RealDouble)a).val;
 		return this;
 	}
 
 	@Override
 	public Num div(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().div(a);
+		}
 		val /= ((RealDouble)a).val;
 		return this;
 	}
 
 	@Override
 	public Num mod(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().mod(a);
+		}
 		double b = ((RealDouble) a).val;
 		val -=  b * Math.floor(val / b);
 		return this;
@@ -61,11 +67,12 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num pow(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().pow(a);
-		
-		if (val < 0)
+		}
+		if (val < 0) {
 			return toComplex().pow(a);
+		}
 		
 		val = Math.pow(val, ((RealDouble)a).val);
 		return this;
@@ -91,8 +98,9 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num max(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().max(a);
+		}
 		double b = ((RealDouble) a).val;
 		val = val >= b ? val : b; 
 		return this;
@@ -100,8 +108,9 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num min(Num a) {
-		if (!(a instanceof RealDouble))
+		if (!(a instanceof RealDouble)) {
 			return toComplex().min(a);
+		}
 		double b = ((RealDouble) a).val;
 		val = val >= b ? val : b; 
 		return this;
@@ -121,8 +130,9 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num sqrt() {
-		if (val < 0)
+		if (val < 0) {
 			return new Complex(0, Math.sqrt(-val));
+		}
 		val = Math.sqrt(val);
 		return this;
 	}
@@ -142,7 +152,7 @@ public class RealDouble extends Num {
 	@Override
 	public Num log() {
 		if (val < 0) {
-			return new Complex(Math.log(val), Math.PI);
+			return new Complex(Math.log(-val), Math.PI);
 		}
 		val = Math.log(val);
 		return this;
@@ -150,10 +160,7 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num sin() {
-		if (val == Math.PI)
-			val = 0;
-		else
-			val = Math.sin(val);
+		val = Math.sin(val);
 		return this;
 	}
 
@@ -165,10 +172,7 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num tan() {
-		if (val == Math.PI)
-			val = 0;
-		else
-			val = Math.tan(val);
+		val = Math.tan(val);
 		return this;
 	}
 
@@ -215,14 +219,47 @@ public class RealDouble extends Num {
 	}
 
 	@Override
-	public Num gamma() {
+	public RealDouble gamma() {
 		val = Gamma.gamma(val);
 		return this;
 	}
 
 	@Override
-	public Num loggamma() {
+	public RealDouble loggamma() {
 		val = Gamma.logGamma(val);
+		return this;
+	}
+	
+	@Override
+	public RealDouble re() {
+		return this;
+	}
+	
+	@Override
+	public RealDouble im() {
+		val = 0;
+		return this;
+	}
+	
+	@Override
+	public RealDouble mod() {
+		val = Math.abs(val);
+		return this;
+	}
+	
+	@Override
+	public RealDouble arg() {
+		if (val == 0)
+			val = Double.NaN;
+		else if (val < 0)
+			val = Math.PI;
+		else
+			val = 0;
+		return this;
+	}
+	
+	@Override
+	public RealDouble conj() {
 		return this;
 	}
 
@@ -233,6 +270,17 @@ public class RealDouble extends Num {
 	
 	public double getValue() {
 		return val;
+	}
+	
+
+	@Override
+	public String toString() {
+		return Double.toString(val);
+	}
+	
+	@Override
+	public String format(int decimalcount, boolean polar) {
+		return FormatUtils.format(val, decimalcount);
 	}
 	
 	@Override

@@ -57,7 +57,7 @@ public class MyKeyboardView extends KeyboardView {
 		
 		smallLabelPaint.setTextAlign(Paint.Align.RIGHT);
 		smallLabelPaint.setStyle(Paint.Style.STROKE);
-		smallLabelPaint.setTextSize(12);
+		smallLabelPaint.setTextSize(16);
 		smallLabelPaint.setColor(Color.LTGRAY);
 	}
 	

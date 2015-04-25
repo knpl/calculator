@@ -111,6 +111,15 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		return view;
 	}
 	
+	public PlotMode getMode(PlotType type) {
+		switch (type) {
+		case NORMAL: return normalMode;
+		case POLAR:	 return polarMode;
+		case PARAMETRIC: return parametricMode;
+		default: return normalMode;
+		}
+	}
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putString("state", mode.getType().name());
@@ -128,7 +137,9 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0: // Edit
-					mode.edit(adapter.getItem(position));
+					PlotEntry entry = adapter.getItem(position);
+					setMode(getMode(entry.getType()));
+					mode.edit(entry);
 					break;
 				case 1: // Remove
 					adapter.remove(adapter.getItem(position));
@@ -479,6 +490,10 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		
 		public PlotEntry(PlotType type, UserFuncDef ufd, Range range, int color) {
 			this(type, ufd, null, range, color);
+		}
+		
+		public PlotType getType() {
+			return type;
 		}
 		
 		public Mapper getMapper() throws Exception {

@@ -13,10 +13,6 @@ public abstract class Func extends Expr {
 		return definition;
 	}
 	
-	public String getName() {
-		return definition.getSignature().getName();
-	}
-	
 	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visit(this);

@@ -90,10 +90,25 @@ public abstract class Num extends Expr {
 	public Num loggamma() {
 		throw new ArithmeticException("Not implemented");
 	}
+	public Num re() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num im() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num mod() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num arg() {
+		throw new ArithmeticException("Not implemented");
+	}
+	public Num conj() {
+		throw new ArithmeticException("Not implemented");
+	}
 	
 	public abstract Complex toComplex();
-	
 	public abstract Num copy();
+	public abstract String format(int decimalcount, boolean polar);
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {

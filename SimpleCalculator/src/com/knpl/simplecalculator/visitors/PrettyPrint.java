@@ -69,7 +69,7 @@ public class PrettyPrint extends Visitor {
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -87,7 +87,7 @@ public class PrettyPrint extends Visitor {
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -105,7 +105,7 @@ public class PrettyPrint extends Visitor {
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -123,7 +123,7 @@ public class PrettyPrint extends Visitor {
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -141,7 +141,7 @@ public class PrettyPrint extends Visitor {
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -159,7 +159,7 @@ public class PrettyPrint extends Visitor {
 		node.getRHS().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	public Node visit(Minus node) throws Exception {
@@ -171,7 +171,7 @@ public class PrettyPrint extends Visitor {
 		node.getOp().accept(this);
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	public Node visit(Factorial node) throws Exception {
@@ -184,7 +184,7 @@ public class PrettyPrint extends Visitor {
 		out.print('!');
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	public Node visit(DegToRad node) throws Exception {
@@ -197,22 +197,24 @@ public class PrettyPrint extends Visitor {
 		out.print('\u00B0');
 		
 		if (parens) out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
 	public Node visit(SVFunc node) throws Exception {
 		getInfo();
-		out.print(node.getName()+"(");
+		String name = node.getSVFuncDef().getSignature().getName();
+		out.print(name+"(");
 		node.getArgument().accept(this);
 		out.print(")");
-		return null;
+		return node;
 	}
 	
 	@Override
 	public Node visit(MVFunc node) throws Exception {
 		getInfo();
-		out.print(node.getName()+"(");
+		String name = node.getMVFuncDef().getSignature().getName();
+		out.print(name+"(");
 		List<Expr> args = node.getArguments();
 		for (int i = 0; i < args.size()-1; ++i) {
 			args.get(i).accept(this);
@@ -220,7 +222,7 @@ public class PrettyPrint extends Visitor {
 		}
 		args.get(args.size()-1).accept(this);
 		out.print(")");
-		return null;
+		return node;
 	}
 
 	@Override
@@ -234,35 +236,35 @@ public class PrettyPrint extends Visitor {
 		}
 		args.get(args.size()-1).accept(this);
 		out.print(")");
-		return null;
+		return node;
 	}
 
 	@Override
 	public Node visit(NumTok node) throws Exception {
 		getInfo();
 		out.print(node);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Node visit(Complex node) throws Exception {
+	public Node visit(Num node) throws Exception {
 		getInfo();
-		out.print("("+node.re()+" + "+node.im()+"*i)");
-		return null;
+		out.print(""+node);
+		return node;
 	}
 	
 	@Override
 	public Node visit(ConstDef node) throws Exception {
 		getInfo();
 		out.print(node.getName());
-		return null;
+		return node;
 	}
 
 	@Override
 	public Node visit(Var node) throws Exception {
 		getInfo();
 		out.print(node.getName());
-		return null;
+		return node;
 	}
 
 	@Override
@@ -271,7 +273,7 @@ public class PrettyPrint extends Visitor {
 		node.getSignature().accept(this);
 		out.print(" = ");
 		node.getExpression().accept(this);
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -279,7 +281,7 @@ public class PrettyPrint extends Visitor {
 		getInfo();
 		out.print(node.getName() + " = ");
 		node.getExpression().accept(this);
-		return null;
+		return node;
 	}
 	
 	@Override
@@ -294,7 +296,7 @@ public class PrettyPrint extends Visitor {
 		params.get(params.size()-1).accept(this);
 		out.print(")");
 		
-		return null;
+		return node;
 	}
 	
 	@Override

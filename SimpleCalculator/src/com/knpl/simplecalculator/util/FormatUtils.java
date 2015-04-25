@@ -1,68 +1,6 @@
 package com.knpl.simplecalculator.util;
 
-import java.util.Arrays;
-
-import com.knpl.simplecalculator.nodes.Complex;
-import com.knpl.simplecalculator.nodes.Num;
-import com.knpl.simplecalculator.nodes.RealDouble;
-
 public class FormatUtils {
-	
-	public static String zeroes(int n) {
-		char[] zeroes = new char[n];
-		Arrays.fill(zeroes, '0');
-		return new String(zeroes);
-	}
-	
-	public static String format(Num a, int n, boolean polar) {
-		if (a instanceof Complex) {
-			Complex z = (Complex) a;
-			return polar ? polarFormat(z, n) : cartesianFormat(z, n);
-		}
-		else if (a instanceof RealDouble) {
-			return format(((RealDouble)a).getValue(), n);
-		}
-		return "What kind of number is this?";
-	}
-	
-	public static String format(Complex z, int n, boolean polar) {
-		return polar ? polarFormat(z, n) : cartesianFormat(z, n);
-	}
-	
-	public static String cartesianFormat(Complex z, int n) {
-		if (z.im() == 0.0) {
-			return format(z.re(), n);
-		}
-		else if (z.re() == 0.0) {
-			if (z.im() == 1.0)
-				return "i";
-			return format(z.im(), n)+"*i";
-		}
-		else {
-			String im = "";
-			if (z.im() != 1.0)
-				im = format(z.im(), n)+"*";
-			return format(z.re(), n) + " + " + im + "i";
-		}
-	}
-	
-	public static String polarFormat(Complex z, int n) {
-		double mod = z.mod();
-		double arg = z.arg();
-
-		if (arg == 0.0) {
-			return format(mod, n);
-		}
-		else if (mod == 0.0) {
-			return "0";
-		}
-		else if (mod == 1.0) {
-			return "e^("+format(arg, n)+" * i)";
-		}
-		else {
-			return format(mod, n) + " * e^(" + format(arg, n)+" * i)";
-		}
-	}
 	
 	public static String format(double x, int n) {
 		boolean sign = x < 0;

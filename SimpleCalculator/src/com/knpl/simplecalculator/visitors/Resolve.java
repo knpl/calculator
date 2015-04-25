@@ -32,10 +32,16 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
+	public Node visit(UserFuncDef node) throws Exception {
+		node.getSignature().accept(this);
+		node.setExpression((Expr) node.getExpression().accept(this));
+		return node;
+	}
+	
+	@Override
 	public Node visit(FuncDefNode node) throws Exception {
 		node.getSignature().accept(this);
 		node.setExpression((Expr) node.getExpression().accept(this));
-		
 		return node;
 	}
 	
@@ -94,12 +100,7 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Complex node) throws Exception {
-		return node;
-	}
-	
-	@Override
-	public Node visit(UserConstDef node) throws Exception {
+	public Node visit(Num node) throws Exception {
 		return node;
 	}
 	
@@ -116,10 +117,8 @@ public class Resolve extends Visitor {
 		if (!node.match(def.getSignature()))
 			throw new Exception("Signature mismatch: "+ node.getName());
 		
-		if (def instanceof SVFuncDef)
-			return new SVFunc((SVFuncDef) def, arguments.get(0));
-		else
-			return new MVFunc((MVFuncDef) def, arguments);	
+		return (def instanceof SVFuncDef) ? new SVFunc((SVFuncDef) def, arguments.get(0))
+									   	  : new MVFunc((MVFuncDef) def, arguments);
 	}
 	
 	@Override

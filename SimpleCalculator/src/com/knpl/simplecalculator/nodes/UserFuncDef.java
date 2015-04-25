@@ -15,13 +15,15 @@ import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserFuncDef extends MVFuncDef {
-	private final Expr expression;
+	private Expr expression;
 	private Program program;
+	private boolean resolved;
 	
 	private UserFuncDef(Signature sig, Expr expr, String description) throws Exception {
 		super(sig, description);
 		this.expression = expr;
 		this.program = null;
+		resolved = false;
 	}
 	
 	public static UserFuncDef fromSource(String source) throws Exception {
@@ -32,14 +34,13 @@ public class UserFuncDef extends MVFuncDef {
 	}
 	
 	public static UserFuncDef fromFuncDefNode(FuncDefNode fdn) throws Exception {
-		Resolve resolve = new Resolve();
-		fdn = (FuncDefNode) fdn.accept(resolve);
-		
-		Map<String, Var> freeVars = resolve.getFreeVarMap();
-		if (!freeVars.isEmpty()) {
-			throw new Exception("Resolve error: undeclared variables");
-		}
-		
+//		Resolve resolve = new Resolve();
+//		fdn = (FuncDefNode) fdn.accept(resolve);
+//		
+//		Map<String, Var> freeVars = resolve.getFreeVarMap();
+//		if (!freeVars.isEmpty()) {
+//			throw new Exception("Resolve error: undeclared variables");
+//		}
 		PrettyPrint prettyPrint = new PrettyPrint();
 		fdn.accept(prettyPrint);
 		
@@ -50,30 +51,40 @@ public class UserFuncDef extends MVFuncDef {
 		return expression;
 	}
 	
+	public UserFuncDef setExpression(Expr expression) {
+		this.expression = expression;
+		return this;
+	}
+	
 	@Override
 	public String getDescription() {
 		return description;
 	}
 	
-	public Program compile() throws Exception {
-		if (program == null) {
-			Compile c = new Compile();
-			(new FuncDefNode(sig, expression)).accept(c);
-			program = c.getProgram();
+	private void compile() throws Exception {
+		if (program != null) {
+			return;
 		}
-		return program;
+		
+		if (!resolved) {
+			Resolve resolve = new Resolve();
+			accept(resolve);
+			if (resolve.getFreeVarMap().size() != 0) {
+				throw new Exception("Unable to compile function. Free variables not allowed.");
+			}
+			resolved = true;
+		}
+		
+		Compile compile = new Compile();
+		(new FuncDefNode(sig, expression)).accept(compile);
+		program = compile.getProgram();
 	}
 	
 	public Program getProgram() throws Exception {
 		if (program == null) {
-			program = compile();
+			compile();
 		}
 		return program;
-	}
-	
-	@Override
-	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
 	}
 
 	@Override
@@ -91,5 +102,10 @@ public class UserFuncDef extends MVFuncDef {
 		}
 		
 		return (Num) expression.accept(new NumEvaluate(map));
+	}
+
+	@Override
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
 	}
 }

@@ -22,7 +22,6 @@ public class FuncDefNode extends Node {
 		}
 		
 		UserFuncDef ufd = UserFuncDef.fromFuncDefNode(this);
-		ufd.compile();
 		
 		defs.putUserFuncDef(ufd);
 		

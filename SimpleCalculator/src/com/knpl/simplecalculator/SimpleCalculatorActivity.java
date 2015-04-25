@@ -10,7 +10,8 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.util.FormatUtils;
+import com.knpl.simplecalculator.storage.CalculatorDb;
+import com.knpl.simplecalculator.util.Globals;
 
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
@@ -134,8 +135,9 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     		new CalculatorPreferenceFragment()
         };
         
-        if (savedInstanceState == null) {	
+        if (savedInstanceState == null) {
         	setFragment(drawerFragments[MAIN_FRAGMENT_POSITION], false);
+        	Globals.getInstance();
         }
     }
     
@@ -229,9 +231,9 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     		Node parseResult = parser.getResult();
 	    	parseResult.execute(this);
     	}
-    	catch (Exception e) {
-    		print("Caught exception: "+e.getMessage());
-    		e.printStackTrace();
+    	catch (Exception ex) {
+    		ex.printStackTrace();
+    		print("Caught exception: "+ex.getMessage());
     	}
     }
     
@@ -251,7 +253,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     	boolean polar = prefs.getBoolean("pref_key_complex_polar", false);
     	
     	TextView output = (TextView) findViewById(R.id.output);
-    	output.setText(FormatUtils.format(n, ndecimals, polar));
+    	output.setText(n.format(ndecimals, polar));
     }
     
 	public void setXAxis(Range x) {

@@ -20,7 +20,7 @@ public abstract class ConstDef extends Expr {
 		return description;
 	}
 	
-	public abstract Num getNum();
+	public abstract Num getNum() throws Exception;
 	
 	@Override
 	public String toString() {

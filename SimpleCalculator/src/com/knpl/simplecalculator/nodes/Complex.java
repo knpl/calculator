@@ -1,5 +1,6 @@
 package com.knpl.simplecalculator.nodes;
 
+import com.knpl.simplecalculator.util.FormatUtils;
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public class Complex extends Num {
@@ -24,14 +25,6 @@ public class Complex extends Num {
 		return new Complex(mod * Math.cos(arg), mod * Math.sin(arg));
 	}
 	
-	public double re() {
-		return re;
-	}
-
-	public double im() {
-		return im;
-	}
-	
 	public Complex setRe(double re) {
 		this.re = re;
 		return this;
@@ -42,11 +35,19 @@ public class Complex extends Num {
 		return this;
 	}
 	
-	public double arg() {
+	public double imz() {
+		return im;
+	}
+	
+	public double rez() {
+		return re;
+	}
+	
+	public double argz() {
 		return Math.atan2(im, re);
 	}
 	
-	public double mod() {
+	public double modz() {
 		return Math.hypot(re, im);
 	}
 	
@@ -108,8 +109,8 @@ public class Complex extends Num {
 
 	@Override
 	public Complex log() {
-		double mod = mod(),
-			   arg = arg();
+		double mod = modz(),
+			   arg = argz();
 		re = Math.log(mod);
 		im = arg;
 		return this;
@@ -117,8 +118,8 @@ public class Complex extends Num {
 
 	@Override
 	public Complex sqrt() {
-		double mod = Math.sqrt(mod()),
-			   arg = 0.5*arg();
+		double mod = Math.sqrt(modz()),
+			   arg = 0.5*argz();
 		re = mod*Math.cos(arg);
 		im = mod*Math.sin(arg);
 		return this;
@@ -283,23 +284,23 @@ public class Complex extends Num {
 	}
 	
 	public static Complex sqrt(Complex z) {
-		return fromPolar(Math.sqrt(mod(z)), arg(z)/2);
+		return fromPolar(Math.sqrt(modz(z)), argz(z)/2);
 	}
 	
 	public static Complex neg(Complex z) {
 		return new Complex(-z.re, -z.im);
 	}
 	
-	public static double mod(Complex z) {
+	public static double modz(Complex z) {
 		return Math.hypot(z.re, z.im);
 	}
 	
-	public static double arg(Complex z) {
+	public static double argz(Complex z) {
 		return Math.atan2(z.im, z.re);
 	}
 	
 	public static Complex log(Complex z) {
-		return new Complex(Math.log(mod(z)), arg(z));
+		return new Complex(Math.log(modz(z)), argz(z));
 	}
 	
 	public static Complex sinh(Complex z) {
@@ -395,18 +396,101 @@ public class Complex extends Num {
 		return w;
 	}
 	
-	public String toString(boolean polar) {
-		return polar ? mod()+"*e^("+(arg()/Math.PI)+"*pi*i)" : re+" + "+im+"*i";
+	@Override
+	public RealDouble re() {
+		return new RealDouble(re);
+	}
+	
+	@Override
+	public RealDouble im() {
+		return new RealDouble(im);
+	}
+	
+	@Override
+	public RealDouble mod() {
+		return new RealDouble(modz());
+	}
+	
+	@Override
+	public RealDouble arg() {
+		return new RealDouble(argz());
+	}
+	
+	@Override
+	public Complex conj() {
+		im = -im;
+		return this;
+	}
+
+	@Override
+	public Complex toComplex() {
+		return this;
 	}
 	
 	@Override
 	public String toString() {
-		return re+" + "+im+"*i";
+		if (im == 0)
+			return ""+re;
+		else if (im < 0)
+			return re+"-"+(-im)+"*i";
+		else
+			return re+"+"+im+"*i";
 	}
 	
 	@Override
-	public Complex toComplex() {
-		return this;
+	public String format(int decimalcount, boolean polar) {
+		return polar ? polarFormat(decimalcount) 
+					 : cartesianFormat(decimalcount);
+	}
+	
+	private String polarFormat(int decimalcount) {
+		double mod = modz(),
+			   arg = argz();
+		
+		if (mod == 0) {
+			return "0";
+		}
+		else if (arg == 0) {
+			return FormatUtils.format(mod, decimalcount);
+		}
+		else {
+			StringBuffer sb = new StringBuffer();
+			if (mod != 1)
+				sb.append(FormatUtils.format(mod, decimalcount)).append(" * ");
+			sb.append("e^(").append(FormatUtils.format(arg, decimalcount));
+			sb.append(" * i)");
+			return sb.toString();
+		}
+	}
+	
+	private String cartesianFormat(int decimalcount) {
+		if (im == 0) {
+			return FormatUtils.format(re, decimalcount);
+		}
+		else if (re == 0) {
+			if (im == 1)
+				return "i";
+			return FormatUtils.format(im, decimalcount)+" * i";
+		}
+		else {
+			StringBuffer sb = new StringBuffer();
+			sb.append(FormatUtils.format(re, decimalcount));
+			if (im < 0) {
+				sb.append(" - ");
+				if (im == -1)
+					sb.append('i');
+				else
+					sb.append(FormatUtils.format(-im, decimalcount)).append(" * i");
+			}
+			else {
+				sb.append(" + ");
+				if (im == 1)
+					sb.append('i');
+				else 
+					sb.append(FormatUtils.format(im, decimalcount)).append(" * i");
+			}
+			return sb.toString();
+		}
 	}
 	
 	@Override
