@@ -10,7 +10,6 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.Globals;
 
 import android.animation.LayoutTransition;

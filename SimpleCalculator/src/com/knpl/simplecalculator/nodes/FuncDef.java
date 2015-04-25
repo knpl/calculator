@@ -1,5 +1,7 @@
 package com.knpl.simplecalculator.nodes;
 
+import java.util.List;
+
 import com.knpl.simplecalculator.visitors.Visitor;
 
 public abstract class FuncDef extends Node {
@@ -19,6 +21,8 @@ public abstract class FuncDef extends Node {
 	public String getDescription() {
 		return description;
 	}
+	
+	public abstract Num numEvaluate(List<Num> args) throws Exception;
 	
 	@Override
 	public String toString() {

@@ -14,7 +14,7 @@ import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public class UserFuncDef extends MVFuncDef {
+public class UserFuncDef extends FuncDef {
 	private Expr expression;
 	private Program program;
 	private boolean resolved;
@@ -34,31 +34,14 @@ public class UserFuncDef extends MVFuncDef {
 	}
 	
 	public static UserFuncDef fromFuncDefNode(FuncDefNode fdn) throws Exception {
-//		Resolve resolve = new Resolve();
-//		fdn = (FuncDefNode) fdn.accept(resolve);
-//		
-//		Map<String, Var> freeVars = resolve.getFreeVarMap();
-//		if (!freeVars.isEmpty()) {
-//			throw new Exception("Resolve error: undeclared variables");
-//		}
 		PrettyPrint prettyPrint = new PrettyPrint();
 		fdn.accept(prettyPrint);
-		
-		return new UserFuncDef(fdn.getSignature(), fdn.getExpression(), prettyPrint.toString());
+		return new UserFuncDef(
+				fdn.getSignature(), fdn.getExpression(), prettyPrint.toString());
 	}
 	
 	public Expr getExpression() {
 		return expression;
-	}
-	
-	public UserFuncDef setExpression(Expr expression) {
-		this.expression = expression;
-		return this;
-	}
-	
-	@Override
-	public String getDescription() {
-		return description;
 	}
 	
 	private void compile() throws Exception {
@@ -67,8 +50,11 @@ public class UserFuncDef extends MVFuncDef {
 		}
 		
 		if (!resolved) {
+			android.util.Log.d("mytag", "resolving now");
+			 
 			Resolve resolve = new Resolve();
-			accept(resolve);
+			sig.accept(resolve);
+			expression = (Expr) expression.accept(resolve);
 			if (resolve.getFreeVarMap().size() != 0) {
 				throw new Exception("Unable to compile function. Free variables not allowed.");
 			}

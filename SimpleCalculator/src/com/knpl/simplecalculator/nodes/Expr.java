@@ -30,7 +30,6 @@ public abstract class Expr extends Node {
 			FuncDefNode def = new FuncDefNode(new Signature("expression", Arrays.asList(var)), node);
 			Compile compile = new Compile();
 			def.accept(compile);
-			
 			ArrayList<Mapper> mappers = new ArrayList<Mapper>(1);
 			mappers.add(new ProgramMapper(compile.getProgram(), Color.BLUE));
 			calculator.plot(mappers);

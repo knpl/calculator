@@ -65,98 +65,86 @@ public class Visitor {
 	public Object visit(Func node) throws Exception {
 		return visit((Expr) node);
 	}
-	public Object visit(SVFunc node) throws Exception {
-		return visit((Func) node);
-	}
-	public Object visit(MVFunc node) throws Exception {
-		return visit((Func) node);
-	}
 	public Object visit(FuncDef node) throws Exception {
 		return visit((Node) node);
 	}
-	public Object visit(SVFuncDef node) throws Exception {
-		return visit((FuncDef) node);
-	}
-	public Object visit(MVFuncDef node) throws Exception {
-		return visit((FuncDef) node);
-	}
 	public Object visit(UserFuncDef node) throws Exception {
-		return visit((MVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(MinDef node) throws Exception {
-		return visit((MVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(MaxDef node) throws Exception {
-		return visit((MVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(FloorDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(CeilDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(SqrtDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(AbsDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(LogDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ExpDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(SinhDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(CoshDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(TanhDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(SinDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(CosDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(TanDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(AsinDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(AcosDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(AtanDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ErfDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(GammaDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(LogGammaDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ReDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ImDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ArgDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ModDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ConjDef node) throws Exception {
-		return visit((SVFuncDef) node);
+		return visit((FuncDef) node);
 	}
 	public Object visit(ConstDefNode node) throws Exception {
 		return visit((Node) node);

@@ -18,16 +18,8 @@ public class UserConstDef extends ConstDef {
 	}
 	
 	public static UserConstDef fromConstDefNode(ConstDefNode cdn) throws Exception {
-//		Resolve resolve = new Resolve();
-//		cdn = (ConstDefNode) cdn.accept(resolve);
-//		
-//		if (!resolve.getFreeVarMap().isEmpty()) {
-//			throw new Exception("Constant expression contains free variables");
-//		}
-		
 		PrettyPrint pp = new PrettyPrint();
 		cdn.accept(pp);
-		
 		return new UserConstDef(cdn.getName(), cdn.getExpression(), pp.toString());
 	}
 	

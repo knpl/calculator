@@ -102,7 +102,7 @@ public class RealDouble extends Num {
 			return toComplex().max(a);
 		}
 		double b = ((RealDouble) a).val;
-		val = val >= b ? val : b; 
+		val = (val >= b) ? val : b; 
 		return this;
 	}
 
@@ -112,7 +112,7 @@ public class RealDouble extends Num {
 			return toComplex().min(a);
 		}
 		double b = ((RealDouble) a).val;
-		val = val >= b ? val : b; 
+		val = (val <= b) ? val : b; 
 		return this;
 	}
 

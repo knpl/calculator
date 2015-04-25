@@ -1,16 +1,24 @@
 package com.knpl.simplecalculator.nodes;
 
+import java.util.List;
+
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public abstract class Func extends Expr {
-	protected final FuncDef definition;
+public class Func extends Expr {
+	final FuncDef definition;
+	final List<Expr> arguments;
 	
-	public Func(FuncDef definition) {
+	public Func(FuncDef definition, List<Expr> arguments) {
 		this.definition = definition;
+		this.arguments = arguments;
 	}
 	
 	public FuncDef getFuncDef() {
 		return definition;
+	}
+	
+	public List<Expr> getArguments() {
+		return arguments;
 	}
 	
 	@Override

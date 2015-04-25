@@ -22,20 +22,12 @@ public class Resolve extends Visitor {
 		this.boundedVarMap = boundedVarMap;
 	}
 	
-	
 	public Map<String, Var> getFreeVarMap()  {
 		return freeVarMap;
 	}
 	
 	public Map<String, Var> getBoundedVarMap() {
 		return boundedVarMap;
-	}
-	
-	@Override
-	public Node visit(UserFuncDef node) throws Exception {
-		node.getSignature().accept(this);
-		node.setExpression((Expr) node.getExpression().accept(this));
-		return node;
 	}
 	
 	@Override
@@ -117,18 +109,15 @@ public class Resolve extends Visitor {
 		if (!node.match(def.getSignature()))
 			throw new Exception("Signature mismatch: "+ node.getName());
 		
-		return (def instanceof SVFuncDef) ? new SVFunc((SVFuncDef) def, arguments.get(0))
-									   	  : new MVFunc((MVFuncDef) def, arguments);
+		if (def instanceof UserFuncDef) {
+			
+		}
+		
+		return new Func(def, arguments);
 	}
 	
 	@Override
-	public Node visit(SVFunc node) throws Exception {
-		node.setArgument((Expr) node.getArgument().accept(this));
-		return node;
-	}
-	
-	@Override
-	public Node visit(MVFunc node) throws Exception {
+	public Node visit(Func node) throws Exception {
 		List<Expr> arguments = node.getArguments();
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this));

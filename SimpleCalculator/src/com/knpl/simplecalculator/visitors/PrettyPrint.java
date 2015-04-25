@@ -201,19 +201,9 @@ public class PrettyPrint extends Visitor {
 	}
 	
 	@Override
-	public Node visit(SVFunc node) throws Exception {
+	public Node visit(Func node) throws Exception {
 		getInfo();
-		String name = node.getSVFuncDef().getSignature().getName();
-		out.print(name+"(");
-		node.getArgument().accept(this);
-		out.print(")");
-		return node;
-	}
-	
-	@Override
-	public Node visit(MVFunc node) throws Exception {
-		getInfo();
-		String name = node.getMVFuncDef().getSignature().getName();
+		String name = node.getFuncDef().getSignature().getName();
 		out.print(name+"(");
 		List<Expr> args = node.getArguments();
 		for (int i = 0; i < args.size()-1; ++i) {

@@ -14,17 +14,22 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:hint="@string/input_hint" /> 
+        android:hint="@string/input_hint" />
+    
+    <ScrollView
+        android:layout_width="match_parent" 
+        android:layout_height="match_parent" 
+	    android:layout_below="@+id/input" >
 
-    <TextView
-        android:id="@+id/output"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/input"
-        android:textSize="20sp"
-        android:textColor="#ffffffff"
-        android:gravity="right"
-        android:layout_below="@+id/input"
-        android:text="@string/output" />
+	    <TextView
+	        android:id="@+id/output"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:textSize="20sp"
+	        android:textColor="#ffffffff"
+	        android:gravity="right"
+	        android:text="@string/output" />
+    
+    </ScrollView>
     
 </RelativeLayout>

@@ -28,18 +28,6 @@ public class Compile extends Visitor {
 	
 	private Program program;
 	
-	public Compile(List<Var> parameters) {
-		code = new ByteArrayOutputStream();
-		nbytes = 0;
-		this.parameters = parameters;
-		constantMap = new HashMap<Double, Integer>();
-		functionMap = new HashMap<UserFuncDef, Integer>();
-		newFunctionMap = new HashMap<UserFuncDef, Integer>();
-		program = null;
-		
-		maxStackSize = curStackSize = 0;
-	}
-	
 	public Compile() {
 		code = new ByteArrayOutputStream();
 		nbytes = 0;
@@ -47,9 +35,8 @@ public class Compile extends Visitor {
 		constantMap = new HashMap<Double, Integer>();
 		functionMap = new HashMap<UserFuncDef, Integer>();
 		newFunctionMap = new HashMap<UserFuncDef, Integer>();
-		program = null;
-		
 		maxStackSize = curStackSize = 0;
+		program = null;
 	}
 	
 	public Program getProgram() {
@@ -102,7 +89,7 @@ public class Compile extends Visitor {
 		ArrayList<Integer> offsets = new ArrayList<Integer>();
 		
 		int nfunctions;
-		while (!newFunctions.isEmpty()) {
+		while (!newFunctions.isEmpty()) {	
 			nfunctions = functionMap.size();
 			functionMap.putAll(newFunctionMap);
 			
@@ -128,7 +115,7 @@ public class Compile extends Visitor {
 		
 		int nconstants = constantMap.size();
 		ArrayList<Double> constants = new ArrayList<Double>(nconstants);
-		constants.addAll(Collections.nCopies(nconstants, 0.0)); 
+		constants.addAll(Collections.nCopies(nconstants, 0.)); 
 		for (Map.Entry<Double, Integer> e : constantMap.entrySet()) {
 			constants.set(e.getValue(), e.getKey());
 		}
@@ -296,20 +283,13 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Void visit(MVFunc node) throws Exception {
+	public Void visit(Func node) throws Exception {
 		List<Expr> args = node.getArguments();
 		for (Expr arg : args) {
 			arg.accept(this);
 		}
 		node.getFuncDef().accept(this);
 		pop(args.size() - 1);
-		return null;
-	}
-	
-	@Override
-	public Void visit(SVFunc node) throws Exception {
-		node.getArgument().accept(this);
-		node.getFuncDef().accept(this);
 		return null;
 	}
 	

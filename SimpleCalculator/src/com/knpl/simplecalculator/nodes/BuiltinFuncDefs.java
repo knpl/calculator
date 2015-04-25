@@ -19,7 +19,7 @@ public class BuiltinFuncDefs {
 		new ReDef(), new ImDef(), new ArgDef(), new ModDef(), new ConjDef()
 	};
 	
-	public static class MinDef extends MVFuncDef {
+	public static class MinDef extends FuncDef {
 		public static final String DESCRIPTION = "The minimum of a and b.";
 		
 		public MinDef() {
@@ -37,7 +37,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class MaxDef extends MVFuncDef {
+	public static class MaxDef extends FuncDef {
 		public static final String DESCRIPTION = "The maximum of a and b.";
 		
 		public MaxDef() {
@@ -55,7 +55,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class FloorDef extends SVFuncDef {
+	public static class FloorDef extends FuncDef {
 		public static final String DESCRIPTION = "The integer part of x.";
 		
 		public FloorDef() {
@@ -63,8 +63,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.floor();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).floor();
 		}
 
 		@Override
@@ -73,7 +73,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 
-	public static class CeilDef extends SVFuncDef {
+	public static class CeilDef extends FuncDef {
 		public static final String DESCRIPTION = "The nearest integer greater than or equal to x.";
 		
 		public CeilDef() {
@@ -81,8 +81,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.ceil();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).ceil();
 		}
 
 		@Override
@@ -91,7 +91,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class SqrtDef extends SVFuncDef {
+	public static class SqrtDef extends FuncDef {
 		public static final String DESCRIPTION = "The square root.";
 		
 		public SqrtDef() {
@@ -99,8 +99,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.sqrt();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).sqrt();
 		}
 
 		@Override
@@ -109,7 +109,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AbsDef extends SVFuncDef {
+	public static class AbsDef extends FuncDef {
 		public static final String DESCRIPTION = "The absolute value.";
 		
 		public AbsDef() {
@@ -122,8 +122,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.abs();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).abs();
 		}
 
 		@Override
@@ -132,7 +132,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class LogDef extends SVFuncDef {
+	public static class LogDef extends FuncDef {
 		public static final String DESCRIPTION = "The natural logarithm.";
 		
 		public LogDef() {
@@ -140,8 +140,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.log();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).log();
 		}
 
 		@Override
@@ -150,7 +150,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ExpDef extends SVFuncDef {
+	public static class ExpDef extends FuncDef {
 		public static final String DESCRIPTION = "The base e exponential function.";
 		
 		public ExpDef() {
@@ -158,8 +158,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.exp();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).exp();
 		}
 
 		@Override
@@ -168,7 +168,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class SinhDef extends SVFuncDef {
+	public static class SinhDef extends FuncDef {
 		public static final String DESCRIPTION = "The hyperbolic sine.";
 		
 		public SinhDef() {
@@ -176,8 +176,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.sinh();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).sinh();
 		}
 
 		@Override
@@ -186,7 +186,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class CoshDef extends SVFuncDef {
+	public static class CoshDef extends FuncDef {
 		public static final String DESCRIPTION = "The hyperbolic cosine.";
 		
 		public CoshDef() {
@@ -194,8 +194,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.cosh();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).cosh();
 		}
 
 		@Override
@@ -204,7 +204,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class TanhDef extends SVFuncDef {
+	public static class TanhDef extends FuncDef {
 		public static final String DESCRIPTION = "The hyperbolic tangent.";
 		
 		public TanhDef() {
@@ -212,8 +212,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.tanh();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).tanh();
 		}
 
 		@Override
@@ -222,7 +222,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class SinDef extends SVFuncDef {
+	public static class SinDef extends FuncDef {
 		public static final String DESCRIPTION = "The sine function.";
 		
 		public SinDef() {
@@ -230,8 +230,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.sin();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).sin();
 		}
 
 		@Override
@@ -240,7 +240,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class CosDef extends SVFuncDef {
+	public static class CosDef extends FuncDef {
 		public static final String DESCRIPTION = "The cosine function.";
 		
 		public CosDef() {
@@ -248,8 +248,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.cos();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).cos();
 		}
 
 		@Override
@@ -258,7 +258,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class TanDef extends SVFuncDef {
+	public static class TanDef extends FuncDef {
 		public static final String DESCRIPTION = "The tangent function.";
 		
 		public TanDef() {
@@ -266,8 +266,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.tan();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).tan();
 		}
 
 		@Override
@@ -276,7 +276,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AsinDef extends SVFuncDef {
+	public static class AsinDef extends FuncDef {
 		public static final String DESCRIPTION = "The inverse sine (arcsin).";
 		
 		public AsinDef() {
@@ -284,8 +284,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.asin();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).asin();
 		}
 
 		@Override
@@ -294,7 +294,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AcosDef extends SVFuncDef {
+	public static class AcosDef extends FuncDef {
 		public static final String DESCRIPTION = "The inverse cosine (arccos).";
 		
 		public AcosDef() {
@@ -302,8 +302,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.acos();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).acos();
 		}
 
 		@Override
@@ -312,7 +312,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class AtanDef extends SVFuncDef {
+	public static class AtanDef extends FuncDef {
 		public static final String DESCRIPTION = "The inverse tangent (arctan).";
 		
 		public AtanDef() {
@@ -320,8 +320,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.atan();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).atan();
 		}
 
 		@Override
@@ -330,7 +330,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ErfDef extends SVFuncDef {
+	public static class ErfDef extends FuncDef {
 		public static final String DESCRIPTION = "The error function.";
 		
 		public ErfDef() {
@@ -343,12 +343,12 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.erf();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).erf();
 		}
 	}
 	
-	public static class GammaDef extends SVFuncDef {
+	public static class GammaDef extends FuncDef {
 		public static final String DESCRIPTION = "The gamma function.";
 		
 		public GammaDef() {
@@ -361,12 +361,12 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.gamma();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).gamma();
 		}
 	}
 	
-	public static class LogGammaDef extends SVFuncDef {
+	public static class LogGammaDef extends FuncDef {
 		public static final String DESCRIPTION = "The log of the gamma.";
 		
 		public LogGammaDef() {
@@ -374,8 +374,8 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.loggamma();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).loggamma();
 		}
 
 		@Override
@@ -384,7 +384,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ReDef extends SVFuncDef {
+	public static class ReDef extends FuncDef {
 		public static final String DESCRIPTION = "The real part of z.";
 	
 		public ReDef() {
@@ -392,8 +392,8 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.re();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).re();
 		}
 
 		@Override
@@ -402,7 +402,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ImDef extends SVFuncDef {
+	public static class ImDef extends FuncDef {
 		public static final String DESCRIPTION = "The imaginary part of z.";
 	
 		public ImDef() {
@@ -410,8 +410,8 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.im();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).im();
 		}
 
 		@Override
@@ -420,7 +420,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ModDef extends SVFuncDef {
+	public static class ModDef extends FuncDef {
 		public static final String DESCRIPTION = "The modulus of z.";
 	
 		public ModDef() {
@@ -428,8 +428,8 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.mod();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).mod();
 		}
 
 		@Override
@@ -438,7 +438,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ArgDef extends SVFuncDef {
+	public static class ArgDef extends FuncDef {
 		public static final String DESCRIPTION = "The argument of z.";
 	
 		public ArgDef() {
@@ -446,8 +446,8 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.arg();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).arg();
 		}
 
 		@Override
@@ -456,7 +456,7 @@ public class BuiltinFuncDefs {
 		}
 	}
 	
-	public static class ConjDef extends SVFuncDef {
+	public static class ConjDef extends FuncDef {
 		public static final String DESCRIPTION = "The complex conjugate of z.";
 	
 		public ConjDef() {
@@ -464,8 +464,8 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(Num arg) throws Exception {
-			return arg.conj();
+		public Num numEvaluate(List<Num> args) throws Exception {
+			return args.get(0).conj();
 		}
 
 		@Override
