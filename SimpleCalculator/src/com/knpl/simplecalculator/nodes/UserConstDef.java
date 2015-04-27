@@ -1,5 +1,9 @@
 package com.knpl.simplecalculator.nodes;
 
+import java.util.Map;
+
+import com.knpl.simplecalculator.parser.Lexer;
+import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.visitors.NumEvaluate;
 import com.knpl.simplecalculator.visitors.PrettyPrint;
 import com.knpl.simplecalculator.visitors.Resolve;
@@ -7,40 +11,52 @@ import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserConstDef extends ConstDef {
 	private Expr expression;
+	private String source;
 	private Num val;
 	private boolean resolved;
 
-	private UserConstDef(String name, Expr expression, String description) {
-		super(name, description);
+	public UserConstDef(String name, Expr expression) {
+		super(name);
 		this.expression = expression;
+		
+		source = "";
 		val = null;
 		resolved = false;
 	}
 	
-	public static UserConstDef fromConstDefNode(ConstDefNode cdn) throws Exception {
-		PrettyPrint pp = new PrettyPrint();
-		cdn.accept(pp);
-		return new UserConstDef(cdn.getName(), cdn.getExpression(), pp.toString());
+	public static UserConstDef fromSource(String source) throws Exception {
+		Parser parser = new Parser(new Lexer(source));
+		if (!parser.constDef()) {
+			throw new Exception("Syntax error");
+		}
+		return (UserConstDef) parser.getResult();
 	}
 	
 	public Expr getExpression() {
 		return expression;
 	}
 	
-	public UserConstDef setExpression(Expr expression) {
-		this.expression = expression;
-		return this;
+	public void resolve(Map<String, UserFuncDef> ufdMap,
+						Map<String, UserConstDef> ucdMap) throws Exception {
+		if (resolved) {
+			return;
+		}
+		source = PrettyPrint.printUserConstDef(this);
+		expression = Resolve.resolveUserConstDef(this, ufdMap, ucdMap);
+		resolved = true;
+	}
+	
+	public void resolve() throws Exception {
+		if (resolved) {
+			return;
+		}
+		source = PrettyPrint.printUserConstDef(this);
+		expression = Resolve.resolveUserConstDef(this);
+		resolved = true;
 	}
 	
 	private void eval() throws Exception {
-		if (!resolved) {
-			Resolve resolve = new Resolve();
-			expression = (Expr) expression.accept(resolve);
-			if (resolve.getFreeVarMap().size() != 0) {
-				throw new Exception("Unable to evaluate constant. Free variables not allowed.");
-			}
-			resolved = true;
-		}
+		resolve();
 		val = (Num) expression.accept(new NumEvaluate());
 	}
 	
@@ -50,6 +66,18 @@ public class UserConstDef extends ConstDef {
 			eval();
 		}
 		return val.copy();
+	}
+	
+	@Override
+	public String toString() {
+		try {
+			resolve();
+			return source;
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return name+" = invalid (Reason: "+ex.getMessage()+")";
+		}
 	}
 	
 	@Override

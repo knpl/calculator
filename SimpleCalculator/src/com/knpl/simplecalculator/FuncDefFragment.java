@@ -1,10 +1,7 @@
 package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
-import com.knpl.simplecalculator.nodes.FuncDefNode;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
-import com.knpl.simplecalculator.parser.Lexer;
-import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.Globals;
 
@@ -54,35 +51,25 @@ public class FuncDefFragment extends ListFragment {
 	}
 
 	public void validate(String inputText) {
-		Parser parser = new Parser(new Lexer(inputText));
-		if (!parser.funcDef()) {
-			displayMessage("Syntax error.");
-			return;
-		}
-		
-		FuncDefNode funcDefNode = (FuncDefNode) parser.getResult();
-		Globals defs = Globals.getInstance();
-		String newName = funcDefNode.getSignature().getName();
-		
-		if (defs.getFuncDef(newName) != null) {
-			displayMessage("Function "+newName+" already exists.");
-			return;
-		}
-		
-		UserFuncDef userFuncDef;
 		try {
-			userFuncDef = UserFuncDef.fromFuncDefNode(funcDefNode);
+			UserFuncDef ufd = UserFuncDef.fromSource(inputText);
+			Globals defs = Globals.getInstance();
+			String name = ufd.getSignature().getName();
+			if (defs.getFuncDef(name) != null) {
+				throw new Exception("Function "+name+" already exists.");
+			}
+			
+			ufd.resolve();
+			defs.putUserFuncDef(ufd);
+			CalculatorDb.insertUFD(ufd);
+			adapter.add(ufd);
+			input.getText().clear();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 			displayMessage(ex.getMessage());
 			return;
 		}
-		
-		defs.putUserFuncDef(userFuncDef);
-		CalculatorDb.insertUFD(userFuncDef);
-		adapter.add(userFuncDef);
-		input.getText().clear();
 	}
 	
 	private void displayMessage(String message) {

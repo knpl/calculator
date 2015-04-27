@@ -9,17 +9,24 @@ import com.knpl.simplecalculator.util.Globals;
 
 public class Resolve extends Visitor {
 	
-	private Map<String,Var> freeVarMap;
-	private Map<String,Var> boundedVarMap;
+	private Map<String, Var> freeVarMap;
+	private Map<String, Var> boundedVarMap;
+	private Map<String, UserFuncDef> ufdMap;
+	private Map<String, UserConstDef> ucdMap;
 	
 	public Resolve() {
 		freeVarMap = new HashMap<String, Var>();
 		boundedVarMap = new HashMap<String, Var>();
+		ufdMap = new HashMap<String, UserFuncDef>();
+		ucdMap = new HashMap<String, UserConstDef>();
 	}
 	
-	public Resolve(Map<String, Var> boundedVarMap) {
+
+	public Resolve(Map<String, UserFuncDef> ufdMap, Map<String, UserConstDef> ucdMap) {
 		freeVarMap = new HashMap<String, Var>();
-		this.boundedVarMap = boundedVarMap;
+		boundedVarMap = new HashMap<String, Var>();
+		this.ufdMap = ufdMap;
+		this.ucdMap = ucdMap;
 	}
 	
 	public Map<String, Var> getFreeVarMap()  {
@@ -30,19 +37,72 @@ public class Resolve extends Visitor {
 		return boundedVarMap;
 	}
 	
-	@Override
-	public Node visit(FuncDefNode node) throws Exception {
-		node.getSignature().accept(this);
-		node.setExpression((Expr) node.getExpression().accept(this));
-		return node;
+	public static Expr resolveUserFuncDef(UserFuncDef ufd) throws Exception {
+		Signature sig = ufd.getSignature();
+		Map<String, UserFuncDef> ufdMap = new HashMap<String, UserFuncDef>();
+		Map<String, UserConstDef> ucdMap = new HashMap<String, UserConstDef>();
+		ufdMap.put(sig.getName(), ufd);
+		
+		Resolve resolve = new Resolve(ufdMap, ucdMap);
+		sig.accept(resolve);
+		Expr result = (Expr) ufd.getExpression().accept(resolve);
+		if (resolve.getFreeVarMap().size() != 0) {
+			throw new Exception("Unable to compile function. Definition contains free variables.");
+		}
+		
+		return result;
 	}
 	
-	@Override
-	public Node visit(ConstDefNode node) throws Exception {
-		node.setExpression((Expr) node.getExpression().accept(this));
-		return node;
+	public static Expr resolveUserFuncDef(UserFuncDef ufd,
+			Map<String, UserFuncDef> ufdMap, Map<String, UserConstDef> ucdMap) throws Exception {
+		Signature sig = ufd.getSignature();
+		if (ufdMap.containsKey(sig.getName())) {
+			throw new Exception("Function "+sig.getName()+" is defined in terms of itself.");
+		}
+		ufdMap.put(sig.getName(), ufd);
+		
+		Resolve resolve = new Resolve(ufdMap, ucdMap);
+		sig.accept(resolve);
+		Expr result = (Expr) ufd.getExpression().accept(resolve);
+		if (resolve.getFreeVarMap().size() != 0) {
+			throw new Exception("Unable to resolve function. Definition contains free variables.");
+		}
+		
+		return result;
 	}
 	
+	public static Expr resolveUserConstDef(UserConstDef ucd) throws Exception {
+		String name = ucd.getName();
+		Map<String, UserFuncDef> ufdMap = new HashMap<String, UserFuncDef>();
+		Map<String, UserConstDef> ucdMap = new HashMap<String, UserConstDef>();
+		ucdMap.put(name, ucd);
+		
+		Resolve resolve = new Resolve(ufdMap, ucdMap);
+		Expr result = (Expr) ucd.getExpression().accept(resolve);
+		if (resolve.getFreeVarMap().size() != 0) {
+			throw new Exception("Unable to resolve function. Definition contains free variables.");
+		}
+		
+		return result;
+	}
+	
+	public static Expr resolveUserConstDef(UserConstDef ucd,
+			Map<String, UserFuncDef> ufdMap, Map<String, UserConstDef> ucdMap) throws Exception {
+		String name = ucd.getName();
+		if (ucdMap.containsKey(name)) {
+			throw new Exception("Constant "+name+" is defined in terms of itself.");
+		}
+		ucdMap.put(name, ucd);
+		
+		Resolve resolve = new Resolve(ufdMap, ucdMap);
+		Expr result = (Expr) ucd.getExpression().accept(resolve);
+		if (resolve.getFreeVarMap().size() != 0) {
+			throw new Exception("Unable to resolve constant. Definition contains free variables.");
+		}
+		
+		return result;
+	}
+
 	@Override
 	public Node visit(Signature node) throws Exception {
 		for (Var param : node.getParameters()) {
@@ -70,6 +130,11 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
+	public Node visit(Num node) throws Exception {
+		return node;
+	}
+	
+	@Override
 	public Node visit(Var node) throws Exception {
 		String name = node.getName();
 		
@@ -81,9 +146,10 @@ public class Resolve extends Visitor {
 		if (variable != null)
 			return variable;
 		
-		ConstDef constant = Globals.getInstance().getConstDef(name);
-		if (constant != null) {
-			return constant;
+		ConstDef def = Globals.getInstance().getConstDef(name);
+		if (def != null) {
+			def.accept(this);
+			return new Const(def);	
 		}
 		
 		freeVarMap.put(name, node);
@@ -92,36 +158,45 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Num node) throws Exception {
-		return node;
-	}
-	
-	@Override
 	public Node visit(Call node) throws Exception {
+		FuncDef def = Globals.getInstance().getFuncDef(node.getName());
+		if (def == null) {
+			throw new Exception("Function " + node.getName() + " undefined");
+		}
+		else if (!node.match(def.getSignature())) {
+			throw new Exception("Signature mismatch: "+ node.getName());
+		}
+		else {
+			def.accept(this);
+		}
+		
 		List<Expr> arguments = node.getArguments();
 		for (int i = 0; i < arguments.size(); ++i) {
 			arguments.set(i, (Expr) arguments.get(i).accept(this));
-		}
-		
-		FuncDef def = Globals.getInstance().getFuncDef(node.getName());
-		if (def == null)
-			throw new Exception("Function " + node.getName() + " undefined");
-		if (!node.match(def.getSignature()))
-			throw new Exception("Signature mismatch: "+ node.getName());
-		
-		if (def instanceof UserFuncDef) {
-			
 		}
 		
 		return new Func(def, arguments);
 	}
+
+	@Override
+	public Node visit(FuncDef node) {
+		return node;
+	}
 	
 	@Override
-	public Node visit(Func node) throws Exception {
-		List<Expr> arguments = node.getArguments();
-		for (int i = 0; i < arguments.size(); ++i) {
-			arguments.set(i, (Expr) arguments.get(i).accept(this));
-		}
+	public Node visit(UserFuncDef node) throws Exception {
+		node.resolve(ufdMap, ucdMap);
+		return node;
+	}
+	
+	@Override
+	public Node visit(ConstDef node) {
+		return node;
+	}
+	
+	@Override
+	public Node visit(UserConstDef node) throws Exception {
+		node.resolve(ufdMap, ucdMap);
 		return node;
 	}
 }

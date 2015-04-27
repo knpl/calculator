@@ -26,8 +26,6 @@ public class Compile extends Visitor {
 	private Map<UserFuncDef, Integer> functionMap;
 	private Map<UserFuncDef, Integer> newFunctionMap;
 	
-	private Program program;
-	
 	public Compile() {
 		code = new ByteArrayOutputStream();
 		nbytes = 0;
@@ -36,11 +34,6 @@ public class Compile extends Visitor {
 		functionMap = new HashMap<UserFuncDef, Integer>();
 		newFunctionMap = new HashMap<UserFuncDef, Integer>();
 		maxStackSize = curStackSize = 0;
-		program = null;
-	}
-	
-	public Program getProgram() {
-		return program;
 	}
 	
 	private void write(int b) {
@@ -68,17 +61,16 @@ public class Compile extends Visitor {
 		curStackSize -= s;
 	}
 	
-	private void clear(ArrayList<UserFuncDef> list, int size) {
-		list.clear();
-		list.addAll(Collections.nCopies(size,(UserFuncDef) null));
+	public static Program compileUserFuncDef(UserFuncDef userFuncDef) throws Exception {
+		Compile compile = new Compile();
+		return compile.compile(userFuncDef);
 	}
 	
-	@Override
-	public Void visit(FuncDefNode node) throws Exception {
-		Signature sig = node.getSignature();
+	private Program compile(UserFuncDef userFuncDef) throws Exception {
+		Signature sig = userFuncDef.getSignature();
 		parameters = sig.getParameters();
 		
-		node.getExpression().accept(this);
+		userFuncDef.getExpression().accept(this);
 		write(ByteCodes.RET);
 		write(parameters.size());
 		pop();
@@ -120,96 +112,101 @@ public class Compile extends Visitor {
 			constants.set(e.getValue(), e.getKey());
 		}
 		
-		program = new Program(sig.getName(), code.toByteArray(), constants, offsets, parameters.size(), maxStackSize);
-		
-		return null;
+		return new Program(sig.getName(), code.toByteArray(),
+						   constants, offsets,
+						   parameters.size(), maxStackSize);
+	}
+	
+	private void clear(ArrayList<UserFuncDef> list, int size) {
+		list.clear();
+		list.addAll(Collections.nCopies(size,(UserFuncDef) null));
 	}
 	
 	@Override
-	public Void visit(BinOp node) throws Exception {
+	public Node visit(BinOp node) throws Exception {
 		node.getLHS().accept(this);
 		node.getRHS().accept(this);
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Add node) throws Exception {
+	public Node visit(Add node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.ADD);
 		pop();
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Sub node) throws Exception {
+	public Node visit(Sub node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.SUB);
 		pop();
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Mul node) throws Exception {
+	public Node visit(Mul node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.MUL);
 		pop();
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Div node) throws Exception {
+	public Node visit(Div node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.DIV);
 		pop();
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(Mod node) throws Exception {
+	public Node visit(Mod node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.MOD);
 		pop();
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Pow node) throws Exception {
+	public Node visit(Pow node) throws Exception {
 		visit((BinOp)node);
 		write(ByteCodes.POW);
 		pop();
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(MonOp node) throws Exception {
+	public Node visit(MonOp node) throws Exception {
 		node.getOp().accept(this);
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Minus node) throws Exception {
+	public Node visit(Minus node) throws Exception {
 		visit((MonOp)node);
 		write(ByteCodes.MINUS);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(Factorial node) throws Exception {
+	public Node visit(Factorial node) throws Exception {
 		visit((MonOp)node);
 		write(ByteCodes.INC);
 		write(ByteCodes.GAMMA);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(DegToRad node) throws Exception {
+	public Node visit(DegToRad node) throws Exception {
 		visit((MonOp)node);
 		write(ByteCodes.D2R);
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(NumTok node) throws Exception {
+	public Node visit(NumTok node) throws Exception {
 		Double val = node.getRealDouble().getValue();
 		
 		write(ByteCodes.LOADC);
@@ -222,11 +219,11 @@ public class Compile extends Visitor {
 		}
 		write(index);
 		
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(RealDouble node) throws Exception {
+	public Node visit(RealDouble node) throws Exception {
 		write(ByteCodes.LOADC);
 		push();
 		
@@ -239,12 +236,12 @@ public class Compile extends Visitor {
 		}
 		write(index);
 		
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(ConstDef node) throws Exception {
-		Num num = node.getNum();
+	public Node visit(Const node) throws Exception {
+		Num num = node.getConstDef().getNum();
 		if (num instanceof Complex) {
 			throw new Exception("Program can't do complex calculations");
 		}
@@ -260,11 +257,11 @@ public class Compile extends Visitor {
 		}
 		write(index);
 		
-		return null;
+		return node;
 	}
 
 	@Override
-	public Void visit(Var node) throws Exception {
+	public Node visit(Var node) throws Exception {
 		String name = node.getName();
 		
 		write(ByteCodes.LOADA);
@@ -275,7 +272,7 @@ public class Compile extends Visitor {
 			Var param = parameters.get(i);
 			if (name.equals(param.getName())) {
 				write(n - i);
-				return null;
+				return node;
 			}
 		}
 		
@@ -283,18 +280,18 @@ public class Compile extends Visitor {
 	}
 	
 	@Override
-	public Void visit(Func node) throws Exception {
+	public Node visit(Func node) throws Exception {
 		List<Expr> args = node.getArguments();
 		for (Expr arg : args) {
 			arg.accept(this);
 		}
 		node.getFuncDef().accept(this);
 		pop(args.size() - 1);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(UserFuncDef node) throws Exception {
+	public Node visit(UserFuncDef node) throws Exception {
 		write(ByteCodes.CALL);
 		
 		Integer offset = functionMap.get(this);
@@ -311,126 +308,126 @@ public class Compile extends Visitor {
 		push(pStackSize);
 		pop(pStackSize);
 		
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(MinDef node) throws Exception {
+	public Node visit(MinDef node) throws Exception {
 		write(ByteCodes.MIN);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(MaxDef node) throws Exception {
+	public Node visit(MaxDef node) throws Exception {
 		write(ByteCodes.MAX);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(FloorDef node) throws Exception {
+	public Node visit(FloorDef node) throws Exception {
 		write(ByteCodes.FLOOR);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(CeilDef node) throws Exception {
+	public Node visit(CeilDef node) throws Exception {
 		write(ByteCodes.CEIL);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(SqrtDef node) throws Exception {
+	public Node visit(SqrtDef node) throws Exception {
 		write(ByteCodes.SQRT);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(AbsDef node) throws Exception {
+	public Node visit(AbsDef node) throws Exception {
 		write(ByteCodes.ABS);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(LogDef node) throws Exception {
+	public Node visit(LogDef node) throws Exception {
 		write(ByteCodes.LOG);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(ExpDef node) throws Exception {
+	public Node visit(ExpDef node) throws Exception {
 		write(ByteCodes.EXP);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(SinhDef node) throws Exception {
+	public Node visit(SinhDef node) throws Exception {
 		write(ByteCodes.SINH);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(CoshDef node) throws Exception {
+	public Node visit(CoshDef node) throws Exception {
 		write(ByteCodes.COSH);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(TanhDef node) throws Exception {
+	public Node visit(TanhDef node) throws Exception {
 		write(ByteCodes.TANH);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(SinDef node) throws Exception {
+	public Node visit(SinDef node) throws Exception {
 		write(ByteCodes.SIN);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(CosDef node) throws Exception {
+	public Node visit(CosDef node) throws Exception {
 		write(ByteCodes.COS);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(TanDef node) throws Exception {
+	public Node visit(TanDef node) throws Exception {
 		write(ByteCodes.TAN);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(AsinDef node) throws Exception {
+	public Node visit(AsinDef node) throws Exception {
 		write(ByteCodes.ASIN);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(AcosDef node) throws Exception {
+	public Node visit(AcosDef node) throws Exception {
 		write(ByteCodes.ACOS);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(AtanDef node) throws Exception {
+	public Node visit(AtanDef node) throws Exception {
 		write(ByteCodes.ATAN);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(ErfDef node) throws Exception {
+	public Node visit(ErfDef node) throws Exception {
 		write(ByteCodes.ERF);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(GammaDef node) throws Exception {
+	public Node visit(GammaDef node) throws Exception {
 		write(ByteCodes.GAMMA);
-		return null;
+		return node;
 	}
 	
 	@Override
-	public Void visit(LogGammaDef node) throws Exception {
+	public Node visit(LogGammaDef node) throws Exception {
 		write(ByteCodes.LOGGAMMA);
-		return null;
+		return node;
 	}
 }

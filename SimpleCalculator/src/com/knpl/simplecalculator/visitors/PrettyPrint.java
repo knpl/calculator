@@ -54,6 +54,50 @@ public class PrettyPrint extends Visitor {
 		return buf;
 	}
 	
+	public static String printUserFuncDef(UserFuncDef ufd) throws Exception {
+		PrettyPrint v = new PrettyPrint();
+		ufd.accept(v);
+		return v.toString();
+	}
+	
+	public static String printUserConstDef(UserConstDef ucd) throws Exception {
+		PrettyPrint v = new PrettyPrint();
+		ucd.accept(v);
+		return v.toString();
+	}
+	
+	@Override
+	public Node visit(UserConstDef node) throws Exception {
+		getInfo();
+		out.print(node.getName() + " = ");
+		node.getExpression().accept(this);
+		return node;
+	}
+	
+	@Override
+	public Node visit(UserFuncDef node) throws Exception {
+		getInfo();
+		node.getSignature().accept(this);
+		out.print(" = ");
+		node.getExpression().accept(this);
+		return node;
+	}
+	
+	@Override
+	public Node visit(Signature node) throws Exception {
+		getInfo();
+		out.print(node.getName()+"(");
+		List<Var> params = node.getParameters();
+		for (int i = 0; i + 1 < params.size(); ++i) {
+			params.get(i).accept(this);
+			out.print(",");
+		}
+		params.get(params.size()-1).accept(this);
+		out.print(")");
+		
+		return node;
+	}
+	
 	@Override
 	public Node visit(Add node) throws Exception {
 		boolean parens = parens(getInfo(), 0, true);
@@ -244,9 +288,9 @@ public class PrettyPrint extends Visitor {
 	}
 	
 	@Override
-	public Node visit(ConstDef node) throws Exception {
+	public Node visit(Const node) throws Exception {
 		getInfo();
-		out.print(node.getName());
+		out.print(node.getConstDef().getName());
 		return node;
 	}
 
@@ -254,38 +298,6 @@ public class PrettyPrint extends Visitor {
 	public Node visit(Var node) throws Exception {
 		getInfo();
 		out.print(node.getName());
-		return node;
-	}
-
-	@Override
-	public Node visit(FuncDefNode node) throws Exception {
-		getInfo();
-		node.getSignature().accept(this);
-		out.print(" = ");
-		node.getExpression().accept(this);
-		return node;
-	}
-	
-	@Override
-	public Node visit(ConstDefNode node) throws Exception {
-		getInfo();
-		out.print(node.getName() + " = ");
-		node.getExpression().accept(this);
-		return node;
-	}
-	
-	@Override
-	public Node visit(Signature node) throws Exception {
-		getInfo();
-		out.print(node.getName()+"(");
-		List<Var> params = node.getParameters();
-		for (int i = 0; i < params.size()-1; ++i) {
-			params.get(i).accept(this);
-			out.print(",");
-		}
-		params.get(params.size()-1).accept(this);
-		out.print(")");
-		
 		return node;
 	}
 	

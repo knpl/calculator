@@ -1,9 +1,6 @@
 package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
-import com.knpl.simplecalculator.nodes.ConstDefNode;
-import com.knpl.simplecalculator.parser.Lexer;
-import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.Globals;
 import com.knpl.simplecalculator.nodes.UserConstDef;
@@ -54,34 +51,25 @@ public class ConstDefFragment extends ListFragment {
 	}
 
 	public void validate(String inputText) {
-		Parser parser = new Parser(new Lexer(inputText));
-		if (!parser.constDef()) {
-			displayMessage("Syntax error.");
-			return;
-		}
-		
-		ConstDefNode constDefNode = (ConstDefNode) parser.getResult();
-		Globals defs = Globals.getInstance();
-		String newName = constDefNode.getName();
-		if (defs.getConstDef(newName) != null) {
-			displayMessage("Constant "+newName+" already exists.");
-			return;
-		}
-		
-		UserConstDef userConstDef;
 		try {
-			userConstDef = UserConstDef.fromConstDefNode(constDefNode);
+			UserConstDef ucd = UserConstDef.fromSource(inputText);
+			Globals defs = Globals.getInstance();
+			String newName = ucd.getName();
+			if (defs.getConstDef(newName) != null) {
+				throw new Exception("Constant "+newName+" already exists.");
+			}
+			
+			ucd.resolve();
+			defs.putUserConstDef(ucd);
+			CalculatorDb.insertUCD(ucd);
+			adapter.add(ucd);
+			input.getText().clear();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 			displayMessage(ex.getMessage());
 			return;
 		}
-		
-		defs.putUserConstDef(userConstDef);
-		CalculatorDb.insertUCD(userConstDef);
-		adapter.add(userConstDef);
-		input.getText().clear();
 	}
 	
 	private void displayMessage(String message) {

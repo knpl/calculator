@@ -284,13 +284,22 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			
 			List<Var> params = ufd.getSignature().getParameters();
 			if (params.size() != 1) {
-				displayMessage("Function must have a single parameter. (Named x or \u03B8)");
+				displayMessage("Function must have a single parameter. (Named x)");
 				return;
 			}
 			
 			String param = params.get(0).getName();
-			if (!param.equals("x") && !param.equals("\u03B8")) {
-				displayMessage("Parameter must be named x or \u03B8.");
+			if (!param.equals("x")) {
+				displayMessage("Parameter must be named x.");
+				return;
+			}
+			
+			try {
+				ufd.resolve();
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				displayMessage(ex.getMessage());
 				return;
 			}
 			
@@ -317,7 +326,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		@Override
 		public void edit(PlotEntry entry) {
 			setColor(entry.color);
-			input.setText(entry.ufd.getDescription());
+			input.setText(entry.ufd.getSource());
 			input.setSelection(input.length());
 			adapter.remove(entry);
 		}
@@ -340,7 +349,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			
 			List<Var> params = ufd.getSignature().getParameters();
 			if (params.size() != 1) {
-				displayMessage("function must have a single parameter. (Named \u03B8)");
+				displayMessage("Function must have a single parameter. (Named \u03B8)");
 				return;
 			}
 			
@@ -354,6 +363,15 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			float to = (float) NumEvaluate.fromString(rangeTo.getText().toString());
 			if (Float.isNaN(from) || Float.isNaN(to)) {
 				displayMessage("Invalid range.");
+				return;
+			}
+			
+			try {
+				ufd.resolve();
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				displayMessage(ex.getMessage());
 				return;
 			}
 			
@@ -385,7 +403,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			setColor(entry.color);
 			rangeFrom.setText(""+entry.range.min);
 			rangeTo.setText(""+entry.range.max);
-			input.setText(entry.ufd.getDescription());
+			input.setText(entry.ufd.getSource());
 			input.setSelection(input.length());
 			adapter.remove(entry);
 		}
@@ -429,6 +447,16 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 				return;
 			}
 			
+			try {
+				xufd.resolve();
+				yufd.resolve();
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				displayMessage(ex.getMessage());
+				return;
+			}
+			
 			adapter.add(new PlotEntry(PlotType.PARAMETRIC, xufd, yufd,
 									  new Range(from, to), color));
 			input.setText("x(t) = ");
@@ -459,11 +487,11 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		public void edit(PlotEntry entry) {
 			setColor(entry.color);
 			
-			secondInput.setText(entry.ufd2.getDescription());
+			secondInput.setText(entry.ufd2.getSource());
 			rangeFrom.setText(""+entry.range.min);
 			rangeTo.setText(""+entry.range.max);
 			
-			input.setText(entry.ufd.getDescription());
+			input.setText(entry.ufd.getSource());
 			input.setSelection(input.length());
 			adapter.remove(entry);
 		}

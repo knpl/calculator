@@ -7,11 +7,15 @@ import com.knpl.simplecalculator.visitors.Visitor;
 public abstract class FuncDef extends Node {
 	
 	public final Signature sig;
-	public final String description;
+	public String description;
 	
 	public FuncDef(Signature sig, String description) {
 		this.sig = sig;
 		this.description = description;
+	}
+	
+	public FuncDef(Signature sig) {
+		this(sig, "");
 	}
 	
 	public Signature getSignature() {
@@ -22,11 +26,16 @@ public abstract class FuncDef extends Node {
 		return description;
 	}
 	
+	public FuncDef setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	
 	public abstract Num numEvaluate(List<Num> args) throws Exception;
 	
 	@Override
 	public String toString() {
-		return getDescription();
+		return sig + " = " + getDescription();
 	}
 	
 	@Override

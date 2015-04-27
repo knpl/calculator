@@ -2,11 +2,8 @@ package com.knpl.simplecalculator.storage;
 
 
 import com.knpl.simplecalculator.CalculatorApplication;
-import com.knpl.simplecalculator.nodes.ConstDefNode;
 import com.knpl.simplecalculator.nodes.UserConstDef;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
-import com.knpl.simplecalculator.parser.Lexer;
-import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.storage.UCDContract.UCDColumns;
 import com.knpl.simplecalculator.storage.UFDContract.UFDColumns;
 import com.knpl.simplecalculator.util.Globals;
@@ -108,11 +105,7 @@ public class CalculatorDb {
 			try {
 				String description = cursor.getString(
 						cursor.getColumnIndexOrThrow(UCDColumns.COLUMN_NAME_UCD_DESC));
-				Parser parser = new Parser(new Lexer(description));
-				if (parser.constDef()) {
-					defs.putUserConstDef(
-						UserConstDef.fromConstDefNode((ConstDefNode)parser.getResult()));
-				}
+				defs.putUserConstDef(UserConstDef.fromSource(description));
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();

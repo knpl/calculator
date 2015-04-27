@@ -1,5 +1,6 @@
 package com.knpl.simplecalculator.nodes;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,60 +17,64 @@ import com.knpl.simplecalculator.visitors.Visitor;
 
 public class UserFuncDef extends FuncDef {
 	private Expr expression;
+	private String source;
 	private Program program;
 	private boolean resolved;
 	
-	private UserFuncDef(Signature sig, Expr expr, String description) throws Exception {
-		super(sig, description);
+	public UserFuncDef(Signature sig, Expr expr) {
+		super(sig);
 		this.expression = expr;
+		this.source = "";
 		this.program = null;
 		resolved = false;
 	}
 	
 	public static UserFuncDef fromSource(String source) throws Exception {
 		Parser parser = new Parser(new Lexer(source));
-		if (!parser.funcDef())
+		if (!parser.funcDef()) {
 			throw new Exception("Syntax error");
-		return fromFuncDefNode((FuncDefNode) parser.getResult());
-	}
-	
-	public static UserFuncDef fromFuncDefNode(FuncDefNode fdn) throws Exception {
-		PrettyPrint prettyPrint = new PrettyPrint();
-		fdn.accept(prettyPrint);
-		return new UserFuncDef(
-				fdn.getSignature(), fdn.getExpression(), prettyPrint.toString());
+		}
+		return (UserFuncDef) parser.getResult();
 	}
 	
 	public Expr getExpression() {
 		return expression;
 	}
 	
+	public UserFuncDef setExpression(Expr expression) {
+		this.expression = expression;
+		return this;
+	}
+	
+	public void resolve(Map<String, UserFuncDef> ufdMap,
+						Map<String, UserConstDef> ucdMap) throws Exception {
+		if (resolved) {
+			return;
+		}
+		source = PrettyPrint.printUserFuncDef(this);
+		expression = Resolve.resolveUserFuncDef(this, ufdMap, ucdMap);
+		resolved = true;
+	}
+	
+	public void resolve() throws Exception {
+		if (resolved) {
+			return;
+		}
+		source = PrettyPrint.printUserFuncDef(this);
+		expression = Resolve.resolveUserFuncDef(this);
+		resolved = true;
+	}
+	
 	private void compile() throws Exception {
 		if (program != null) {
 			return;
 		}
-		
-		if (!resolved) {
-			android.util.Log.d("mytag", "resolving now");
-			 
-			Resolve resolve = new Resolve();
-			sig.accept(resolve);
-			expression = (Expr) expression.accept(resolve);
-			if (resolve.getFreeVarMap().size() != 0) {
-				throw new Exception("Unable to compile function. Free variables not allowed.");
-			}
-			resolved = true;
-		}
-		
-		Compile compile = new Compile();
-		(new FuncDefNode(sig, expression)).accept(compile);
-		program = compile.getProgram();
+		resolve();
+		program = Compile.compileUserFuncDef(this);
 	}
 	
 	public Program getProgram() throws Exception {
-		if (program == null) {
-			compile();
-		}
+		compile();
 		return program;
 	}
 
@@ -88,6 +93,22 @@ public class UserFuncDef extends FuncDef {
 		}
 		
 		return (Num) expression.accept(new NumEvaluate(map));
+	}
+	
+	public String getSource() {
+		return toString();
+	}
+	
+	@Override
+	public String toString() {
+		try {
+			resolve();
+			return source;
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return sig+" = invalid (Reason: "+ex.getMessage()+")";
+		}
 	}
 
 	@Override

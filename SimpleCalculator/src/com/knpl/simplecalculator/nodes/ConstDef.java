@@ -2,14 +2,18 @@ package com.knpl.simplecalculator.nodes;
 
 import com.knpl.simplecalculator.visitors.Visitor;
 
-public abstract class ConstDef extends Expr {
+public abstract class ConstDef extends Node {
 	
-	protected final String name,
-						   description;
+	protected final String name;
+	protected String description;
 	
 	public ConstDef(String name, String description) {
 		this.name = name;
 		this.description = description;
+	}
+	
+	public ConstDef(String name) {
+		this(name, "");
 	}
 	
 	public String getName() {
@@ -24,7 +28,7 @@ public abstract class ConstDef extends Expr {
 	
 	@Override
 	public String toString() {
-		return getDescription();
+		return name+" = "+getDescription();
 	}
 	
 	@Override

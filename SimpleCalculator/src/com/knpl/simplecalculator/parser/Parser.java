@@ -79,8 +79,8 @@ public class Parser {
 		if (!(token(EQ) && expr()))
 			return false;
 		
-		result = (sig == null) ? new ConstDefNode(id, (Expr) result) 
-							   : new FuncDefNode(sig, (Expr) result);
+		result = (sig == null) ? new UserConstDef(id, (Expr) result) 
+							   : new UserFuncDef(sig, (Expr) result);
 		
 		return true;
 	}
@@ -95,7 +95,7 @@ public class Parser {
 		if (!(token(EQ) && expr() && token(EOF)))
 			return false;
 		
-		result = new ConstDefNode(id, (Expr) result);
+		result = new UserConstDef(id, (Expr) result);
 		
 		return true;
 	}
@@ -127,7 +127,7 @@ public class Parser {
 		if (!(token(EQ) && expr() && token(EOF)))
 			return false;
 		
-		result = new FuncDefNode(sig, (Expr) result);
+		result = new UserFuncDef(sig, (Expr) result);
 		
 		return true;
 	}

@@ -7,14 +7,12 @@ import java.util.Map;
 
 
 import com.knpl.simplecalculator.nodes.Add;
-import com.knpl.simplecalculator.nodes.Call;
-import com.knpl.simplecalculator.nodes.ConstDef;
+import com.knpl.simplecalculator.nodes.Const;
 import com.knpl.simplecalculator.nodes.DegToRad;
 import com.knpl.simplecalculator.nodes.Div;
 import com.knpl.simplecalculator.nodes.Expr;
 import com.knpl.simplecalculator.nodes.Factorial;
 import com.knpl.simplecalculator.nodes.Func;
-import com.knpl.simplecalculator.nodes.FuncDef;
 import com.knpl.simplecalculator.nodes.Minus;
 import com.knpl.simplecalculator.nodes.Mod;
 import com.knpl.simplecalculator.nodes.Mul;
@@ -22,13 +20,11 @@ import com.knpl.simplecalculator.nodes.Num;
 import com.knpl.simplecalculator.nodes.NumTok;
 import com.knpl.simplecalculator.nodes.Pow;
 import com.knpl.simplecalculator.nodes.RealDouble;
-import com.knpl.simplecalculator.nodes.Signature;
 import com.knpl.simplecalculator.nodes.Sub;
 import com.knpl.simplecalculator.nodes.Var;
 import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.parser.TokenType;
-import com.knpl.simplecalculator.util.Globals;
 
 public class NumEvaluate extends Visitor {
 	private Map<String, Num> map;
@@ -132,36 +128,11 @@ public class NumEvaluate extends Visitor {
 		String name = node.getName();
 		
 		Num result = map.get(name);
-		if (result != null) {
-			return result.copy();
+		if (result == null) {
+			throw new Exception("Unable to evaluate free variable: "+node.getName());
 		}
 		
-		ConstDef constant = Globals.getInstance().getConstDef(name);
-		if (constant != null) {
-			return constant.getNum();
-		}
-		
-		throw new Exception("Unable to evaluate free variable: "+node.getName());
-	}
-	
-	@Override
-	public Num visit(Call node) throws Exception {
-		Globals defs = Globals.getInstance();
-		FuncDef def = defs.getFuncDef(node.getName());
-		if (def == null) {
-			throw new Exception("Unable to find function definition: "+node.getName());
-		}
-		
-		Signature sig = def.getSignature();
-		if (node.getArguments().size() != sig.getParameters().size()) {
-			throw new Exception("Signature mismatch: "+node.getName());
-		}
-		
-		List<Num> args = new ArrayList<Num>();
-		for (Expr e : node.getArguments()) {
-			args.add((Num)e.accept(this));
-		}
-		return def.numEvaluate(args);
+		return result.copy();
 	}
 	
 	@Override
@@ -174,8 +145,8 @@ public class NumEvaluate extends Visitor {
 	}
 	
 	@Override
-	public Num visit(ConstDef node) throws Exception {
-		return node.getNum();
+	public Num visit(Const node) throws Exception {
+		return node.getConstDef().getNum();
 	}
 	
 	@Override

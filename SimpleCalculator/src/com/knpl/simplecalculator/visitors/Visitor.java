@@ -56,9 +56,6 @@ public class Visitor {
 	public Object visit(Var node) throws Exception {
 		return visit((Expr) node);
 	}
-	public Object visit(FuncDefNode node) throws Exception {
-		return visit((Node) node);
-	}
 	public Object visit(Signature node) throws Exception {
 		return visit((Node) node);
 	}
@@ -146,11 +143,14 @@ public class Visitor {
 	public Object visit(ConjDef node) throws Exception {
 		return visit((FuncDef) node);
 	}
-	public Object visit(ConstDefNode node) throws Exception {
-		return visit((Node) node);
+	public Object visit(Const node) throws Exception {
+		return visit((Expr) node);
 	}
 	public Object visit(ConstDef node) throws Exception {
-		return visit((Expr) node);
+		return visit((Node) node);
+	}
+	public Object visit(UserConstDef node) throws Exception {
+		return visit((ConstDef) node);
 	}
 	public Object visit(PiDef node) throws Exception {
 		return visit((ConstDef) node);
@@ -159,9 +159,6 @@ public class Visitor {
 		return visit((ConstDef) node);
 	}
 	public Object visit(IDef node) throws Exception {
-		return visit((ConstDef) node);
-	}
-	public Object visit(UserConstDef node) throws Exception {
 		return visit((ConstDef) node);
 	}
 	public Object visit(Num node) throws Exception {
