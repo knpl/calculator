@@ -2,26 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    <LinearLayout
-	    android:orientation="horizontal"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true" >
+
+	<EditText
+	    android:id="@+id/input_definition"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:padding="16dp" >
-	    
-	    <EditText
-	        android:id="@+id/input_definition"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:hint="@string/string_enter_expression"
-	        android:inputType="textNoSuggestions" />
-	
-	</LinearLayout>
+		android:layout_margin="16dp"
+	    android:hint="@string/string_enter_expression" />
     
-	<ListView android:id="@id/android:list"
-               android:layout_width="match_parent"
-               android:layout_height="0dp"
-               android:layout_weight="1"
-               android:drawSelectorOnTop="false" />
+	<ListView 
+	    android:id="@id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:drawSelectorOnTop="false" />
+	
 </LinearLayout>

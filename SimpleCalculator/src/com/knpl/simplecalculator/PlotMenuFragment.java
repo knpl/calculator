@@ -326,7 +326,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		@Override
 		public void edit(PlotEntry entry) {
 			setColor(entry.color);
-			input.setText(entry.ufd.getSource());
+			input.setText(entry.ufd.toString());
 			input.setSelection(input.length());
 			adapter.remove(entry);
 		}
@@ -403,7 +403,7 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 			setColor(entry.color);
 			rangeFrom.setText(""+entry.range.min);
 			rangeTo.setText(""+entry.range.max);
-			input.setText(entry.ufd.getSource());
+			input.setText(entry.ufd.toString());
 			input.setSelection(input.length());
 			adapter.remove(entry);
 		}
@@ -487,11 +487,11 @@ public class PlotMenuFragment extends ListFragment implements TextView.OnEditorA
 		public void edit(PlotEntry entry) {
 			setColor(entry.color);
 			
-			secondInput.setText(entry.ufd2.getSource());
+			secondInput.setText(entry.ufd2.toString());
 			rangeFrom.setText(""+entry.range.min);
 			rangeTo.setText(""+entry.range.max);
 			
-			input.setText(entry.ufd.getSource());
+			input.setText(entry.ufd.toString());
 			input.setSelection(input.length());
 			adapter.remove(entry);
 		}

@@ -15,30 +15,44 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class CalculatorDb {
 
-	public static void insertUFD(UserFuncDef def) {
-		Context context = CalculatorApplication.getCalculatorApplicationContext();
-		CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
-		
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		
-		ContentValues values = new ContentValues();
-		values.put(UFDColumns.COLUMN_NAME_UFD_ID, def.getSignature().getName());
-		values.put(UFDColumns.COLUMN_NAME_UFD_DESC, def.getDescription());
-		
-		db.insert(UFDColumns.TABLE_NAME, null, values);
+	public static boolean insertUFD(UserFuncDef def) {
+		try {
+			Context context = CalculatorApplication.getCalculatorApplicationContext();
+			CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
+			
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put(UFDColumns.COLUMN_NAME_UFD_ID, def.getSignature().getName());
+			values.put(UFDColumns.COLUMN_NAME_UFD_DESC, def.getSource());
+			
+			db.insert(UFDColumns.TABLE_NAME, null, values);
+			return true;
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
 	}
 	
-	public static void insertUCD(UserConstDef def) {
-		Context context = CalculatorApplication.getCalculatorApplicationContext();
-		CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
-		
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		
-		ContentValues values = new ContentValues();
-		values.put(UCDColumns.COLUMN_NAME_UCD_ID, def.getName());
-		values.put(UCDColumns.COLUMN_NAME_UCD_DESC, def.getDescription());
-		
-		db.insert(UCDColumns.TABLE_NAME, null, values);
+	public static boolean insertUCD(UserConstDef def) {
+		try {
+			Context context = CalculatorApplication.getCalculatorApplicationContext();
+			CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
+			
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put(UCDColumns.COLUMN_NAME_UCD_ID, def.getName());
+			values.put(UCDColumns.COLUMN_NAME_UCD_DESC, def.getSource());
+			
+			db.insert(UCDColumns.TABLE_NAME, null, values);
+			return true;
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
 	}
 	
 	public static void deleteUFD(String oldName) {
@@ -63,23 +77,26 @@ public class CalculatorDb {
 				  new String[] {oldName});
 	}
 	
-	public static void putAllUFDs() {
+	public static void loadUserDefs() {
 		Context context = CalculatorApplication.getCalculatorApplicationContext();
 		CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
-		
-		String[] projection = {UFDColumns.COLUMN_NAME_UFD_DESC};
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		Cursor cursor = db.query(
-				 UFDColumns.TABLE_NAME, 
-				 projection, null, null, null, null, null);
-		
 		Globals defs = Globals.getInstance();
+		
+		String[] projection;
+		SQLiteDatabase db;
+		Cursor cursor;
+		
+		// Load all user defined functions.
+		projection = new String[]{UFDColumns.COLUMN_NAME_UFD_DESC};
+		db = dbHelper.getReadableDatabase();
+		cursor = db.query(UFDColumns.TABLE_NAME, 
+						  projection, null, null, null, null, null);
+
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			try {
 				String description = cursor.getString(
 						cursor.getColumnIndexOrThrow(UFDColumns.COLUMN_NAME_UFD_DESC));
-				
 				defs.putUserFuncDef(UserFuncDef.fromSource(description));
 			}
 			catch (Exception ex) {
@@ -87,19 +104,13 @@ public class CalculatorDb {
 			}
 			cursor.moveToNext();
 		}
-	}
-	
-	public static void putAllUCDs() {
-		Context context = CalculatorApplication.getCalculatorApplicationContext();
-		CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
 		
-		String[] projection = {UCDColumns.COLUMN_NAME_UCD_DESC};
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		Cursor cursor = db.query(
-				 UCDColumns.TABLE_NAME, 
-				 projection, null, null, null, null, null);
+		// Load all user defined constants.
+		projection = new String[]{UCDColumns.COLUMN_NAME_UCD_DESC};
+		db = dbHelper.getReadableDatabase();
+		cursor = db.query(UCDColumns.TABLE_NAME, 
+						  projection, null, null, null, null, null);
 		
-		Globals defs = Globals.getInstance();
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			try {
@@ -112,7 +123,81 @@ public class CalculatorDb {
 			}
 			cursor.moveToNext();
 		}
+		
+		// Completely remove all user definitions that can't be resolved. 
+		for (UserFuncDef ufd : defs.getUserFuncDefs()) {
+			try {
+				ufd.resolve();
+			}
+			catch (Exception ex) {
+				String name = ufd.getSignature().getName();
+				defs.removeUserFuncDef(name);
+				deleteUFD(name);
+			}
+		}
+		
+		for (UserConstDef ucd : defs.getUserConstDefs()) {
+			try {
+				ucd.resolve();
+			}
+			catch (Exception ex) {
+				String name = ucd.getName();
+				defs.removeUserFuncDef(name);
+				deleteUFD(name);
+			}
+		}	
 	}
+	
+//	public static void putAllUFDs() {
+//		Context context = CalculatorApplication.getCalculatorApplicationContext();
+//		CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
+//		
+//		String[] projection = {UFDColumns.COLUMN_NAME_UFD_DESC};
+//		SQLiteDatabase db = dbHelper.getReadableDatabase();
+//		Cursor cursor = db.query(
+//				 UFDColumns.TABLE_NAME, 
+//				 projection, null, null, null, null, null);
+//		
+//		Globals defs = Globals.getInstance();
+//		cursor.moveToFirst();
+//		while (!cursor.isAfterLast()) {
+//			try {
+//				String description = cursor.getString(
+//						cursor.getColumnIndexOrThrow(UFDColumns.COLUMN_NAME_UFD_DESC));
+//				
+//				defs.putUserFuncDef(UserFuncDef.fromSource(description));
+//			}
+//			catch (Exception ex) {
+//				ex.printStackTrace();
+//			}
+//			cursor.moveToNext();
+//		}
+//	}
+//	
+//	public static void putAllUCDs() {
+//		Context context = CalculatorApplication.getCalculatorApplicationContext();
+//		CalculatorDbHelper dbHelper = new CalculatorDbHelper(context);
+//		
+//		String[] projection = {UCDColumns.COLUMN_NAME_UCD_DESC};
+//		SQLiteDatabase db = dbHelper.getReadableDatabase();
+//		Cursor cursor = db.query(
+//				 UCDColumns.TABLE_NAME, 
+//				 projection, null, null, null, null, null);
+//		
+//		Globals defs = Globals.getInstance();
+//		cursor.moveToFirst();
+//		while (!cursor.isAfterLast()) {
+//			try {
+//				String description = cursor.getString(
+//						cursor.getColumnIndexOrThrow(UCDColumns.COLUMN_NAME_UCD_DESC));
+//				defs.putUserConstDef(UserConstDef.fromSource(description));
+//			}
+//			catch (Exception ex) {
+//				ex.printStackTrace();
+//			}
+//			cursor.moveToNext();
+//		}
+//	}
 	
 	public static void listUserDefs() {
 		Context context = CalculatorApplication.getCalculatorApplicationContext();

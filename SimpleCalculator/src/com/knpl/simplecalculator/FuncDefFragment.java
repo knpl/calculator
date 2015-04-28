@@ -1,6 +1,8 @@
 package com.knpl.simplecalculator;
 
 import java.util.ArrayList;
+
+import com.knpl.simplecalculator.nodes.FuncDef;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
 import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.Globals;
@@ -12,6 +14,9 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -22,18 +27,19 @@ import android.widget.Toast;
 
 public class FuncDefFragment extends ListFragment {
 	private SimpleCalculatorActivity activity;
-	private ArrayAdapter<UserFuncDef> adapter;
+	private ArrayAdapter<FuncDef> adapter;
 	private EditText input;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.fragment_deflist, container, false);
 		
 		Globals defs = Globals.getInstance();
-		ArrayList<UserFuncDef> userFuncDefs =
-				new ArrayList<UserFuncDef>(defs.getUserFuncDefs());
-		adapter = new ArrayAdapter<UserFuncDef>(getActivity(), 
+		ArrayList<FuncDef> userFuncDefs =
+				new ArrayList<FuncDef>(defs.getUserFuncDefs());
+		adapter = new ArrayAdapter<FuncDef>(getActivity(), 
 			android.R.layout.simple_list_item_1, userFuncDefs);
 		setListAdapter(adapter);
 		
@@ -46,6 +52,7 @@ public class FuncDefFragment extends ListFragment {
 				return true;
 			}
 		});
+		input.setHint("Example: d(a,b) = sqrt(a*a+b*b)");
 		
 		return view;
 	}
@@ -77,7 +84,12 @@ public class FuncDefFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onListItemClick(ListView l, View v, final int position, long id) {	
+	public void onListItemClick(ListView l, View v, int position, long id) {	
+		final FuncDef fd = adapter.getItem(position);
+		if (!(fd instanceof UserFuncDef)) {
+			return;
+		}
+		
 		final CharSequence[] options = new CharSequence[]{"Edit", "Remove", "Cancel"};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -87,10 +99,10 @@ public class FuncDefFragment extends ListFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0: // Edit
-					edit(position);
+					edit((UserFuncDef)fd);
 					break;
 				case 1: // Remove
-					remove(position);
+					remove((UserFuncDef)fd);
 					break;
 				default:
 					;
@@ -102,22 +114,44 @@ public class FuncDefFragment extends ListFragment {
 		super.onListItemClick(l, v, position, id);
 	}
 	
-	public void edit(int position) {
-		Globals defs = Globals.getInstance();
-		UserFuncDef ufd = adapter.getItem(position);
-		input.setText(ufd.getDescription());
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.funcdef_actions, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_show_builtin_funcdefs:
+			adapter.clear();
+			adapter.addAll(Globals.getInstance().getBuiltinFuncDefs());
+			input.setVisibility(View.GONE);
+			break;
+		case R.id.action_show_user_funcdefs:
+			adapter.clear();
+			adapter.addAll(Globals.getInstance().getUserFuncDefs());
+			input.setVisibility(View.VISIBLE);
+			input.requestFocus();
+			break;
+		default:
+			;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	public void edit(UserFuncDef ufd) {
+		input.setText(ufd.toString());
 		input.setSelection(input.length());
 		String id = ufd.getSignature().getName();
-		defs.removeUserFuncDef(id);
+		Globals.getInstance().removeUserFuncDef(id);
 		CalculatorDb.deleteUFD(id);
 		adapter.remove(ufd);
 	}
 	
-	public void remove(int position) {
-		Globals defs = Globals.getInstance();
-		UserFuncDef ufd = adapter.getItem(position);
+	public void remove(UserFuncDef ufd) {
 		String id = ufd.getSignature().getName();
-		defs.removeUserFuncDef(id);
+		Globals.getInstance().removeUserFuncDef(id);
 		CalculatorDb.deleteUFD(id);
 		adapter.remove(ufd);
 	}

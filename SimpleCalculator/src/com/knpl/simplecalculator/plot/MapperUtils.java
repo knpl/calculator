@@ -2,7 +2,7 @@ package com.knpl.simplecalculator.plot;
 
 import android.graphics.Path;
 
-public class MapperUtil {
+public class MapperUtils {
 
 	public static Path pathInWindow(Path path, float[] src, int cnt,
 						float xmin, float xmax, float ymin, float ymax)

@@ -38,7 +38,7 @@ public class PolarMapper implements Mapper {
 			polarToCartesian(buffer);
 		}
 		
-		Path path = MapperUtil.pathInWindow(new Path(), buffer, buffer.length, 
+		Path path = MapperUtils.pathInWindow(new Path(), buffer, buffer.length, 
 						xrange.min, xrange.max, yrange.min, yrange.max);
 		path.transform(ctm);
 		return path;

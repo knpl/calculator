@@ -95,8 +95,9 @@ public class UserFuncDef extends FuncDef {
 		return (Num) expression.accept(new NumEvaluate(map));
 	}
 	
-	public String getSource() {
-		return toString();
+	public String getSource() throws Exception {
+		resolve();
+		return source;
 	}
 	
 	@Override

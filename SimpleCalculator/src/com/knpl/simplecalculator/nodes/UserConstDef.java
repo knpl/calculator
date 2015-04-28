@@ -68,6 +68,11 @@ public class UserConstDef extends ConstDef {
 		return val.copy();
 	}
 	
+	public String getSource() throws Exception {
+		resolve();
+		return source;
+	}
+	
 	@Override
 	public String toString() {
 		try {

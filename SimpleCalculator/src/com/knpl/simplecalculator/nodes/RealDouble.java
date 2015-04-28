@@ -86,7 +86,7 @@ public class RealDouble extends Num {
 
 	@Override
 	public Num deg2rad() {
-		val *= 180.0/Math.PI;
+		val *= Math.PI/180.0;
 		return this;
 	}
 	
@@ -271,7 +271,6 @@ public class RealDouble extends Num {
 	public double getValue() {
 		return val;
 	}
-	
 
 	@Override
 	public String toString() {

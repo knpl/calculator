@@ -10,8 +10,7 @@ import com.knpl.simplecalculator.parser.Lexer;
 import com.knpl.simplecalculator.parser.Parser;
 import com.knpl.simplecalculator.plot.Range;
 import com.knpl.simplecalculator.plot.Mapper;
-import com.knpl.simplecalculator.util.Globals;
-
+import com.knpl.simplecalculator.storage.CalculatorDb;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -136,7 +135,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
         
         if (savedInstanceState == null) {
         	setFragment(drawerFragments[MAIN_FRAGMENT_POSITION], false);
-        	Globals.getInstance();
+        	CalculatorDb.loadUserDefs();
         }
     }
     

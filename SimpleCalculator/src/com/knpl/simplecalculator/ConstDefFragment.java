@@ -3,6 +3,7 @@ package com.knpl.simplecalculator;
 import java.util.ArrayList;
 import com.knpl.simplecalculator.storage.CalculatorDb;
 import com.knpl.simplecalculator.util.Globals;
+import com.knpl.simplecalculator.nodes.ConstDef;
 import com.knpl.simplecalculator.nodes.UserConstDef;
 
 import android.app.Activity;
@@ -12,6 +13,9 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -22,18 +26,19 @@ import android.widget.Toast;
 
 public class ConstDefFragment extends ListFragment {
 	private SimpleCalculatorActivity activity;
-	private ArrayAdapter<UserConstDef> adapter;
+	private ArrayAdapter<ConstDef> adapter;
 	private EditText input;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.fragment_deflist, container, false);
 		
 		Globals defs = Globals.getInstance();
-		ArrayList<UserConstDef> userConstDefs =
-				new ArrayList<UserConstDef>(defs.getUserConstDefs());
-		adapter = new ArrayAdapter<UserConstDef>(getActivity(), 
+		ArrayList<ConstDef> userConstDefs =
+				new ArrayList<ConstDef>(defs.getUserConstDefs());
+		adapter = new ArrayAdapter<ConstDef>(getActivity(), 
 			android.R.layout.simple_list_item_1, userConstDefs);
 		setListAdapter(adapter);
 		
@@ -46,6 +51,7 @@ public class ConstDefFragment extends ListFragment {
 				return true;
 			}
 		});
+		input.setHint("Example: \u03C6 = (1+sqrt(5))/2");
 		
 		return view;
 	}
@@ -77,7 +83,12 @@ public class ConstDefFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onListItemClick(ListView l, View v, final int position, long id) {	
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		final ConstDef cd = adapter.getItem(position);
+		if (!(cd instanceof UserConstDef)) {
+			return;
+		}
+		
 		final CharSequence[] options = new CharSequence[]{"Edit", "Remove", "Cancel"};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -87,10 +98,10 @@ public class ConstDefFragment extends ListFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0: // Edit
-					edit(position);
+					edit((UserConstDef) cd);
 					break;
 				case 1: // Remove
-					remove(position);
+					remove((UserConstDef) cd);
 					break;
 				default:
 					;
@@ -102,22 +113,44 @@ public class ConstDefFragment extends ListFragment {
 		super.onListItemClick(l, v, position, id);
 	}
 	
-	public void edit(int position) {
-		Globals defs = Globals.getInstance();
-		UserConstDef ucd = adapter.getItem(position);
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.constdef_actions, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_show_builtin_constdefs:
+			adapter.clear();
+			adapter.addAll(Globals.getInstance().getBuiltinConstDefs());
+			input.setVisibility(View.GONE);
+			break;
+		case R.id.action_show_user_constdefs:
+			adapter.clear();
+			adapter.addAll(Globals.getInstance().getUserConstDefs());
+			input.setVisibility(View.VISIBLE);
+			input.requestFocus();
+			break;
+		default:
+			;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	public void edit(UserConstDef ucd) {
 		input.setText(ucd.getDescription());
 		input.setSelection(input.length());
 		String id = ucd.getName();
-		defs.removeUserConstDef(id);
+		Globals.getInstance().removeUserConstDef(id);
 		CalculatorDb.deleteUCD(id);
 		adapter.remove(ucd);
 	}
 	
-	public void remove(int position) {
-		Globals defs = Globals.getInstance();
-		UserConstDef ucd = adapter.getItem(position);
+	public void remove(UserConstDef ucd) {
 		String id = ucd.getName();
-		defs.removeUserConstDef(id);
+		Globals.getInstance().removeUserConstDef(id);
 		CalculatorDb.deleteUCD(id);
 		adapter.remove(ucd);
 	}

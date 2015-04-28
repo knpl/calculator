@@ -3,7 +3,6 @@
 
     <string name="app_name">SimpleCalculator</string>
     <string name="action_settings">Settings</string>
-    <string name="input_hint">Type expression here</string>
     <string name="button_text">Enter</string>
     <string name="plot_button_text">Plot</string>
     <string name="output">\u2026</string>
@@ -27,6 +26,9 @@
     <string name="action_toggle_normal_mode">Regular input</string>
     <string name="action_toggle_parametric_mode">Parametric input</string>
     <string name="action_toggle_polar_mode">Polar input</string>
+    
+    <string name="action_show_builtin_defs">Show built-in definitions</string>
+    <string name="action_show_user_defs">Show user definitions</string>
     
     <string name="function_dialog_title">New function</string>
     

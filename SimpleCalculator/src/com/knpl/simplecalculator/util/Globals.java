@@ -12,15 +12,12 @@ import com.knpl.simplecalculator.nodes.FuncDef;
 import com.knpl.simplecalculator.nodes.UserConstDef;
 import com.knpl.simplecalculator.nodes.UserFuncDef;
 
-import com.knpl.simplecalculator.storage.CalculatorDb;
-
 public class Globals {
 	private static Globals instance = null;
 	
 	public static Globals getInstance() {
 		if (instance == null) {
 			instance = new Globals();
-			instance.loadDefinitionsFromDatabase();
 		}
 		return instance;
 	}
@@ -114,10 +111,5 @@ public class Globals {
 		}
 		userConstDefMap.put(name, userConstDef);
 		return true;
-	}	
-	
-	private void loadDefinitionsFromDatabase() {
-		CalculatorDb.putAllUFDs();
-		CalculatorDb.putAllUCDs();
 	}
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  	  xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.knpl.simplecalculator.SimpleCalculatorActivity" >
+	<item
+        android:id="@+id/action_show_builtin_constdefs"
+        android:title="@string/action_show_builtin_defs"
+        app:showAsAction="never" />
+	<item
+        android:id="@+id/action_show_user_constdefs"
+        android:title="@string/action_show_user_defs"
+        app:showAsAction="never" />
+</menu>
