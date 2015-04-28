@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.knpl.simplecalculator"
+    package="com.knpl.calc"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -9,13 +9,13 @@
         android:targetSdkVersion="21" />
 
     <application
-        android:name="com.knpl.simplecalculator.CalculatorApplication"
+        android:name="com.knpl.calc.CalculatorApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".SimpleCalculatorActivity"
+            android:name="com.knpl.calc.SimpleCalculatorActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>

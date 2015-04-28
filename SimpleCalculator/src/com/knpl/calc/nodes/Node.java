@@ -1,0 +1,15 @@
+package com.knpl.calc.nodes;
+
+
+import com.knpl.calc.SimpleCalculatorActivity;
+import com.knpl.calc.visitors.Visitor;
+
+public abstract class Node {
+	public void execute(SimpleCalculatorActivity calculator) throws Exception {
+		throw new Exception("Node doesn't implement execute");
+	}
+	
+	public Object accept(Visitor v) throws Exception {
+		return v.visit(this);
+	}
+}
