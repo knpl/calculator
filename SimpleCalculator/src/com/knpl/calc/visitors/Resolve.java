@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.knpl.calc.nodes.*;
+import com.knpl.calc.nodes.operators.*;
+import com.knpl.calc.nodes.defs.*;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.util.Globals;
 
 public class Resolve extends Visitor {
@@ -104,7 +107,7 @@ public class Resolve extends Visitor {
 	}
 
 	@Override
-	public Node visit(Signature node) throws Exception {
+	public Node visitSignature(Signature node) throws Exception {
 		for (Var param : node.getParameters()) {
 			boundedVarMap.put(param.getName(), param);
 		}
@@ -112,30 +115,30 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
-	public Node visit(BinOp node) throws Exception {
+	public Node visitBinOp(BinOp node) throws Exception {
 		node.setLHS((Expr) node.getLHS().accept(this));
 		node.setRHS((Expr) node.getRHS().accept(this));
 		return node;
 	}
 
 	@Override
-	public Node visit(MonOp node) throws Exception {
+	public Node visitMonOp(MonOp node) throws Exception {
 		node.setOp((Expr) node.getOp().accept(this));
 		return node;
 	}
 	
 	@Override
-	public Node visit(NumTok node) throws Exception {
+	public Node visitNumTok(NumTok node) throws Exception {
 		return node;
 	}
 	
 	@Override
-	public Node visit(Num node) throws Exception {
+	public Node visitNum(Num node) throws Exception {
 		return node;
 	}
 	
 	@Override
-	public Node visit(Var node) throws Exception {
+	public Node visitVar(Var node) throws Exception {
 		String name = node.getName();
 		
 		Var variable = boundedVarMap.get(name);
@@ -158,7 +161,7 @@ public class Resolve extends Visitor {
 	}
 	
 	@Override
-	public Node visit(Call node) throws Exception {
+	public Node visitCall(Call node) throws Exception {
 		FuncDef def = Globals.getInstance().getFuncDef(node.getName());
 		if (def == null) {
 			throw new Exception("Function " + node.getName() + " undefined");
@@ -179,23 +182,23 @@ public class Resolve extends Visitor {
 	}
 
 	@Override
-	public Node visit(FuncDef node) {
+	public Node visitFuncDef(FuncDef node) {
 		return node;
 	}
 	
 	@Override
-	public Node visit(UserFuncDef node) throws Exception {
+	public Node visitUserFuncDef(UserFuncDef node) throws Exception {
 		node.resolve(ufdMap, ucdMap);
 		return node;
 	}
 	
 	@Override
-	public Node visit(ConstDef node) {
+	public Node visitConstDef(ConstDef node) {
 		return node;
 	}
 	
 	@Override
-	public Node visit(UserConstDef node) throws Exception {
+	public Node visitUserConstDef(UserConstDef node) throws Exception {
 		node.resolve(ufdMap, ucdMap);
 		return node;
 	}

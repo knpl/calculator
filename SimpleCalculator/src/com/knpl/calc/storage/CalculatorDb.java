@@ -2,8 +2,8 @@ package com.knpl.calc.storage;
 
 
 import com.knpl.calc.CalculatorApplication;
-import com.knpl.calc.nodes.UserConstDef;
-import com.knpl.calc.nodes.UserFuncDef;
+import com.knpl.calc.nodes.defs.UserConstDef;
+import com.knpl.calc.nodes.defs.UserFuncDef;
 import com.knpl.calc.storage.UCDContract.UCDColumns;
 import com.knpl.calc.storage.UFDContract.UFDColumns;
 import com.knpl.calc.util.Globals;

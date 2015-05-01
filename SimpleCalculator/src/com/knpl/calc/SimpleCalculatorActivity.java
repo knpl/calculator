@@ -1,11 +1,9 @@
 package com.knpl.calc;
 
 import java.util.ArrayList;
-
 import com.knpl.calc.R;
 import com.knpl.calc.keyboard.CalculatorKeyboard;
 import com.knpl.calc.keyboard.MyKeyboardView;
-import com.knpl.calc.nodes.Num;
 import com.knpl.calc.plot.Mapper;
 import com.knpl.calc.plot.Range;
 import com.knpl.calc.storage.CalculatorDb;
@@ -38,8 +36,6 @@ import android.widget.ListView;
 
 public class SimpleCalculatorActivity extends ActionBarActivity {
 	
-	public static final String packagePrefix = "com.knpl.simplecalculator.";
-	
 	public static final int MAIN_FRAGMENT_POSITION = 0,
 							OPTIONS_FRAGMENT_POSITION = 1,
 							PLOTMENU_FRAGMENT_POSITION = 2,
@@ -47,15 +43,20 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
 							CONSTDEF_FRAGMENT_POSITION = 4,
 							PREFERENCES_FRAGMENT_POSITION = 5;
 	
-	public static final int N_DECIMALS = 10;
+	public String[] fragmentNames = {
+		"com.knpl.calc.MainFragment",
+		"com.knpl.calc.PlotOptionsFragment",
+		"com.knpl.calc.PlotMenuFragment",
+		"com.knpl.calc.FuncDefFragment",
+		"com.knpl.calc.ConstDefFragment",
+		"com.knpl.calc.CalculatorPreferenceFragment"
+	};
 	
-	public static final String EXTRA_MESSAGE = packagePrefix+"EXTRA_MESSAGE";
 	public static final Range DEFAULT_AXIS = new Range(-5, 5);
 	
 	private static Range xaxis = DEFAULT_AXIS,
 						 yaxis = DEFAULT_AXIS;
 	
-	private Fragment[] drawerFragments;
 	private String[] items;
 	private DrawerLayout drawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
@@ -115,23 +116,14 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
         drawerList.setOnItemClickListener( new ListView.OnItemClickListener() {
         	@Override
     		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        		setFragment(drawerFragments[position], false);
+        		setFragment(fragmentNames[position]);
         		drawerList.setItemChecked(position, true);
         		drawerLayout.closeDrawer(drawerList);
     		}
         });
         
-        drawerFragments = new Fragment[] {
-    		new MainFragment(),
-    		new PlotOptionsFragment(),
-    		new PlotMenuFragment(),
-    		new FuncDefFragment(),
-    		new ConstDefFragment(),
-    		new CalculatorPreferenceFragment()
-        };
-        
         if (savedInstanceState == null) {
-        	setFragment(drawerFragments[MAIN_FRAGMENT_POSITION], false);
+        	setFragment(fragmentNames[MAIN_FRAGMENT_POSITION]);
         	CalculatorDb.loadUserDefs();
         }
     }
@@ -187,15 +179,28 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
 		return super.onCreateOptionsMenu(menu);
 	}
     
-    private void setFragment(Fragment fragment, boolean addToBackStack) {
-		FragmentManager fm = getSupportFragmentManager();
+    private void setFragment(String fragmentName) {
+    	FragmentManager fm = getSupportFragmentManager();
     	FragmentTransaction ft = fm.beginTransaction();
-    	ft.replace(R.id.content_frame, fragment);
-    	if (addToBackStack)
-    		ft.addToBackStack(null);
+    	Fragment frag = fm.findFragmentByTag(fragmentName);
+    	
+    	if (frag == null)  {
+    		frag = Fragment.instantiate(this, fragmentName);
+    	}
+    	
+    	ft.replace(R.id.content_frame, frag);
     	ft.commit();
-    }    
-    
+    }
+//    
+//    private void setFragment(Fragment fragment, boolean addToBackStack) {
+//		FragmentManager fm = getSupportFragmentManager();
+//    	FragmentTransaction ft = fm.beginTransaction();
+//    	ft.replace(R.id.content_frame, fragment);
+//    	if (addToBackStack)
+//    		ft.addToBackStack(null);
+//    	ft.commit();
+//    }    
+//    
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -216,17 +221,12 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     
-    public void print(String s) {
-    	((MainFragment) drawerFragments[MAIN_FRAGMENT_POSITION]).print(s);
-    }
-    
-    public void print(Num n) {
-    	((MainFragment) drawerFragments[MAIN_FRAGMENT_POSITION]).print(n);
-    }
-    
     public void plot(ArrayList<Mapper> mappers) {
     	PlotFragment fragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
-    	setFragment(fragment, false);
+    	FragmentManager fm = getSupportFragmentManager();
+    	FragmentTransaction ft = fm.beginTransaction();
+    	ft.replace(R.id.content_frame, fragment);
+    	ft.commit();
     }
    
 	public void setXAxis(Range x) {

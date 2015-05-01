@@ -1,38 +1,40 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.operators;
 
+import com.knpl.calc.nodes.Expr;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.visitors.Visitor;
 
-
 public abstract class BinOp extends Expr {
-	protected Expr ops[];
+	protected Expr lhs, rhs;
 	
 	public BinOp(Expr lhs, Expr rhs) {
-		ops = new Expr[2];
-		ops[0] = lhs;
-		ops[1] = rhs;
+		this.lhs = lhs;
+		this.rhs = rhs;
 	}
 	
 	public Expr getLHS() {
-		return ops[0];
+		return lhs;
 	}
 	
 	public Expr getRHS() {
-		return ops[1];
+		return rhs;
 	}
 	
 	public BinOp setLHS(Expr lhs) {
-		ops[0] = lhs;
+		this.lhs = lhs;
 		return this;
 	}
 	
 	public BinOp setRHS(Expr rhs) {
-		ops[1] = rhs;
+		this.rhs = rhs;
 		return this;
 	}
 	
+	public abstract Num numEvaluate(Num lhs, Num rhs);
+	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitBinOp(this);
 	}
 }
 

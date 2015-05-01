@@ -6,35 +6,27 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.apache.commons.math3.special.Beta;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
+
+import com.knpl.calc.nodes.numbers.Num;
 
 public class Program implements Serializable {
 	
 	private static final long serialVersionUID = -2503458081984075342L;
 	
 	private final String name;
-	private final double[] constants;
+	private final Num[] constants;
 	private final short[] offsets;
 	private final byte[] instructions;
 	private final int parameterCount;
 	private final int stackSize;
 	
-	public Program(String name, byte[] instructions, List<Double> constants, List<Integer> offsets,
+	public Program(String name, byte[] instructions, Num[] constants, short[] offsets,
 				   int parameterCount, int stackSize) {
 		this.name = name;
-		
-		this.constants = new double[constants.size()];
-		for (int i = 0; i < this.constants.length; ++i) {
-			this.constants[i] = constants.get(i); 
-		}
-		
-		this.offsets = new short[offsets.size()];
-		for (int i = 0; i < this.offsets.length; ++i) {
-			this.offsets[i] = (short)(int)offsets.get(i); 
-		}
-		
+		this.constants = constants;
+		this.offsets = offsets;
 		this.instructions = instructions;
 		this.parameterCount = parameterCount;
 		this.stackSize = stackSize;
@@ -214,18 +206,13 @@ public class Program implements Serializable {
 				stack[sp-1] = Gamma.logGamma(stack[sp-1]);
 				break;
 				
-			case ByteCodes.LOGBETA:
-				stack[sp-2] = Beta.logBeta(stack[sp-2], stack[sp-1]);
-				sp -= 1;
-				break;
-				
 			case ByteCodes.ATAN:
 				stack[sp-1] = Math.atan(stack[sp-1]);
 				break;
 				
 			case ByteCodes.LOADC:
 				pc += 1;
-				stack[sp] = constants[instructions[pc]];
+				stack[sp] = constants[instructions[pc]].toDouble();
 				sp += 1;
 				break;
 			
@@ -451,7 +438,7 @@ public class Program implements Serializable {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			try {
-				stacks[i] = (float)Erf.erf(stacks[i]);
+				stacks[i] = (float) Erf.erf(stacks[i]);
 			}
 			catch (Exception ex) {
 				stacks[i] = Float.NaN;
@@ -470,13 +457,6 @@ public class Program implements Serializable {
 		int dstIndex = n * (sp - 1);
 		for (int i = dstIndex; i < dstIndex + n; i += 1) {
 			stacks[i] = (float)Gamma.logGamma(stacks[i]);
-		}
-	}
-	
-	private void simdLogBeta(float[] stacks, int n, int sp) {
-		int dstIndex = n * (sp - 2);
-		for (int i = dstIndex; i < dstIndex + n; i += 1) {
-			stacks[i] = (float)Beta.logBeta(stacks[i], stacks[i + n]);
 		}
 	}
 	
@@ -642,14 +622,9 @@ public class Program implements Serializable {
 				simdLogGamma(stacks, n, sp);
 				break;
 				
-			case ByteCodes.LOGBETA:
-				simdLogBeta(stacks, n, sp);
-				sp -= 1;
-				break;
-				
 			case ByteCodes.LOADC:
 				pc += 1;
-				simdLoadc(stacks, n, sp, (float)constants[instructions[pc]]);
+				simdLoadc(stacks, n, sp, constants[instructions[pc]].toFloat());
 				sp += 1;
 				break;
 			
@@ -685,14 +660,14 @@ public class Program implements Serializable {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(baos);
 		
-		out.printf("Program name: %s\n",name);
-		out.printf("Parameter count: %d\n",parameterCount);
+		out.printf("Program name: %s\n", name);
+		out.printf("Parameter count: %d\n", parameterCount);
 		out.printf("Maximum stack size: %d\n", stackSize);
 		
 		out.println();
 		out.println("Constants:");
 		for (int i = 0; i < constants.length; ++i) {
-			out.printf(" %d:\t%f\n", i, constants[i]);
+			out.print(i+":\t"+constants[i]+"\n");
 		}
 		
 		out.println();

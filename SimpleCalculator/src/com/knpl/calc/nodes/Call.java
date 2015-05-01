@@ -3,6 +3,7 @@ package com.knpl.calc.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.knpl.calc.nodes.defs.Signature;
 import com.knpl.calc.visitors.Visitor;
 
 public class Call extends Expr {
@@ -29,6 +30,6 @@ public class Call extends Expr {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitCall(this);
 	}
 }

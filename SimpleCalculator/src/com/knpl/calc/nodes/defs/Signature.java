@@ -1,10 +1,12 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.knpl.calc.nodes.Node;
+import com.knpl.calc.nodes.Var;
 import com.knpl.calc.visitors.Visitor;
 
 public class Signature extends Node implements Serializable {
@@ -38,7 +40,7 @@ public class Signature extends Node implements Serializable {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitSignature(this);
 	}
 	
 	@Override

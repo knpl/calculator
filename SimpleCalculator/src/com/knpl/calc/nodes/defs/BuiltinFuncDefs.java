@@ -1,8 +1,10 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
 import java.util.Arrays;
 import java.util.List;
 
+import com.knpl.calc.nodes.Var;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.visitors.Visitor;
 
 public class BuiltinFuncDefs {
@@ -27,13 +29,13 @@ public class BuiltinFuncDefs {
 		}
 		
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).min(args.get(1));
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitMinDef(this);
 		}
 	}
 	
@@ -45,13 +47,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).max(args.get(1));
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitMaxDef(this);
 		}
 	}
 	
@@ -63,13 +65,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).floor();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitFloorDef(this);
 		}
 	}
 
@@ -81,13 +83,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).ceil();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitCeilDef(this);
 		}
 	}
 	
@@ -99,13 +101,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).sqrt();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitSqrtDef(this);
 		}
 	}
 	
@@ -122,13 +124,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).abs();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitAbsDef(this);
 		}
 	}
 	
@@ -140,13 +142,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).log();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitLogDef(this);
 		}
 	}
 	
@@ -158,13 +160,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).exp();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitExpDef(this);
 		}
 	}
 	
@@ -176,13 +178,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).sinh();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitSinhDef(this);
 		}
 	}
 	
@@ -194,13 +196,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).cosh();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitCoshDef(this);
 		}
 	}
 	
@@ -212,13 +214,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).tanh();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitTanhDef(this);
 		}
 	}
 	
@@ -230,13 +232,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).sin();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitSinDef(this);
 		}
 	}
 	
@@ -248,13 +250,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).cos();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitCosDef(this);
 		}
 	}
 	
@@ -266,13 +268,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).tan();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitTanDef(this);
 		}
 	}
 	
@@ -284,13 +286,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).asin();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitAsinDef(this);
 		}
 	}
 	
@@ -302,13 +304,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).acos();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitAcosDef(this);
 		}
 	}
 	
@@ -320,13 +322,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).atan();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitAtanDef(this);
 		}
 	}
 	
@@ -339,11 +341,11 @@ public class BuiltinFuncDefs {
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitErfDef(this);
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).erf();
 		}
 	}
@@ -357,11 +359,11 @@ public class BuiltinFuncDefs {
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitGammaDef(this);
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).gamma();
 		}
 	}
@@ -374,13 +376,13 @@ public class BuiltinFuncDefs {
 		}
 
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).loggamma();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitLogGammaDef(this);
 		}
 	}
 	
@@ -392,13 +394,13 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).re();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitReDef(this);
 		}
 	}
 	
@@ -410,13 +412,13 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).im();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitImDef(this);
 		}
 	}
 	
@@ -428,13 +430,13 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).mod();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitModDef(this);
 		}
 	}
 	
@@ -446,13 +448,13 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).arg();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitArgDef(this);
 		}
 	}
 	
@@ -464,13 +466,13 @@ public class BuiltinFuncDefs {
 		}
 	
 		@Override
-		public Num numEvaluate(List<Num> args) throws Exception {
+		public Num getNum(List<Num> args) throws Exception {
 			return args.get(0).conj();
 		}
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitConjDef(this);
 		}
 	}
 }

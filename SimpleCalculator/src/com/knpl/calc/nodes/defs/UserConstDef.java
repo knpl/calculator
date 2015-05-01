@@ -1,10 +1,12 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
 import java.util.Map;
 
+import com.knpl.calc.nodes.Expr;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.parser.Lexer;
 import com.knpl.calc.parser.Parser;
-import com.knpl.calc.visitors.NumEvaluate;
+import com.knpl.calc.visitors.Fold;
 import com.knpl.calc.visitors.PrettyPrint;
 import com.knpl.calc.visitors.Resolve;
 import com.knpl.calc.visitors.Visitor;
@@ -57,7 +59,11 @@ public class UserConstDef extends ConstDef {
 	
 	private void eval() throws Exception {
 		resolve();
-		val = (Num) expression.accept(new NumEvaluate());
+		expression = (Expr) expression.accept(new Fold());
+		if (!(expression instanceof Num)) {
+			throw new Exception("expression is not constant.");
+		}
+		val = (Num) expression;
 	}
 	
 	@Override
@@ -87,6 +93,6 @@ public class UserConstDef extends ConstDef {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitUserConstDef(this);
 	}
 }

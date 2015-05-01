@@ -1,7 +1,8 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
 import java.util.List;
 
+import com.knpl.calc.nodes.Expr;
 import com.knpl.calc.visitors.Visitor;
 
 public class Func extends Expr {
@@ -23,6 +24,6 @@ public class Func extends Expr {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitFunc(this);
 	}
 }

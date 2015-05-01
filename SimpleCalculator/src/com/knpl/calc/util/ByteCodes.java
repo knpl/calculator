@@ -41,7 +41,6 @@ public class ByteCodes {
 		ERF = 0x1d,
 		GAMMA = 0x1e,
 		LOGGAMMA = 0x1f,
-		LOGBETA = 0x20,
 		
 		D2R = 0x21,
 		INC = 0x22,
@@ -145,9 +144,6 @@ public class ByteCodes {
 					break;
 				case LOGGAMMA:
 					s = "LOGGAMMA";
-					break;
-				case LOGBETA:
-					s = "LOGBETA";
 					break;
 				case D2R:
 					s = "D2R";

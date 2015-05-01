@@ -1,5 +1,6 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
+import com.knpl.calc.nodes.Expr;
 import com.knpl.calc.visitors.Visitor;
 
 public class Const extends Expr {
@@ -15,6 +16,6 @@ public class Const extends Expr {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitConst(this);
 	}
 }

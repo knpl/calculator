@@ -1,7 +1,9 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
 import java.util.List;
 
+import com.knpl.calc.nodes.Node;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.visitors.Visitor;
 
 public abstract class FuncDef extends Node {
@@ -31,7 +33,7 @@ public abstract class FuncDef extends Node {
 		return this;
 	}
 	
-	public abstract Num numEvaluate(List<Num> args) throws Exception;
+	public abstract Num getNum(List<Num> args) throws Exception;
 	
 	@Override
 	public String toString() {
@@ -40,6 +42,6 @@ public abstract class FuncDef extends Node {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitFuncDef(this);
 	}
 }

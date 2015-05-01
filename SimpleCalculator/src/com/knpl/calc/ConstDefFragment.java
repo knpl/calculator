@@ -2,8 +2,8 @@ package com.knpl.calc;
 
 import java.util.ArrayList;
 import com.knpl.calc.R;
-import com.knpl.calc.nodes.ConstDef;
-import com.knpl.calc.nodes.UserConstDef;
+import com.knpl.calc.nodes.defs.ConstDef;
+import com.knpl.calc.nodes.defs.UserConstDef;
 import com.knpl.calc.storage.CalculatorDb;
 import com.knpl.calc.util.Globals;
 

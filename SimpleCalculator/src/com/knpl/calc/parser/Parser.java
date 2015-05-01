@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knpl.calc.nodes.*;
+import com.knpl.calc.nodes.defs.Signature;
+import com.knpl.calc.nodes.defs.UserConstDef;
+import com.knpl.calc.nodes.defs.UserFuncDef;
+import com.knpl.calc.nodes.operators.*;
 
 import static com.knpl.calc.parser.TokenType.*;
 

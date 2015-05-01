@@ -5,23 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import com.knpl.calc.nodes.Add;
-import com.knpl.calc.nodes.Const;
-import com.knpl.calc.nodes.DegToRad;
-import com.knpl.calc.nodes.Div;
+import com.knpl.calc.nodes.operators.*;
 import com.knpl.calc.nodes.Expr;
-import com.knpl.calc.nodes.Factorial;
-import com.knpl.calc.nodes.Func;
-import com.knpl.calc.nodes.Minus;
-import com.knpl.calc.nodes.Mod;
-import com.knpl.calc.nodes.Mul;
-import com.knpl.calc.nodes.Num;
 import com.knpl.calc.nodes.NumTok;
-import com.knpl.calc.nodes.Pow;
-import com.knpl.calc.nodes.RealDouble;
-import com.knpl.calc.nodes.Sub;
 import com.knpl.calc.nodes.Var;
+import com.knpl.calc.nodes.defs.Const;
+import com.knpl.calc.nodes.defs.Func;
+import com.knpl.calc.nodes.numbers.Num;
+import com.knpl.calc.nodes.numbers.RealDouble;
 import com.knpl.calc.parser.Lexer;
 import com.knpl.calc.parser.Parser;
 import com.knpl.calc.parser.TokenType;
@@ -62,69 +53,24 @@ public class NumEvaluate extends Visitor {
 	}
 	
 	@Override
-	public Num visit(Add node) throws Exception {
+	public Num visitBinOp(BinOp node) throws Exception {
 		Num a = (Num) node.getLHS().accept(this);
 		Num b = (Num) node.getRHS().accept(this);
-		return a.add(b);
-	}
-
-	@Override
-	public Num visit(Sub node) throws Exception {
-		Num a = (Num) node.getLHS().accept(this);
-		Num b = (Num) node.getRHS().accept(this);
-		return a.sub(b);
-	}
-
-	@Override
-	public Num visit(Mul node) throws Exception {
-		Num a = (Num) node.getLHS().accept(this);
-		Num b = (Num) node.getRHS().accept(this);
-		return a.mul(b);
-	}
-
-	@Override
-	public Num visit(Div node) throws Exception {
-		Num a = (Num) node.getLHS().accept(this);
-		Num b = (Num) node.getRHS().accept(this);
-		return a.div(b);
+		return node.numEvaluate(a, b);
 	}
 	
 	@Override
-	public Num visit(Mod node) throws Exception {
-		Num a = (Num) node.getLHS().accept(this);
-		Num b = (Num) node.getRHS().accept(this);
-		return a.mod(b);
-	}
-
-	@Override
-	public Num visit(Pow node) throws Exception {
-		Num a = (Num) node.getLHS().accept(this);
-		Num b = (Num) node.getRHS().accept(this);
-		return a.pow(b);
+	public Num visitMonOp(MonOp node) throws Exception {
+		return node.numEvaluate((Num) node.getOp().accept(this));
 	}
 	
 	@Override
-	public Num visit(Minus node) throws Exception {
-		return ((Num) node.getOp().accept(this)).neg();
-	}
-	
-	@Override
-	public Num visit(Factorial node) throws Exception {
-		return ((Num) node.getOp().accept(this)).factorial();
-	}
-	
-	@Override
-	public Num visit(DegToRad node) throws Exception {
-		return ((Num) node.getOp().accept(this)).deg2rad();
-	}
-
-	@Override
-	public Num visit(NumTok node) throws Exception {
+	public Num visitNumTok(NumTok node) throws Exception {
 		return node.getRealDouble();
 	}
 	
 	@Override
-	public Num visit(Var node) throws Exception {
+	public Num visitVar(Var node) throws Exception {
 		String name = node.getName();
 		
 		Num result = map.get(name);
@@ -136,21 +82,21 @@ public class NumEvaluate extends Visitor {
 	}
 	
 	@Override
-	public Num visit(Func node) throws Exception {
+	public Num visitFunc(Func node) throws Exception {
 		List<Num> args = new ArrayList<Num>();
 		for (Expr e : node.getArguments()) {
 			args.add((Num)e.accept(this));
 		}
-		return node.getFuncDef().numEvaluate(args);
+		return node.getFuncDef().getNum(args);
 	}
 	
 	@Override
-	public Num visit(Const node) throws Exception {
+	public Num visitConst(Const node) throws Exception {
 		return node.getConstDef().getNum();
 	}
 	
 	@Override
-	public Num visit(Num node) throws Exception {
+	public Num visitNum(Num node) throws Exception {
 		return node.copy();
 	}
 }

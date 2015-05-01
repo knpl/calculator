@@ -1,4 +1,4 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.numbers;
 
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
@@ -213,7 +213,7 @@ public class RealDouble extends Num {
 	}
 
 	@Override
-	public Num erf() {
+	public Num erf() {	
 		val = Erf.erf(val);
 		return this;
 	}
@@ -273,6 +273,16 @@ public class RealDouble extends Num {
 	}
 
 	@Override
+	public float toFloat() {
+		return (float) val;
+	}
+
+	@Override
+	public double toDouble() {
+		return val;
+	}
+
+	@Override
 	public String toString() {
 		return Double.toString(val);
 	}
@@ -283,7 +293,29 @@ public class RealDouble extends Num {
 	}
 	
 	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof RealDouble)) {
+			return false;
+		}
+		else if (this == o) {
+			return true;
+		}
+		else {
+			RealDouble that = (RealDouble) o;
+			return val == that.val;
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		long vallong = Double.doubleToLongBits(val);
+		int result = 13;
+		result = 37 * result + (int) (vallong ^ (vallong >>> 32));
+		return result;
+	}
+	
+	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitRealDouble(this);
 	}
 }

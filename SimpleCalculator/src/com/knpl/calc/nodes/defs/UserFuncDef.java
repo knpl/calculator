@@ -1,4 +1,4 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
 
 import java.util.HashMap;
@@ -6,10 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.knpl.calc.MainInterface;
+import com.knpl.calc.nodes.Expr;
+import com.knpl.calc.nodes.Var;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.parser.Lexer;
 import com.knpl.calc.parser.Parser;
+import com.knpl.calc.storage.CalculatorDb;
+import com.knpl.calc.util.Globals;
 import com.knpl.calc.util.Program;
 import com.knpl.calc.visitors.Compile;
+import com.knpl.calc.visitors.Fold;
 import com.knpl.calc.visitors.NumEvaluate;
 import com.knpl.calc.visitors.PrettyPrint;
 import com.knpl.calc.visitors.Resolve;
@@ -70,6 +77,7 @@ public class UserFuncDef extends FuncDef {
 			return;
 		}
 		resolve();
+		expression = (Expr) expression.accept(new Fold());
 		program = Compile.compileUserFuncDef(this);
 	}
 	
@@ -79,7 +87,7 @@ public class UserFuncDef extends FuncDef {
 	}
 
 	@Override
-	public Num numEvaluate(List<Num> args) throws Exception {
+	public Num getNum(List<Num> args) throws Exception {
 		List<Var> params = sig.getParameters();
 		if (params.size() != args.size()) {
 			throw new Exception("Argument mismatch while evaluating function " + sig.getName());
@@ -101,6 +109,18 @@ public class UserFuncDef extends FuncDef {
 	}
 	
 	@Override
+	public void execute(MainInterface interfaze) throws Exception {
+		Globals globals = Globals.getInstance();
+		if (globals.getFuncDef(sig.getName()) != null) {
+			throw new Exception("Function "+sig.getName()+" exists already.");
+		}
+		Program program = getProgram();
+		globals.putUserFuncDef(this);
+		CalculatorDb.insertUFD(this);
+		interfaze.print(program.toString(), false);
+	}
+
+	@Override
 	public String toString() {
 		try {
 			resolve();
@@ -114,6 +134,6 @@ public class UserFuncDef extends FuncDef {
 
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitUserFuncDef(this);
 	}
 }

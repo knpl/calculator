@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.knpl.calc.nodes.BuiltinConstDefs;
-import com.knpl.calc.nodes.BuiltinFuncDefs;
-import com.knpl.calc.nodes.ConstDef;
-import com.knpl.calc.nodes.FuncDef;
-import com.knpl.calc.nodes.UserConstDef;
-import com.knpl.calc.nodes.UserFuncDef;
+import com.knpl.calc.nodes.defs.BuiltinConstDefs;
+import com.knpl.calc.nodes.defs.BuiltinFuncDefs;
+import com.knpl.calc.nodes.defs.ConstDef;
+import com.knpl.calc.nodes.defs.FuncDef;
+import com.knpl.calc.nodes.defs.UserConstDef;
+import com.knpl.calc.nodes.defs.UserFuncDef;
 
 public class Globals {
 	private static Globals instance = null;

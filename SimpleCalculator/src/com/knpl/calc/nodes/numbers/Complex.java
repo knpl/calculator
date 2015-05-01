@@ -1,4 +1,4 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.numbers;
 
 import com.knpl.calc.util.FormatUtils;
 import com.knpl.calc.visitors.Visitor;
@@ -426,6 +426,16 @@ public class Complex extends Num {
 	public Complex toComplex() {
 		return this;
 	}
+
+	@Override
+	public float toFloat() {
+		return (im == 0) ? (float) re : Float.NaN;
+	}
+
+	@Override
+	public double toDouble() {
+		return (im == 0) ? re : Double.NaN;
+	}
 	
 	@Override
 	public String toString() {
@@ -494,7 +504,31 @@ public class Complex extends Num {
 	}
 	
 	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof Complex)) {
+			return false;
+		}
+		else if (o == this) {
+			return true;
+		}
+		else {
+			Complex that = (Complex) o;
+			return (re == that.re) && (im == that.im);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		long relong = Double.doubleToLongBits(re);
+		long imlong = Double.doubleToLongBits(im);
+		int result = 19;
+		result = 37 * result + (int) (relong ^ (relong >>> 32));
+		result = 37 * result + (int) (imlong ^ (imlong >>> 32));
+		return result;
+	}
+	
+	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitComplex(this);
 	}
 }

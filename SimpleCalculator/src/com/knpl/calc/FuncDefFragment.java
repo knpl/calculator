@@ -3,8 +3,8 @@ package com.knpl.calc;
 import java.util.ArrayList;
 
 import com.knpl.calc.R;
-import com.knpl.calc.nodes.FuncDef;
-import com.knpl.calc.nodes.UserFuncDef;
+import com.knpl.calc.nodes.defs.FuncDef;
+import com.knpl.calc.nodes.defs.UserFuncDef;
 import com.knpl.calc.storage.CalculatorDb;
 import com.knpl.calc.util.Globals;
 

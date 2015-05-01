@@ -27,8 +27,8 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.knpl.calc.R;
-import com.knpl.calc.nodes.UserFuncDef;
 import com.knpl.calc.nodes.Var;
+import com.knpl.calc.nodes.defs.UserFuncDef;
 import com.knpl.calc.plot.Mapper;
 import com.knpl.calc.plot.ParametricMapper;
 import com.knpl.calc.plot.PolarMapper;
@@ -405,8 +405,8 @@ public class PlotMenuFragment extends ListFragment {
 		@Override
 		public void edit(PlotEntry entry) {
 			setColor(entry.color);
-			rangeFrom.setText(""+entry.range.min);
-			rangeTo.setText(""+entry.range.max);
+			rangeFrom.setText("0");
+			rangeTo.setText("2*\u03C0");
 			input.setText(entry.ufd.toString());
 			input.setSelection(input.length());
 			adapter.remove(entry);
@@ -492,8 +492,8 @@ public class PlotMenuFragment extends ListFragment {
 			setColor(entry.color);
 			
 			secondInput.setText(entry.ufd2.toString());
-			rangeFrom.setText(""+entry.range.min);
-			rangeTo.setText(""+entry.range.max);
+			rangeFrom.setText("0");
+			rangeTo.setText("10");
 			
 			input.setText(entry.ufd.toString());
 			input.setSelection(input.length());
@@ -547,9 +547,6 @@ public class PlotMenuFragment extends ListFragment {
 			buf.append(ufd.toString());
 			if (ufd2 != null) {
 				buf.append(", ").append(ufd2.toString());
-			}
-			if (range != null) {
-				buf.append(", ").append(range.toString());
 			}
 			return buf.toString();
 		}

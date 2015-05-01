@@ -1,5 +1,7 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
+import com.knpl.calc.nodes.numbers.Complex;
+import com.knpl.calc.nodes.numbers.RealDouble;
 import com.knpl.calc.visitors.Visitor;
 
 public class BuiltinConstDefs {
@@ -25,7 +27,7 @@ public class BuiltinConstDefs {
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitPiDef(this);
 		}
 	}
 	
@@ -44,7 +46,7 @@ public class BuiltinConstDefs {
 		
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitEDef(this);
 		}
 	}
 	
@@ -63,7 +65,7 @@ public class BuiltinConstDefs {
 
 		@Override
 		public Object accept(Visitor v) throws Exception {
-			return v.visit(this);
+			return v.visitIDef(this);
 		}
 	}
 }

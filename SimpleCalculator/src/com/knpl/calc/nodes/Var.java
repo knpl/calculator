@@ -15,6 +15,6 @@ public class Var extends Expr {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitVar(this);
 	}
 }

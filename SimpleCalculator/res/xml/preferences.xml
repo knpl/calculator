@@ -23,7 +23,7 @@
 	        android:summary="Color plot background black."
 	        android:defaultValue="false" />
 	    
-	    <com.knpl.simplecalculator.RangePreference
+	    <com.knpl.calc.RangePreference
 	        android:key="pref_key_line_thickness"
 	        android:title="Plotted line thickness"
 	        android:summary="Plotted lines are currently 1 pixels wide."
@@ -38,7 +38,7 @@
 	    android:key="pref_key_numberformat_settings"
 	    android:title="Number formatting">
 	    
-	    <com.knpl.simplecalculator.RangePreference
+	    <com.knpl.calc.RangePreference
 	        android:key="pref_key_precision"
 	        android:title="Precision"
 	        android:summary="Calculator currently displays results using 10 digits."

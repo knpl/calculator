@@ -1,5 +1,6 @@
 package com.knpl.calc.nodes;
 
+import com.knpl.calc.nodes.numbers.RealDouble;
 import com.knpl.calc.visitors.Visitor;
 
 public class NumTok extends Expr {
@@ -20,6 +21,6 @@ public class NumTok extends Expr {
 
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitNumTok(this);
 	}
 }

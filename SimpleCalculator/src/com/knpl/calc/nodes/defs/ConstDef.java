@@ -1,5 +1,7 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.defs;
 
+import com.knpl.calc.nodes.Node;
+import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.visitors.Visitor;
 
 public abstract class ConstDef extends Node {
@@ -33,6 +35,6 @@ public abstract class ConstDef extends Node {
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitConstDef(this);
 	}
 }

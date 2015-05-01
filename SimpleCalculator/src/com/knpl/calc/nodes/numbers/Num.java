@@ -1,5 +1,6 @@
-package com.knpl.calc.nodes;
+package com.knpl.calc.nodes.numbers;
 
+import com.knpl.calc.nodes.Expr;
 import com.knpl.calc.visitors.Visitor;
 
 public abstract class Num extends Expr {
@@ -107,11 +108,13 @@ public abstract class Num extends Expr {
 	}
 	
 	public abstract Complex toComplex();
+	public abstract float toFloat();
+	public abstract double toDouble();
 	public abstract Num copy();
 	public abstract String format(int decimalcount, boolean polar);
 	
 	@Override
 	public Object accept(Visitor v) throws Exception {
-		return v.visit(this);
+		return v.visitNum(this);
 	}
 }
