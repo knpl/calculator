@@ -16,8 +16,8 @@ public class PlotComputer implements Serializable {
 		this.program = program;
 	}
 	
-	public void evaluate(float[] dst, int dindex, int dstep,
-			 			 float[] src, int sindex, int sstep)
+	public void execute(float[] dst, int dindex, int dstep,
+			 			float[] src, int sindex, int sstep)
 	{	
 		int n = (src.length / sstep);
 		int paramcnt = program.getParameterCount();
@@ -29,7 +29,6 @@ public class PlotComputer implements Serializable {
 				stacks[row + j] = src[j*sstep + sindex];
 			}
 		}
-		
 		simd(stacks, n, 0, paramcnt, 0);
 		
 		for (int j = 0; j < n; ++j) {

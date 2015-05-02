@@ -33,7 +33,7 @@ public class PolarMapper implements Mapper {
 		if (buffer == null) {
 			buffer = new float[2 * sampleCount];
 			trange.generate(buffer, 0, 2);
-			computer.evaluate(buffer, 1, 2, buffer, 0, 2);
+			computer.execute(buffer, 1, 2, buffer, 0, 2);
 			polarToCartesian(buffer);
 		}
 		

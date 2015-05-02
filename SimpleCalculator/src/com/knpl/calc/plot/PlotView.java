@@ -2,7 +2,6 @@ package com.knpl.calc.plot;
 
 import java.util.List;
 
-import com.knpl.calc.SimpleCalculatorActivity;
 import com.knpl.calc.plot.PlotStates.PlotState;
 import com.knpl.calc.plot.Range.MarkerInfo;
 import com.knpl.calc.util.FormatUtils;
@@ -56,11 +55,6 @@ public class PlotView extends View {
 	
 	public PlotView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		mappers = null;
-		
-		xaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
-		yaxis = SimpleCalculatorActivity.DEFAULT_AXIS;
-		
 		translate = new float[]{0f,0f};
 		scalecenter = new float[]{0f,0f};
 		scalefactor = 1f;

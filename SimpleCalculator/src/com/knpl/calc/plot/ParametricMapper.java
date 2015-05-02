@@ -47,8 +47,8 @@ public class ParametricMapper implements Mapper {
 			buffer = new float[2 * sampleCount];
 			trange.generate(buffer, 0, 2);
 			trange.generate(buffer, 1, 2);
-			xcomputer.evaluate(buffer, 0, 2, buffer, 0, 2);
-			ycomputer.evaluate(buffer, 1, 2, buffer, 1, 2);
+			xcomputer.execute(buffer, 0, 2, buffer, 0, 2);
+			ycomputer.execute(buffer, 1, 2, buffer, 1, 2);
 		}
 		
 		Path path = MapperUtils.pathInWindow(new Path(), buffer, buffer.length, 

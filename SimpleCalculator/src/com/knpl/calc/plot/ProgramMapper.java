@@ -59,7 +59,7 @@ public class ProgramMapper implements Mapper {
 		}
 		
 		for (int i = 0; i < buffers.length; ++i) {
-			computer.evaluate(buffers[i], 1, 2, buffers[i], 0, 2);
+			computer.execute(buffers[i], 1, 2, buffers[i], 0, 2);
 		}
 		
 		initialized = true;
@@ -79,7 +79,7 @@ public class ProgramMapper implements Mapper {
 		Range leftRange = range.create(from, to);
 		
 		leftRange.generate(leftBuf, 0, 2);
-		computer.evaluate(leftBuf, 1, 2, leftBuf, 0, 2);
+		computer.execute(leftBuf, 1, 2, leftBuf, 0, 2);
 	}
 	
 	public void goRight() {
@@ -95,7 +95,7 @@ public class ProgramMapper implements Mapper {
 		Range rightRange = range.create(from, to);
 		
 		rightRange.generate(rightBuf, 0, 2);
-		computer.evaluate(rightBuf, 1, 2, rightBuf, 0, 2);
+		computer.execute(rightBuf, 1, 2, rightBuf, 0, 2);
 	}
 	
 	@Override
