@@ -1,23 +1,20 @@
 package com.knpl.calc.nodes.defs;
 
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.knpl.calc.MainInterface;
 import com.knpl.calc.nodes.Expr;
-import com.knpl.calc.nodes.Var;
 import com.knpl.calc.nodes.numbers.Num;
 import com.knpl.calc.parser.Lexer;
 import com.knpl.calc.parser.Parser;
 import com.knpl.calc.storage.CalculatorDb;
 import com.knpl.calc.util.Globals;
+import com.knpl.calc.util.NumComputer;
 import com.knpl.calc.util.Program;
 import com.knpl.calc.visitors.Compile;
 import com.knpl.calc.visitors.Fold;
-import com.knpl.calc.visitors.NumEvaluate;
 import com.knpl.calc.visitors.PrettyPrint;
 import com.knpl.calc.visitors.Resolve;
 import com.knpl.calc.visitors.Visitor;
@@ -27,6 +24,7 @@ public class UserFuncDef extends FuncDef {
 	private String source;
 	private Program program;
 	private boolean resolved;
+	private boolean folded;
 	
 	public UserFuncDef(Signature sig, Expr expr) {
 		super(sig);
@@ -34,6 +32,7 @@ public class UserFuncDef extends FuncDef {
 		this.source = "";
 		this.program = null;
 		resolved = false;
+		folded = false;
 	}
 	
 	public static UserFuncDef fromSource(String source) throws Exception {
@@ -72,12 +71,20 @@ public class UserFuncDef extends FuncDef {
 		resolved = true;
 	}
 	
-	private void compile() throws Exception {
-		if (program != null) {
+	public void fold() throws Exception {
+		if (folded) {
 			return;
 		}
 		resolve();
 		expression = (Expr) expression.accept(new Fold());
+		folded = true;
+	}
+	
+	private void compile() throws Exception {
+		if (program != null) {
+			return;
+		}
+		fold();
 		program = Compile.compileUserFuncDef(this);
 	}
 	
@@ -88,19 +95,8 @@ public class UserFuncDef extends FuncDef {
 
 	@Override
 	public Num getNum(List<Num> args) throws Exception {
-		List<Var> params = sig.getParameters();
-		if (params.size() != args.size()) {
-			throw new Exception("Argument mismatch while evaluating function " + sig.getName());
-		}
-		
-		Map<String, Num> map  = new HashMap<String, Num>(params.size());
-		Iterator<Num> itArg   = args.iterator();
-		Iterator<Var> itParam = params.iterator();
-		while (itParam.hasNext()) {
-			map.put(itParam.next().getName(), itArg.next());
-		}
-		
-		return (Num) expression.accept(new NumEvaluate(map));
+		NumComputer comp = new NumComputer(getProgram());
+		return comp.execute(args);
 	}
 	
 	public String getSource() throws Exception {

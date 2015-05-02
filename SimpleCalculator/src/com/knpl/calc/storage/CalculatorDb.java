@@ -27,6 +27,7 @@ public class CalculatorDb {
 			values.put(UFDColumns.COLUMN_NAME_UFD_DESC, def.getSource());
 			
 			db.insert(UFDColumns.TABLE_NAME, null, values);
+			db.close();
 			return true;
 		}
 		catch (Exception ex) {
@@ -47,6 +48,7 @@ public class CalculatorDb {
 			values.put(UCDColumns.COLUMN_NAME_UCD_DESC, def.getSource());
 			
 			db.insert(UCDColumns.TABLE_NAME, null, values);
+			db.close();
 			return true;
 		}
 		catch (Exception ex) {
@@ -64,6 +66,7 @@ public class CalculatorDb {
 		db.delete(UFDColumns.TABLE_NAME, 
 				  UFDColumns.COLUMN_NAME_UFD_ID + " = ?",
 				  new String[] {oldName});
+		db.close();
 	}
 	
 	public static void deleteUCD(String oldName) {
@@ -107,7 +110,6 @@ public class CalculatorDb {
 		
 		// Load all user defined constants.
 		projection = new String[]{UCDColumns.COLUMN_NAME_UCD_DESC};
-		db = dbHelper.getReadableDatabase();
 		cursor = db.query(UCDColumns.TABLE_NAME, 
 						  projection, null, null, null, null, null);
 		
@@ -123,6 +125,7 @@ public class CalculatorDb {
 			}
 			cursor.moveToNext();
 		}
+		db.close();
 		
 		// Completely remove all user definitions that can't be resolved. 
 		for (UserFuncDef ufd : defs.getUserFuncDefs()) {

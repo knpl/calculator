@@ -2,11 +2,7 @@ package com.knpl.calc.visitors;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import com.knpl.calc.nodes.*;
 import com.knpl.calc.nodes.defs.*;
 import com.knpl.calc.nodes.defs.BuiltinFuncDefs.*;
@@ -18,50 +14,15 @@ import com.knpl.calc.util.Program;
 public class Compile extends Visitor {
 	
 	private ByteArrayOutputStream code;
-	private int nbytes;
-	
-	private int maxStackSize;
-	private int curStackSize;
 	
 	private List<Var> parameters;
+	private List<Num> constants;
+	private List<UserFuncDef> functions;
 	
-	private Map<Num, Integer> constantMap;
-	private Map<UserFuncDef, Integer> functionMap;
-	private Map<UserFuncDef, Integer> newFunctionMap;
-	
-	public Compile() {
+	private Compile() {
 		code = new ByteArrayOutputStream();
-		nbytes = 0;
-		parameters = new ArrayList<Var>();
-		constantMap = new HashMap<Num, Integer>();
-		functionMap = new HashMap<UserFuncDef, Integer>();
-		newFunctionMap = new HashMap<UserFuncDef, Integer>();
-		maxStackSize = curStackSize = 0;
-	}
-	
-	private void write(int b) {
-		code.write(b);
-		nbytes+=1;
-	}
-	
-	private void push() {
-		curStackSize += 1;
-		if (curStackSize > maxStackSize)
-			maxStackSize = curStackSize;
-	}
-	
-	private void push(int s) {
-		curStackSize += s;
-		if (curStackSize > maxStackSize)
-			maxStackSize = curStackSize;
-	}
-	
-	private void pop() {
-		curStackSize -= 1;
-	}
-	
-	private void pop(int s) {
-		curStackSize -= s;
+		constants = new ArrayList<Num>();
+		functions = new ArrayList<UserFuncDef>();
 	}
 	
 	public static Program compileUserFuncDef(UserFuncDef userFuncDef) throws Exception {
@@ -69,329 +30,300 @@ public class Compile extends Visitor {
 		return compile.compile(userFuncDef);
 	}
 	
-	private Program compile(UserFuncDef userFuncDef) throws Exception {
-		Signature sig = userFuncDef.getSignature();
-		parameters = sig.getParameters();
+	private Program compile(UserFuncDef ufd) throws Exception {
+		Signature sig = ufd.getSignature();
+		final String name = sig.getName();
+		final int paramcnt  = sig.getParameters().size();
+		ArrayList<Short> offsets = new ArrayList<Short>();
 		
-		userFuncDef.getExpression().accept(this);
-		write(ByteCodes.RET);
-		write(parameters.size());
-		pop();
-		
-		ArrayList<UserFuncDef> newFunctions = new ArrayList<UserFuncDef>(newFunctionMap.size());
-		clear(newFunctions, newFunctionMap.size());
-		
-		ArrayList<Integer> offsets = new ArrayList<Integer>();
-		
-		int nfunctions;
-		while (!newFunctions.isEmpty()) {	
-			nfunctions = functionMap.size();
-			functionMap.putAll(newFunctionMap);
+		parameters = ufd.getSignature().getParameters();
+		ufd.getExpression().accept(this);
+		code.write(ByteCodes.RET);
+		for (int i = 0; i < functions.size(); ++i) {
+			offsets.add((short)code.size());
 			
-			for (Map.Entry<UserFuncDef, Integer> e : newFunctionMap.entrySet()) {
-				newFunctions.set(e.getValue()-nfunctions, e.getKey());
-			}
-			newFunctionMap.clear();
-			
-			List<Var> oldParameters = parameters;
-			for (UserFuncDef ufd : newFunctions) {
-				parameters = ufd.getSignature().getParameters();
-				offsets.add(nbytes);
-				
-				ufd.getExpression().accept(this);
-				write(ByteCodes.RET);
-				write(parameters.size());
-				pop();
-			}
-			parameters = oldParameters;
-			
-			clear(newFunctions, newFunctionMap.size());
-		}
-		
-		Num[] constants = new Num[constantMap.size()];
-		for (Map.Entry<Num, Integer> e : constantMap.entrySet()) {
-			constants[e.getValue()] = e.getKey();
+			ufd = functions.get(i);
+			parameters = ufd.getSignature().getParameters();
+			ufd.fold();
+			ufd.getExpression().accept(this);
+			code.write(ByteCodes.RET);
 		}
 		
 		short[] offs = new short[offsets.size()];
 		for (int i = 0; i < offs.length; ++i) {
-			offs[i] = (short) (int) offsets.get(i);
+			offs[i] = offsets.get(i);
 		}
-		return new Program(sig.getName(), code.toByteArray(),
-						   constants, offs, parameters.size(), maxStackSize);
-	}
-	
-	private void clear(ArrayList<UserFuncDef> list, int size) {
-		list.clear();
-		list.addAll(Collections.nCopies(size,(UserFuncDef) null));
-	}
-	
-	@Override
-	public Node visitBinOp(BinOp node) throws Exception {
-		node.getLHS().accept(this);
-		node.getRHS().accept(this);
-		return node;
-	}
-
-	@Override
-	public Node visitAdd(Add node) throws Exception {
-		visitBinOp((BinOp)node);
-		write(ByteCodes.ADD);
-		pop();
-		return node;
-	}
-
-	@Override
-	public Node visitSub(Sub node) throws Exception {
-		visitBinOp((BinOp)node);
-		write(ByteCodes.SUB);
-		pop();
-		return node;
-	}
-
-	@Override
-	public Node visitMul(Mul node) throws Exception {
-		visitBinOp((BinOp)node);
-		write(ByteCodes.MUL);
-		pop();
-		return node;
-	}
-
-	@Override
-	public Node visitDiv(Div node) throws Exception {
-		visitBinOp((BinOp)node);
-		write(ByteCodes.DIV);
-		pop();
-		return node;
-	}
-	
-	@Override
-	public Node visitMod(Mod node) throws Exception {
-		visitBinOp((BinOp)node);
-		write(ByteCodes.MOD);
-		pop();
-		return node;
-	}
-
-	@Override
-	public Node visitPow(Pow node) throws Exception {
-		visitBinOp((BinOp)node);
-		write(ByteCodes.POW);
-		pop();
-		return node;
-	}
-	
-	@Override
-	public Node visitMonOp(MonOp node) throws Exception {
-		node.getOp().accept(this);
-		return node;
-	}
-
-	@Override
-	public Node visitMinus(Minus node) throws Exception {
-		visitMonOp((MonOp)node);
-		write(ByteCodes.MINUS);
-		return node;
-	}
-	
-	@Override
-	public Node visitFactorial(Factorial node) throws Exception {
-		visitMonOp((MonOp)node);
-		write(ByteCodes.INC);
-		write(ByteCodes.GAMMA);
-		return node;
-	}
-	
-	@Override
-	public Node visitDegToRad(DegToRad node) throws Exception {
-		visitMonOp((MonOp)node);
-		write(ByteCodes.D2R);
-		return node;
-	}
-	
-	@Override
-	public Node visitNum(Num node) throws Exception {
-		write(ByteCodes.LOADC);
-		push();
 		
-		Integer index = constantMap.get(node);
-		if (index == null) {
-			index = (Integer) constantMap.size();
-			constantMap.put(node, index);
+		Num[] consts = new Num[constants.size()];
+		for (int i = 0; i < consts.length; ++i) {
+			consts[i] = constants.get(i);
 		}
-		write(index);
 		
+		return new Program(name, paramcnt, code.toByteArray(), consts, offs);
+	}
+	
+	@Override
+	public Node visitNum(Num node) {
+		int index = constants.indexOf(node);
+		if (index < 0) {
+			index = constants.size();
+			constants.add(node);
+		}
+		code.write(ByteCodes.LOADC);
+		code.write(index);
 		return node;
 	}
 
 	@Override
 	public Node visitVar(Var node) throws Exception {
-		String name = node.getName();
-		
-		write(ByteCodes.LOADA);
-		push();
-		
-		int n = parameters.size();
-		for (int i = 0; i < n; ++i) {
-			Var param = parameters.get(i);
-			if (name.equals(param.getName())) {
-				write(n - i);
-				return node;
-			}
+		int index = parameters.indexOf(node);
+		if (index < 0) {
+			throw new Exception("Unresolved variable: " + node.getName());
 		}
-		
-		throw new Exception("Unresolved variable: " + name);
+		code.write(ByteCodes.LOADA);
+		code.write(index);
+		return node;
+	}
+
+	@Override
+	public Node visitAdd(Add node) throws Exception {
+		node.getLHS().accept(this);
+		node.getRHS().accept(this);
+		code.write(ByteCodes.ADD);
+		return node;
+	}
+
+	@Override
+	public Node visitSub(Sub node) throws Exception {
+		node.getLHS().accept(this);
+		node.getRHS().accept(this);
+		code.write(ByteCodes.SUB);
+		return node;
+	}
+
+	@Override
+	public Node visitMul(Mul node) throws Exception {
+		node.getLHS().accept(this);
+		node.getRHS().accept(this);
+		code.write(ByteCodes.MUL);
+		return node;
+	}
+
+	@Override
+	public Node visitDiv(Div node) throws Exception {
+		node.getLHS().accept(this);
+		node.getRHS().accept(this);
+		code.write(ByteCodes.DIV);
+		return node;
+	}
+	
+	@Override
+	public Node visitMod(Mod node) throws Exception {
+		node.getLHS().accept(this);
+		node.getRHS().accept(this);
+		code.write(ByteCodes.MOD);
+		return node;
+	}
+
+	@Override
+	public Node visitPow(Pow node) throws Exception {
+		node.getLHS().accept(this);
+		node.getRHS().accept(this);
+		code.write(ByteCodes.POW);
+		return node;
+	}
+	
+	@Override
+	public Node visitMinus(Minus node) throws Exception {
+		node.getOp().accept(this);
+		code.write(ByteCodes.MINUS);
+		return node;
+	}
+	
+	@Override
+	public Node visitFactorial(Factorial node) throws Exception {
+		node.getOp().accept(this);
+		code.write(ByteCodes.INC);
+		code.write(ByteCodes.GAMMA);
+		return node;
+	}
+	
+	@Override
+	public Node visitDegToRad(DegToRad node) throws Exception {
+		node.getOp().accept(this);
+		code.write(ByteCodes.D2R);
+		return node;
 	}
 	
 	@Override
 	public Node visitFunc(Func node) throws Exception {
-		List<Expr> args = node.getArguments();
-		for (Expr arg : args) {
+		for (Expr arg : node.getArguments()) {
 			arg.accept(this);
 		}
 		node.getFuncDef().accept(this);
-		pop(args.size() - 1);
 		return node;
 	}
 	
 	@Override
-	public Node visitUserFuncDef(UserFuncDef node) throws Exception {
-		write(ByteCodes.CALL);
-		
-		Integer offset = functionMap.get(this);
-		if (offset == null) {
-			offset = newFunctionMap.get(this);
-			if (offset == null) {
-				offset = functionMap.size() + newFunctionMap.size();
-				newFunctionMap.put(node, offset);
-			}
+	public Node visitUserFuncDef(UserFuncDef node) {
+		int index = functions.indexOf(node);
+		if (index < 0) {
+			index = functions.size();
+			functions.add(node);
 		}
-		
-		int pStackSize = node.getProgram().getStackSize();
-		write(offset);
-		push(pStackSize);
-		pop(pStackSize);
-		
+		code.write(ByteCodes.CALL);
+		code.write(index);
+		code.write(node.getSignature().getParameters().size());
 		return node;
 	}
 	
 	@Override
-	public Node visitMinDef(MinDef node) throws Exception {
-		write(ByteCodes.MIN);
+	public Node visitMinDef(MinDef node) {
+		code.write(ByteCodes.MIN);
 		return node;
 	}
 	
 	@Override
-	public Node visitMaxDef(MaxDef node) throws Exception {
-		write(ByteCodes.MAX);
+	public Node visitMaxDef(MaxDef node) {
+		code.write(ByteCodes.MAX);
 		return node;
 	}
 	
 	@Override
-	public Node visitFloorDef(FloorDef node) throws Exception {
-		write(ByteCodes.FLOOR);
+	public Node visitFloorDef(FloorDef node) {
+		code.write(ByteCodes.FLOOR);
 		return node;
 	}
 	
 	@Override
-	public Node visitCeilDef(CeilDef node) throws Exception {
-		write(ByteCodes.CEIL);
+	public Node visitCeilDef(CeilDef node) {
+		code.write(ByteCodes.CEIL);
 		return node;
 	}
 	
 	@Override
-	public Node visitSqrtDef(SqrtDef node) throws Exception {
-		write(ByteCodes.SQRT);
+	public Node visitSqrtDef(SqrtDef node) {
+		code.write(ByteCodes.SQRT);
 		return node;
 	}
 	
 	@Override
-	public Node visitAbsDef(AbsDef node) throws Exception {
-		write(ByteCodes.ABS);
+	public Node visitAbsDef(AbsDef node) {
+		code.write(ByteCodes.ABS);
 		return node;
 	}
 	
 	@Override
-	public Node visitLogDef(LogDef node) throws Exception {
-		write(ByteCodes.LOG);
+	public Node visitLogDef(LogDef node) {
+		code.write(ByteCodes.LOG);
 		return node;
 	}
 	
 	@Override
-	public Node visitExpDef(ExpDef node) throws Exception {
-		write(ByteCodes.EXP);
+	public Node visitExpDef(ExpDef node) {
+		code.write(ByteCodes.EXP);
 		return node;
 	}
 	
 	@Override
-	public Node visitSinhDef(SinhDef node) throws Exception {
-		write(ByteCodes.SINH);
+	public Node visitSinhDef(SinhDef node) {
+		code.write(ByteCodes.SINH);
 		return node;
 	}
 	
 	@Override
-	public Node visitCoshDef(CoshDef node) throws Exception {
-		write(ByteCodes.COSH);
+	public Node visitCoshDef(CoshDef node) {
+		code.write(ByteCodes.COSH);
 		return node;
 	}
 	
 	@Override
-	public Node visitTanhDef(TanhDef node) throws Exception {
-		write(ByteCodes.TANH);
+	public Node visitTanhDef(TanhDef node) {
+		code.write(ByteCodes.TANH);
 		return node;
 	}
 	
 	@Override
-	public Node visitSinDef(SinDef node) throws Exception {
-		write(ByteCodes.SIN);
+	public Node visitSinDef(SinDef node) {
+		code.write(ByteCodes.SIN);
 		return node;
 	}
 	
 	@Override
-	public Node visitCosDef(CosDef node) throws Exception {
-		write(ByteCodes.COS);
+	public Node visitCosDef(CosDef node) {
+		code.write(ByteCodes.COS);
 		return node;
 	}
 	
 	@Override
-	public Node visitTanDef(TanDef node) throws Exception {
-		write(ByteCodes.TAN);
+	public Node visitTanDef(TanDef node) {
+		code.write(ByteCodes.TAN);
 		return node;
 	}
 	
 	@Override
-	public Node visitAsinDef(AsinDef node) throws Exception {
-		write(ByteCodes.ASIN);
+	public Node visitAsinDef(AsinDef node) {
+		code.write(ByteCodes.ASIN);
 		return node;
 	}
 	
 	@Override
-	public Node visitAcosDef(AcosDef node) throws Exception {
-		write(ByteCodes.ACOS);
+	public Node visitAcosDef(AcosDef node)  {
+		code.write(ByteCodes.ACOS);
 		return node;
 	}
 	
 	@Override
-	public Node visitAtanDef(AtanDef node) throws Exception {
-		write(ByteCodes.ATAN);
+	public Node visitAtanDef(AtanDef node) {
+		code.write(ByteCodes.ATAN);
 		return node;
 	}
 	
 	@Override
-	public Node visitErfDef(ErfDef node) throws Exception {
-		write(ByteCodes.ERF);
+	public Node visitErfDef(ErfDef node) {
+		code.write(ByteCodes.ERF);
 		return node;
 	}
 	
 	@Override
-	public Node visitGammaDef(GammaDef node) throws Exception {
-		write(ByteCodes.GAMMA);
+	public Node visitGammaDef(GammaDef node) {
+		code.write(ByteCodes.GAMMA);
 		return node;
 	}
 	
 	@Override
-	public Node visitLogGammaDef(LogGammaDef node) throws Exception {
-		write(ByteCodes.LOGGAMMA);
+	public Node visitLogGammaDef(LogGammaDef node) {
+		code.write(ByteCodes.LOGGAMMA);
+		return node;
+	}
+	
+	@Override
+	public Node visitReDef(ReDef node) {
+		code.write(ByteCodes.RE);
+		return node;
+	}
+	
+	@Override
+	public Node visitImDef(ImDef node) {
+		code.write(ByteCodes.IM);
+		return node;
+	}
+	
+	@Override
+	public Node visitArgDef(ArgDef node) {
+		code.write(ByteCodes.ARG);
+		return node;
+	}
+	
+	@Override
+	public Node visitModDef(ModDef node) {
+		code.write(ByteCodes.MODUL);
+		return node;
+	}
+	
+	@Override
+	public Node visitConjDef(ConjDef node) {
+		code.write(ByteCodes.CONJ);
 		return node;
 	}
 }

@@ -46,7 +46,13 @@ public class ByteCodes {
 		INC = 0x22,
 		DEC = 0x23,
 	
-		MOD = 0x24;
+		MOD = 0x24,
+		
+		RE = 0x25,
+		IM = 0x26,
+		ARG = 0x27,
+		MODUL = 0x28,
+		CONJ = 0x29;
 	
 		public static String toString(byte code) {
 			String s;
@@ -156,6 +162,21 @@ public class ByteCodes {
 					break;
 				case MOD:
 					s = "MOD";
+					break;
+				case RE:
+					s = "RE";
+					break;
+				case IM:
+					s = "IM";
+					break;
+				case ARG:
+					s = "ARG";
+					break;
+				case MODUL:
+					s = "MODUL";
+					break;
+				case CONJ:
+					s = "CONJ";
 					break;
 				default:
 					s = "Invalid instruction";

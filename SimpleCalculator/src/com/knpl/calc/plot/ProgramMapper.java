@@ -3,7 +3,7 @@ package com.knpl.calc.plot;
 import android.graphics.Matrix;
 import android.graphics.Path;
 
-import com.knpl.calc.util.Program;
+import com.knpl.calc.util.PlotComputer;
 
 public class ProgramMapper implements Mapper {
 
@@ -12,7 +12,7 @@ public class ProgramMapper implements Mapper {
 	public static final int DEFAULT_BUFSIZE = 256;
 	public static final int NBUFFERS = 3;
 	
-	private Program program;
+	private final PlotComputer computer;
 	
 	private Range range;
 	private float[][] buffers;
@@ -22,8 +22,8 @@ public class ProgramMapper implements Mapper {
 	private int color;
 	private boolean initialized;
 	
-	public ProgramMapper(Program program, int color) {
-		this.program = program;
+	public ProgramMapper(PlotComputer computer, int color) {
+		this.computer = computer;
 		this.color = color;
 		reset();
 	}
@@ -59,7 +59,7 @@ public class ProgramMapper implements Mapper {
 		}
 		
 		for (int i = 0; i < buffers.length; ++i) {
-			program.evaluate(buffers[i], 1, 2, buffers[i], 0, 2);
+			computer.evaluate(buffers[i], 1, 2, buffers[i], 0, 2);
 		}
 		
 		initialized = true;
@@ -79,7 +79,7 @@ public class ProgramMapper implements Mapper {
 		Range leftRange = range.create(from, to);
 		
 		leftRange.generate(leftBuf, 0, 2);
-		program.evaluate(leftBuf, 1, 2, leftBuf, 0, 2);
+		computer.evaluate(leftBuf, 1, 2, leftBuf, 0, 2);
 	}
 	
 	public void goRight() {
@@ -95,7 +95,7 @@ public class ProgramMapper implements Mapper {
 		Range rightRange = range.create(from, to);
 		
 		rightRange.generate(rightBuf, 0, 2);
-		program.evaluate(rightBuf, 1, 2, rightBuf, 0, 2);
+		computer.evaluate(rightBuf, 1, 2, rightBuf, 0, 2);
 	}
 	
 	@Override

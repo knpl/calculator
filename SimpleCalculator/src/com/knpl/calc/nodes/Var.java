@@ -14,6 +14,25 @@ public class Var extends Expr {
 	}
 	
 	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		else if (o == null || !(o instanceof Var)) {
+			return false;
+		}
+		else {
+			Var that = (Var) o;
+			return name.equals(that.name);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+	@Override
 	public Object accept(Visitor v) throws Exception {
 		return v.visitVar(this);
 	}

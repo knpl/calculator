@@ -1,7 +1,6 @@
 package com.knpl.calc.plot;
 
-import com.knpl.calc.util.Program;
-
+import com.knpl.calc.util.PlotComputer;
 import android.graphics.Matrix;
 import android.graphics.Path;
 
@@ -10,23 +9,23 @@ public class PolarMapper implements Mapper {
 	
 	private static final int DEFAULT_SAMPLE_COUNT = 360;
 
-	private final Program program;
+	private final PlotComputer computer;
 	private final Range trange;
 	private final int sampleCount;
 	private final int color;
 	
 	private float[] buffer;
 	
-	public PolarMapper(Program program, Range trange, int sampleCount, int color) {
-		this.program = program;
+	public PolarMapper(PlotComputer computer, Range trange, int sampleCount, int color) {
+		this.computer = computer;
 		this.trange = trange;
 		this.sampleCount = sampleCount;
 		this.color = color;
 		buffer = null;
 	}
 	
-	public PolarMapper(Program program, Range trange, int color) {
-		this(program, trange, DEFAULT_SAMPLE_COUNT, color);
+	public PolarMapper(PlotComputer computer, Range trange, int color) {
+		this(computer, trange, DEFAULT_SAMPLE_COUNT, color);
 	}
 	
 	@Override
@@ -34,7 +33,7 @@ public class PolarMapper implements Mapper {
 		if (buffer == null) {
 			buffer = new float[2 * sampleCount];
 			trange.generate(buffer, 0, 2);
-			program.evaluate(buffer, 1, 2, buffer, 0, 2);
+			computer.evaluate(buffer, 1, 2, buffer, 0, 2);
 			polarToCartesian(buffer);
 		}
 		

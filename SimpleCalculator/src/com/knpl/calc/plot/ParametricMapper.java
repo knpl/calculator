@@ -1,7 +1,6 @@
 package com.knpl.calc.plot;
 
-import com.knpl.calc.util.Program;
-
+import com.knpl.calc.util.PlotComputer;
 import android.graphics.Matrix;
 import android.graphics.Path;
 
@@ -13,22 +12,22 @@ public class ParametricMapper implements Mapper {
 	
 	private float[] buffer;
 	
-	private final Program xprogram,
-						  yprogram;
+	private final PlotComputer xcomputer,
+						  	   ycomputer;
 	private final Range trange;
 	private final int sampleCount,
 					  color;
 	
-	public ParametricMapper(Program xprogram, Program yprogram, Range trange, int sampleCount, int color) {
-		this.xprogram = xprogram;
-		this.yprogram = yprogram;
+	public ParametricMapper(PlotComputer xprogram, PlotComputer yprogram, Range trange, int sampleCount, int color) {
+		this.xcomputer = xprogram;
+		this.ycomputer = yprogram;
 		this.trange = trange;
 		this.sampleCount = sampleCount;
 		this.color = color;
 		buffer = null;
 	}
 
-	public ParametricMapper(Program xprogram, Program yprogram, Range trange, int color) {
+	public ParametricMapper(PlotComputer xprogram, PlotComputer yprogram, Range trange, int color) {
 		this(xprogram, yprogram, trange, DEFAULT_SAMPLE_COUNT, color);
 	}
 	
@@ -48,8 +47,8 @@ public class ParametricMapper implements Mapper {
 			buffer = new float[2 * sampleCount];
 			trange.generate(buffer, 0, 2);
 			trange.generate(buffer, 1, 2);
-			xprogram.evaluate(buffer, 0, 2, buffer, 0, 2);
-			yprogram.evaluate(buffer, 1, 2, buffer, 1, 2);
+			xcomputer.evaluate(buffer, 0, 2, buffer, 0, 2);
+			ycomputer.evaluate(buffer, 1, 2, buffer, 1, 2);
 		}
 		
 		Path path = MapperUtils.pathInWindow(new Path(), buffer, buffer.length, 

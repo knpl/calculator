@@ -34,6 +34,7 @@ import com.knpl.calc.plot.ParametricMapper;
 import com.knpl.calc.plot.PolarMapper;
 import com.knpl.calc.plot.ProgramMapper;
 import com.knpl.calc.plot.Range;
+import com.knpl.calc.util.PlotComputer;
 import com.knpl.calc.visitors.NumEvaluate;
 
 public class PlotMenuFragment extends ListFragment {
@@ -531,13 +532,14 @@ public class PlotMenuFragment extends ListFragment {
 		public Mapper getMapper() throws Exception {
 			switch (type) {
 			case NORMAL:
-				return new ProgramMapper(ufd.getProgram(), color);
+				return new ProgramMapper(new PlotComputer(ufd.getProgram()), color);
 			case POLAR:
-				return new PolarMapper(ufd.getProgram(), range, color);
+				return new PolarMapper(new PlotComputer(ufd.getProgram()), range, color);
 			case PARAMETRIC:
-				return new ParametricMapper(ufd.getProgram(), ufd2.getProgram(), range, color);
+				return new ParametricMapper(new PlotComputer(ufd.getProgram()), 
+											new PlotComputer(ufd2.getProgram()), range, color);
 			default:
-				return new ProgramMapper(ufd.getProgram(), color);
+				return new ProgramMapper(new PlotComputer(ufd.getProgram()), color);
 			}
 		}
 		
