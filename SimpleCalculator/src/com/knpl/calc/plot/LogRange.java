@@ -6,7 +6,7 @@ public class LogRange extends Range {
 
 	private static final long serialVersionUID = 3457489932408306624L;
 	
-	public LogRange(float min, float max) {
+	public LogRange(double min, double max) {
 		super(min, max);
 	}
 	
@@ -15,15 +15,15 @@ public class LogRange extends Range {
 	}
 	
 	@Override
-	public LogRange create(float min, float max) {
+	public LogRange create(double min, double max) {
 		return new LogRange(min, max);
 	}
 	
 	@Override
-	public LogRange extend(float factor) {
-		float tmp = .5f * (factor - 1);
-		float newmin = (float)(min * Math.pow((max / min),   - tmp));
-		float newmax = (float)(min * Math.pow((max / min), 1 + tmp));
+	public LogRange extend(double factor) {
+		double tmp = .5 * (factor - 1);
+		double newmin = min * Math.pow((max / min),   - tmp);
+		double newmax = min * Math.pow((max / min), 1 + tmp);
 		return new LogRange(newmin, newmax);
 	}
 	
@@ -31,11 +31,11 @@ public class LogRange extends Range {
 	public void generate(float[] dst, int index, int step) {
 		int size = dst.length / step;
 		
-		float c = min;
-		float cs = (max-min)/(size-1);
+		double c = min;
+		double cs = (max-min)/(size-1);
 		
 		for (int i = index; i < dst.length; i += step) {
-			dst[i] = c;
+			dst[i] = (float) c;
 			c += cs;
 		}
 		
@@ -48,7 +48,17 @@ public class LogRange extends Range {
 	}
 	
 	@Override
+	public double modelToView(double v) {
+		return (min + (max-min) * (Math.log(v/min) / Math.log(max/min)));
+	}
+	
+	@Override
 	public float viewToModel(float v) {
+		return (float) (min * Math.pow((max/min), (v-min) / (max-min)));
+	}
+	
+	@Override
+	public double viewToModel(double v) {
 		return (float) (min * Math.pow((max/min), (v-min) / (max-min)));
 	}
 	

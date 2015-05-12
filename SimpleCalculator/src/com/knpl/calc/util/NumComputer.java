@@ -74,10 +74,6 @@ public class NumComputer {
 				mem.get(tos-1).div(mem.get(tos));
 				mem.remove(tos);
 				break;
-			case ByteCodes.MOD:
-				mem.get(tos-1).mod(mem.get(tos));
-				mem.remove(tos);
-				break;
 			case ByteCodes.POW:
 				mem.get(tos-1).pow(mem.get(tos));
 				mem.remove(tos);
@@ -153,7 +149,7 @@ public class NumComputer {
 			case ByteCodes.ARG:
 				mem.get(tos).arg();
 				break;
-			case ByteCodes.MODUL:
+			case ByteCodes.MOD:
 				mem.get(tos).mod();
 				break;
 			case ByteCodes.CONJ:

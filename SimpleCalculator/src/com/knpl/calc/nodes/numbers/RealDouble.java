@@ -1,13 +1,15 @@
 package com.knpl.calc.nodes.numbers;
 
+import java.io.Serializable;
+
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
 
 import com.knpl.calc.util.FormatUtils;
 import com.knpl.calc.visitors.Visitor;
 
-public class RealDouble extends Num {
-
+public class RealDouble extends Num implements Serializable {
+	private static final long serialVersionUID = 6216519041995708479L;
 	private double val;
 	
 	public RealDouble(double val) {

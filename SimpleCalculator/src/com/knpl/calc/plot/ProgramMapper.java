@@ -22,9 +22,12 @@ public class ProgramMapper implements Mapper {
 	private int color;
 	private boolean initialized;
 	
+	private Path path;
+	
 	public ProgramMapper(PlotComputer computer, int color) {
 		this.computer = computer;
 		this.color = color;
+		
 		reset();
 	}
 
@@ -36,6 +39,7 @@ public class ProgramMapper implements Mapper {
 		scratchBound = 0;
 		bufferIndex = 1;
 		initialized = false;
+		path = null;
 	}
 	
 	@Override
@@ -51,9 +55,9 @@ public class ProgramMapper implements Mapper {
 		bufferIndex = 1;
 		
 		for (int i = 0; i < buffers.length; ++i) {
-			float len = range.len();
-			float lb = range.min  + (i - bufferIndex) * len;
-			float ub = lb + len;
+			double len =  range.len();
+			double lb = (range.min  + (i - bufferIndex) * len);
+			double ub = lb + len;
 			Range a = range.create(range.viewToModel(lb), range.viewToModel(ub));
 			a.generate(buffers[i], 0, 2);
 		}
@@ -62,6 +66,8 @@ public class ProgramMapper implements Mapper {
 			computer.execute(buffers[i], 1, 2, buffers[i], 0, 2);
 		}
 		
+		path = new Path();
+		
 		initialized = true;
 	}
 	
@@ -69,8 +75,8 @@ public class ProgramMapper implements Mapper {
 	public void goLeft() {
 		bufferIndex = (bufferIndex + (NBUFFERS - 1)) % NBUFFERS;
 		
-		float from = range.viewToModel(range.min - range.len()),
-			  to   = range.min;
+		double from = range.viewToModel(range.min - range.len()),
+			   to   = range.min;
 		range = range.create(from, to);
 		
 		float[] leftBuf = buffers[(bufferIndex + (NBUFFERS - 1)) % NBUFFERS];
@@ -85,8 +91,8 @@ public class ProgramMapper implements Mapper {
 	public void goRight() {
 		bufferIndex = (bufferIndex + 1) % NBUFFERS;
 		
-		float from = range.max,
-			  to   = range.viewToModel(range.max + range.len());
+		double from = range.max,
+			   to   = range.viewToModel(range.max + range.len());
 		range = range.create(from, to);
 		
 		float[] rightBuf = buffers[(bufferIndex + 1) % NBUFFERS];
@@ -104,13 +110,13 @@ public class ProgramMapper implements Mapper {
 			initialize(DEFAULT_BUFSIZE, xrange);
 		}
 		
-		float ratio = (range.modelToView(xrange.max) - range.modelToView(xrange.min))/range.len();
+		double ratio = (range.modelToView(xrange.max) - range.modelToView(xrange.min))/range.len();
 		if (ratio > 3/2f) {
-			float max = range.viewToModel(range.min + range.len()*2);
+			double max = range.viewToModel(range.min + range.len()*2);
 			initialize(DEFAULT_BUFSIZE, range.create(range.min, max));
 		}
 		else if (ratio < 2/3f) {
-			float max = range.viewToModel(range.min + range.len()/2);
+			double max = range.viewToModel(range.min + range.len()/2);
 			initialize(DEFAULT_BUFSIZE, range.create(range.min, max));
 		}
 		else if (xrange.min < range.viewToModel(range.min - 0.5f*range.len())) {
@@ -123,18 +129,19 @@ public class ProgramMapper implements Mapper {
 		scratch(xrange);
 		xrange.modelToView(scratch, scratchBound, 0, 2);
 		yrange.modelToView(scratch, scratchBound, 1, 2);
-		Path path = pathFromScratch(xrange, yrange);
+		path.rewind();
+		MapperUtils.pathInRangeY(path, scratch, scratchBound, (float)yrange.min, (float)yrange.max);
 		path.transform(ctm);
 		return path;
 	}
 	
 	public void scratch(Range xrange) {
-		final float rangeLen = range.len();
+		final double rangeLen = range.len();
 		final int npoints = buffers[0].length / 2;
 		
-		float diff = (range.modelToView(xrange.min) - range.min)/rangeLen;
+		double diff = (range.modelToView(xrange.min) - range.min)/rangeLen;
 		int integer = (int)Math.floor(diff);
-		float fraction  = diff - integer;
+		double fraction  = diff - integer;
 		
 		int firstBuffer = (bufferIndex + integer + NBUFFERS) % NBUFFERS;
 		int firstPoint = (int) Math.floor(fraction * npoints);
@@ -206,17 +213,17 @@ public class ProgramMapper implements Mapper {
 					path.moveTo(x, y);
 				}
 				else if (Float.isInfinite(lasty)) {
-					path.moveTo(x, (lasty < 0) ? yrange.min : yrange.max);
+					path.moveTo(x, (float) ((lasty < 0) ? yrange.min : yrange.max));
 					path.lineTo(x, y);
 				}
 				else {
 					if (lasty > yrange.max) {
-						lastx = getIntersectX(lastx, lasty, x, y, yrange.max);
-						lasty = yrange.max;
+						lastx = getIntersectX(lastx, lasty, x, y, (float) yrange.max);
+						lasty = (float) yrange.max;
 					}
 					else if (lasty < yrange.min) {
-						lastx = getIntersectX(lastx, lasty, x, y, yrange.min);
-						lasty = yrange.min;
+						lastx = getIntersectX(lastx, lasty, x, y, (float) yrange.min);
+						lasty = (float) yrange.min;
 					}
 					
 					path.moveTo(lastx, lasty);
@@ -234,12 +241,12 @@ public class ProgramMapper implements Mapper {
 				
 				if (!yrange.contains(y)) {
 					if (y > yrange.max) {
-						x = getIntersectX(lastx, lasty, x, y, yrange.max);
-						y = yrange.max;
+						x = getIntersectX(lastx, lasty, x, y, (float) yrange.max);
+						y = (float) yrange.max;
 					}
 					else if (y < yrange.min) {
-						x = getIntersectX(lastx, lasty, x, y, yrange.min);
-						y = yrange.min;
+						x = getIntersectX(lastx, lasty, x, y, (float) yrange.min);
+						y = (float) yrange.min;
 					}
 					state = SKIP;
 				}

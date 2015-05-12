@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<com.knpl.calc.keyboard.MyKeyboardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/keyboardView"
+    android:layout_height="match_parent" 
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0000"
-    android:paddingTop="5dp" />
+    android:orientation="horizontal" 
+    android:background="#ff222222" >
+    	
+    <com.knpl.calc.keyboard.MyKeyboardView
+	    android:id="@android:id/keyboardView"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" />
+ 
+	<Button
+	    android:id="@android:id/closeButton"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	   	android:background="@android:drawable/ic_menu_close_clear_cancel"
+	   	android:gravity="center"
+	   	android:padding="10dp" />
+	
+</LinearLayout>

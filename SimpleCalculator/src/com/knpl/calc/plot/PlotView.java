@@ -1,5 +1,6 @@
 package com.knpl.calc.plot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.knpl.calc.plot.PlotStates.PlotState;
@@ -15,7 +16,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.preference.PreferenceManager;
-import android.util.AttributeSet;
 import android.view.View;
 
 public class PlotView extends View {
@@ -53,8 +53,8 @@ public class PlotView extends View {
 	private boolean grid, 
 					extend;
 	
-	public PlotView(Context context, AttributeSet attrs) {
-		super(context, attrs);
+	public PlotView(Context context) {
+		super(context);
 		translate = new float[]{0f,0f};
 		scalecenter = new float[]{0f,0f};
 		scalefactor = 1f;
@@ -92,6 +92,14 @@ public class PlotView extends View {
 		
 		plotPaint.setStrokeWidth(prefs.getInt("pref_key_line_thickness", 0));
 	}
+
+	public PlotView setValues(List<Mapper> paths, Range x, Range y) {
+		this.mappers = (paths == null) ? new ArrayList<Mapper>() : paths;
+		this.xaxis = (x == null) ? new Range(-5, 5) : x;
+		this.yaxis = (y == null) ? new Range(-5, 5) : y;
+		invalidate();
+		return this;
+	}
 	
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -116,19 +124,12 @@ public class PlotView extends View {
 		normalToScreen.invert(screenToNormal);
 		
 		viewToNormal.reset();
-		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
-		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
+		viewToNormal.preScale((float)(1/xaxis.len()), (float)(1/yaxis.len()));
+		viewToNormal.preTranslate((float)-xaxis.min, (float)-yaxis.min);
 		viewToNormal.invert(normalToView);
 		
 		height = h;
 		width = w;
-	}
-
-	public PlotView init(List<Mapper> paths, Range x, Range y) {
-		this.mappers = paths;
-		this.xaxis = x;
-		this.yaxis = y;
-		return this;
 	}
 	
 	public void setState(PlotState plotState) {
@@ -156,8 +157,8 @@ public class PlotView extends View {
 		yaxis = yrange;
 		
 		viewToNormal.reset();
-		viewToNormal.preScale(1/xaxis.len(), 1/yaxis.len());
-		viewToNormal.preTranslate(-xaxis.min, -yaxis.min);
+		viewToNormal.preScale((float)(1/xaxis.len()), (float)(1/yaxis.len()));
+		viewToNormal.preTranslate((float)-xaxis.min, (float)-yaxis.min);
 		viewToNormal.invert(normalToView);
 	}
 	
@@ -166,10 +167,10 @@ public class PlotView extends View {
 		screenToNormal.mapVectors(dv);
 		normalToView.mapVectors(dv);
 		
-		setWindow(xaxis.create(xaxis.viewToModel(xaxis.min - dv[0]),
-				  			   xaxis.viewToModel(xaxis.max - dv[0])),
-				  yaxis.create(yaxis.viewToModel(yaxis.min - dv[1]),
-						  	   yaxis.viewToModel(yaxis.max - dv[1])));
+		setWindow(xaxis.create(xaxis.viewToModel((float) (xaxis.min - dv[0])),
+				  			   xaxis.viewToModel((float) (xaxis.max - dv[0]))),
+				  yaxis.create(yaxis.viewToModel((float) (yaxis.min - dv[1])),
+						  	   yaxis.viewToModel((float) (yaxis.max - dv[1]))));
 		
 		invalidate();
 	}
@@ -218,8 +219,8 @@ public class PlotView extends View {
 			yrange = yaxis.create(yaxis.viewToModel(yaxis.min - viewTranslate[1]),
 								  yaxis.viewToModel(yaxis.max - viewTranslate[1]));
 			
-			ctm.preScale(1/xrange.len(), 1/yrange.len());
-			ctm.preTranslate(-xrange.min, -yrange.min);
+			ctm.preScale((float)(1/xrange.len()), (float)(1/yrange.len()));
+			ctm.preTranslate((float)-xrange.min, (float)-yrange.min);
 			break;
 			
 		case ZOOMING:
@@ -232,8 +233,8 @@ public class PlotView extends View {
 			yrange = yaxis.create(yaxis.viewToModel(viewTranslate[1] + (yaxis.min - viewTranslate[1])/scalefactor), 
 								  yaxis.viewToModel(viewTranslate[1] + (yaxis.max - viewTranslate[1])/scalefactor));
 			
-			ctm.preScale(1/xrange.len(), 1/yrange.len());
-			ctm.preTranslate(-xrange.min, -yrange.min);
+			ctm.preScale((float)(1/xrange.len()), (float)(1/yrange.len()));
+			ctm.preTranslate((float)-xrange.min, (float)-yrange.min);
 			break;
 			
 		default:
@@ -252,12 +253,12 @@ public class PlotView extends View {
 	public void drawAxes(Canvas c, Matrix ctm, Range x, Range y) {
 		float xy, yx;
 		
-		if 		(y.min > 0) xy = y.min;
-		else if (y.max < 0) xy = y.max;
+		if 		(y.min > 0) xy = (float) y.min;
+		else if (y.max < 0) xy = (float) y.max;
 		else 				xy = 0;
 		
-		if 		(x.min > 0)	yx = x.min;
-		else if (x.max < 0) yx = x.max;
+		if 		(x.min > 0)	yx = (float) x.min;
+		else if (x.max < 0) yx = (float) x.max;
 		else 				yx = 0;
 		
 		float[] viewToScreenUnits = new float[]{1,1};
@@ -267,10 +268,10 @@ public class PlotView extends View {
 		drawYMarkers(c, ctm, y, yx, 1/viewToScreenUnits[0], 1/viewToScreenUnits[1]);
 
 		Path path = new Path();
-		path.moveTo(x.min, xy);
-		path.lineTo(x.max, xy);
-		path.moveTo(yx, y.min);
-		path.lineTo(yx, y.max);
+		path.moveTo((float) x.min, xy);
+		path.lineTo((float) x.max, xy);
+		path.moveTo(yx, (float) y.min);
+		path.lineTo(yx, (float) y.max);
 		path.transform(ctm);
 		c.drawPath(path, linePaint);
 	}

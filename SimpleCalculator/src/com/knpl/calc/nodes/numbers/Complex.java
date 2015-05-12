@@ -1,10 +1,12 @@
 package com.knpl.calc.nodes.numbers;
 
+import java.io.Serializable;
+
 import com.knpl.calc.util.FormatUtils;
 import com.knpl.calc.visitors.Visitor;
 
-public class Complex extends Num {
-	
+public class Complex extends Num implements Serializable {
+	private static final long serialVersionUID = 4389168288430142019L;
 	private double re,
 				   im;
 	

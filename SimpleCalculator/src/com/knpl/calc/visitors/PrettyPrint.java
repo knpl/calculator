@@ -175,24 +175,6 @@ public class PrettyPrint extends Visitor {
 	}
 	
 	@Override
-	public Node visitMod(Mod node) throws  Exception {
-		boolean parens = parens(getInfo(), 1, true);
-		
-		if (parens) out.print("(");
-		
-		setInfo(new Info(1, false));
-		node.getLHS().accept(this);
-		
-		out.print('%');
-		
-		setInfo(new Info(1, true));
-		node.getRHS().accept(this);
-		
-		if (parens) out.print(")");
-		return node;
-	}
-	
-	@Override
 	public Node visitPow(Pow node) throws  Exception {
 		boolean parens = parens(getInfo(), 4, false);
 		

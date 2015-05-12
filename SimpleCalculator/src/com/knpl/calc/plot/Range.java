@@ -7,10 +7,10 @@ import android.graphics.Path;
 public class Range implements Serializable {
 	private static final long serialVersionUID = 4451726311629241145L;
 	
-	public final float min,
-		  		 	   max;
+	public final double min,
+		  		 	    max;
 	
-	public Range(float min, float max) {
+	public Range(double min, double max) {
 		this.min = min;
 		this.max = max;
 	}
@@ -19,15 +19,19 @@ public class Range implements Serializable {
 		this(old.min, old.max);
 	}
 	
-	public Range create(float min, float max) {
+	public Range create(double min, double max) {
 		return new Range(min, max);
+	}
+	
+	public boolean contains(double x) {
+		return min <= x && x <= max;
 	}
 	
 	public boolean contains(float x) {
 		return min <= x && x <= max;
 	}
 
-	public float len() {
+	public double len() {
 		return max-min;
 	}
 
@@ -35,7 +39,15 @@ public class Range implements Serializable {
 		return v;
 	}
 	
+	public double modelToView(double v) {
+		return v;
+	}
+	
 	public float viewToModel(float v) {
+		return v;
+	}
+	
+	public double viewToModel(double v) {
 		return v;
 	}
 
@@ -58,19 +70,19 @@ public class Range implements Serializable {
 		y.modelToView(v, n, 1, 2);
 	}
 	
-	public Range extend(float factor) {
-		float tmp = .5f * (factor - 1) * (max-min);
+	public Range extend(double factor) {
+		double tmp = .5 * (factor - 1) * (max - min);
 		return new Range(min - tmp, max + tmp);
 	}
 	
 	public void generate(float[] dst, int index, int step) {
 		int size = dst.length / step;
 		
-		float c = min;
-		float cs = (max-min)/(size-1);
+		double c = min;
+		double cs = (max - min)/(size - 1);
 		
 		for (int i = index; i < dst.length; i += step) {
-			dst[i] = c;
+			dst[i] = (float)c;
 			c += cs;
 		}
 	}

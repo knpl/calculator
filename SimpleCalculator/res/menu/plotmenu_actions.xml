@@ -16,6 +16,11 @@
         app:showAsAction="ifRoom" />
     
     <item
+        android:id="@+id/action_plot_3d"
+        android:title="@string/action_plot_3d"
+        app:showAsAction="never" />
+    
+    <item
         android:id="@+id/action_toggle_normal_mode"
         android:title="@string/action_toggle_normal_mode"
         app:showAsAction="never" />

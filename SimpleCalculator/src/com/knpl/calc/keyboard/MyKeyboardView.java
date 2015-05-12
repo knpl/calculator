@@ -1,7 +1,5 @@
 package com.knpl.calc.keyboard;
 
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,33 +25,37 @@ public class MyKeyboardView extends KeyboardView {
 	public static final String[] actionLabels = 
 		{"abc", "\u03B1\u03B2\u03B3", "123", "OK"}; // 57344 - 57347
 	
-	private Paint backgroundPaint,
-				  pressedBackgroundPaint,
+	private Paint bgPaint,
+				  pressedbgPaint,
 				  labelPaint,
 				  smallLabelPaint;
 	
 	private Rect rect;
+	
+	private int textYoffset;
 
 	public MyKeyboardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setPreviewEnabled(false);
 		
 		rect = new Rect();
-		backgroundPaint = new Paint();
-		pressedBackgroundPaint = new Paint();
+		bgPaint = new Paint();
+		pressedbgPaint = new Paint();
 		labelPaint = new Paint();
 		smallLabelPaint = new Paint();
 		
-		backgroundPaint.setStyle(Paint.Style.FILL);
-		backgroundPaint.setColor(Color.DKGRAY);
+		bgPaint.setStyle(Paint.Style.FILL);
+		bgPaint.setColor(Color.DKGRAY);
 		
-		pressedBackgroundPaint.setStyle(Paint.Style.FILL);
-		pressedBackgroundPaint.setColor(Color.rgb(128, 128, 255));
+		pressedbgPaint.setStyle(Paint.Style.FILL);
+		pressedbgPaint.setColor(Color.rgb(128, 128, 255));
 		
 		labelPaint.setTextAlign(Paint.Align.CENTER);
 		labelPaint.setStyle(Paint.Style.STROKE);
 		labelPaint.setTextSize(22);
 		labelPaint.setColor(Color.WHITE);
+		
+		textYoffset = (int) (-labelPaint.ascent()/2f);
 		
 		smallLabelPaint.setTextAlign(Paint.Align.RIGHT);
 		smallLabelPaint.setStyle(Paint.Style.STROKE);
@@ -70,7 +72,7 @@ public class MyKeyboardView extends KeyboardView {
 		return ACTION_BLOCK_START <= code &&
 			   code <= ACTION_BLOCK_START + actionLabels.length;
 	}
-	
+
 	public String getLabelFromCode(int primaryCode) {
 		String result;
 		
@@ -97,52 +99,54 @@ public class MyKeyboardView extends KeyboardView {
 		icon.setBounds(rect);
 		icon.draw(canvas);
 	}
+	
+	private void drawKey(Canvas canvas, Key key) {
+		rect.left = key.x + 1;
+		rect.right = key.x + key.width - 1;
+		rect.top = key.y + 1;
+		rect.bottom = key.y + key.height - 1;
+		
+		int xc = key.x + key.width/2;
+		int yc = key.y + key.height/2;
+		Drawable icon = key.icon;
+
+		Paint paint = key.pressed ? pressedbgPaint : bgPaint;
+		canvas.drawRect(rect, paint);
+		
+		// Draw center label
+		if (icon != null) {
+			drawIcon(icon, canvas, rect, xc, yc);
+			return;
+		}
+		
+		char code = (char) key.codes[0];
+		canvas.drawText(getLabelFromCode(code), xc, yc + textYoffset, labelPaint);
+		
+		if (key.popupResId == 0 || key.popupCharacters == null) { // No popup
+			return;
+		}
+		
+		String text;
+		CharSequence chars = key.popupCharacters;
+		if (chars.length() <= 1) {
+			return;
+		}
+		text = getLabelFromCode(chars.charAt(1));
+		canvas.drawText(text, rect.right - 2,
+				rect.top - smallLabelPaint.ascent() + 2, smallLabelPaint);
+		
+		if (chars.length() <= 2) {
+			return;
+		}
+		text = getLabelFromCode(chars.charAt(2));
+		canvas.drawText(text, rect.right - 2,
+				rect.bottom - smallLabelPaint.descent() - 2, smallLabelPaint);
+	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		List<Key> keys = getKeyboard().getKeys();
-		int yoffset = (int) (-labelPaint.ascent()/2f);
-		Paint paint;
-		
-		int xc, yc;
-		for (Key key : keys) {
-			rect.left = key.x + 1;
-			rect.right = key.x + key.width - 1;
-			rect.top = key.y + 1;
-			rect.bottom = key.y + key.height - 1;
-			xc = key.x + key.width/2;
-			yc = key.y + key.height/2;
-			Drawable icon = key.icon;
-
-			paint = key.pressed ? pressedBackgroundPaint : backgroundPaint;
-			canvas.drawRect(rect, paint);
-			
-			// Draw center label
-			if (icon != null) {
-				drawIcon(icon, canvas, rect, xc, yc);
-			}
-			else {
-				char code = (char) key.codes[0];
-				canvas.drawText(getLabelFromCode(code), xc, yc + yoffset, labelPaint);	
-			}
-			
-			String upperleftLabel = null,
-				   lowerleftLabel = null;
-			if (key.popupResId == 0 || key.popupCharacters == null) { // No popup
-				continue;
-			}
-			
-			if (key.popupCharacters.length() > 1) {
-				upperleftLabel = getLabelFromCode(key.popupCharacters.charAt(1));
-				canvas.drawText(upperleftLabel, rect.right - 2,
-						rect.top - smallLabelPaint.ascent() + 2, smallLabelPaint);
-				if (key.popupCharacters.length() > 2) {
-					lowerleftLabel = getLabelFromCode(key.popupCharacters.charAt(2));
-					canvas.drawText(lowerleftLabel, rect.right - 2, 
-							rect.bottom - smallLabelPaint.descent() - 2, smallLabelPaint);
-				}
-			}
-			
+		for (Key key : getKeyboard().getKeys()) {
+			drawKey(canvas, key);
 		}
 	}
 	

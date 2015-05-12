@@ -56,28 +56,28 @@ public class PlotOptionsFragment extends Fragment {
 		return view;
 	}
 	
-	public float getNumber(EditText et) {
+	public double getNumber(EditText et) {
 		String s = et.getText().toString();
 		if (s.isEmpty()) {
-			return Float.NaN;
+			return Double.NaN;
 		}
 		
 		try {
-			return Float.parseFloat(s);
+			return Double.parseDouble(s);
 		}
 		catch (NumberFormatException e) {
-			return Float.NaN;
+			return Double.NaN;
 		}
 	}
 	
-	public Range getAxis(Spinner spinner, float min, float max) {
+	public Range getAxis(Spinner spinner, double min, double max) {
 		switch (spinner.getSelectedItemPosition()) {
 		case 0: 
 			return new Range(min, max);
 		case 1: 
 			return new LogRange(min, max);
 		default:	
-			return SimpleCalculatorActivity.DEFAULT_AXIS;
+			return new Range(min, max);
 		}
 	}
 	
@@ -87,10 +87,10 @@ public class PlotOptionsFragment extends Fragment {
 		Range oldx = activity.getXAxis();
 		Range oldy = activity.getYAxis();
 		
-		float xmin = getNumber((EditText)v.findViewById(R.id.xMin)),
-			  xmax = getNumber((EditText)v.findViewById(R.id.xMax)),
-			  ymin = getNumber((EditText)v.findViewById(R.id.yMin)),
-			  ymax = getNumber((EditText)v.findViewById(R.id.yMax));
+		double xmin = getNumber((EditText)v.findViewById(R.id.xMin)),
+			   xmax = getNumber((EditText)v.findViewById(R.id.xMax)),
+			   ymin = getNumber((EditText)v.findViewById(R.id.yMin)),
+			   ymax = getNumber((EditText)v.findViewById(R.id.yMax));
 		
 		if (!ok(xmin)) xmin = oldx.min;
 		if (!ok(xmax)) xmax = oldx.max;
@@ -101,8 +101,8 @@ public class PlotOptionsFragment extends Fragment {
 		activity.setYAxis(getAxis((Spinner) v.findViewById(R.id.yType), ymin, ymax));
 	}
 	
-	public boolean ok(float x) {
-		return !(Float.isNaN(x) || Float.isInfinite(x));
+	public boolean ok(double x) {
+		return !(Double.isNaN(x) || Double.isInfinite(x));
 	}
 	
 	@Override

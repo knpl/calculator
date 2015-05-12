@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android" android:keyWidth="16.7%p">
     <Row android:keyHeight="10%p" android:rowEdgeFlags="top" >
-        <Key android:codes="176" android:keyEdgeFlags="left" />
+        <Key android:codes="33" android:popupKeyboard="@xml/popup" android:popupCharacters="!\u00B0" android:keyEdgeFlags="left" />
         <Key android:codes="55" android:popupKeyboard="@xml/popup" android:popupCharacters="7\uF004\uF007\uF00a" />
         <Key android:codes="56" android:popupKeyboard="@xml/popup" android:popupCharacters="8\uF005\uF008\uF00b" />
         <Key android:codes="57" android:popupKeyboard="@xml/popup" android:popupCharacters="9\uF006\uF009\uF00c" />
@@ -9,14 +9,13 @@
         <Key android:codes="41" android:keyEdgeFlags="right" />
     </Row>
     <Row android:keyHeight="10%p" >
-        <Key android:codes="94" android:keyEdgeFlags="left"
-             android:popupKeyboard="@xml/popup" android:popupCharacters="^!" />
+        <Key android:codes="94" android:keyEdgeFlags="left" android:popupKeyboard="@xml/popup" />
         <Key android:codes="52" android:popupKeyboard="@xml/popup" android:popupCharacters="4\uF000\uF001" />
         <Key android:codes="53" android:popupKeyboard="@xml/popup" android:popupCharacters="5\uF002" />
         <Key android:codes="54" android:popupKeyboard="@xml/popup" android:popupCharacters="6\uF003" />
         <Key android:codes="42" /> 
         <Key android:codes="47" android:keyEdgeFlags="right" 
-             android:popupKeyboard="@xml/popup" android:popupCharacters="/%"/>
+             android:popupKeyboard="@xml/popup" />
     </Row>
     <Row android:keyHeight="10%p" >
         <Key android:codes="960" android:keyEdgeFlags="left" 

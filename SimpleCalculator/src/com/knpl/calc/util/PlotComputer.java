@@ -92,13 +92,6 @@ public class PlotComputer implements Serializable {
 		}
 	}
 	
-	private void simdMod(float[] stacks, int n, int sp) {
-		int dst = n * (sp - 2);
-		for (int i = dst; i < dst + n; i++) {
-			stacks[i] -= stacks[i+n] * Math.floor(stacks[i]/stacks[i+n]);
-		}
-	}
-	
 	private void simdPow(float[] stacks, int n, int sp) {
 		int dst = n * (sp - 2);
 		for (int i = dst; i < dst + n; i++) {
@@ -332,10 +325,6 @@ public class PlotComputer implements Serializable {
 				simdDiv(stacks, n, sp);
 				sp -= 1;
 				break;
-			case ByteCodes.MOD:
-				simdMod(stacks, n, sp);
-				sp -= 1;
-				break;
 			case ByteCodes.POW:
 				simdPow(stacks, n, sp);
 				sp -= 1;
@@ -410,7 +399,7 @@ public class PlotComputer implements Serializable {
 			case ByteCodes.ARG:
 				simdArg(stacks, n, sp);
 				break;
-			case ByteCodes.MODUL:
+			case ByteCodes.MOD:
 				simdAbs(stacks, n, sp);
 				break;
 			case ByteCodes.CONJ:

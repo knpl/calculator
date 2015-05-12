@@ -72,14 +72,13 @@ public class CalculatorKeyboard {
 			}
 		}
 
-		@Override public void onText(CharSequence text) {}
-
+		@Override 
+		public void onText(CharSequence text) {
+			
+		}
 		@Override public void swipeLeft() {}
-
 		@Override public void swipeRight() {}
-
 		@Override public void swipeDown() {}
-
 		@Override public void swipeUp() {}
 	}
 	
@@ -151,16 +150,18 @@ public class CalculatorKeyboard {
     	if (isKeyboardVisible()) {
     		return;
     	}
-    	kbdv.setEnabled(true);
+    	
 		kbdv.setVisibility(View.VISIBLE);
+		kbdv.setEnabled(true);
     }
     
     public void hideKeyboard() {
     	if (!isKeyboardVisible()) {
     		return;
     	}
-    	kbdv.setEnabled(false);
+    	kbdv.closing();
 		kbdv.setVisibility(View.GONE);
+		kbdv.setEnabled(false);
     }
     
     public void registerEditText(EditText input) {

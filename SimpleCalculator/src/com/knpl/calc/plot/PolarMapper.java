@@ -38,7 +38,7 @@ public class PolarMapper implements Mapper {
 		}
 		
 		Path path = MapperUtils.pathInWindow(new Path(), buffer, buffer.length, 
-						xrange.min, xrange.max, yrange.min, yrange.max);
+			(float)xrange.min, (float)xrange.max, (float)yrange.min, (float)yrange.max);
 		path.transform(ctm);
 		return path;
 	}

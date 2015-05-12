@@ -62,7 +62,6 @@ public class Program implements Serializable {
 			case ByteCodes.MUL:
 			case ByteCodes.DIV:
 			case ByteCodes.POW:
-			case ByteCodes.MOD:
 			case ByteCodes.MAX:
 			case ByteCodes.MIN:
 			case ByteCodes.POP:

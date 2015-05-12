@@ -45,13 +45,11 @@ public class ByteCodes {
 		D2R = 0x21,
 		INC = 0x22,
 		DEC = 0x23,
-	
-		MOD = 0x24,
 		
 		RE = 0x25,
 		IM = 0x26,
 		ARG = 0x27,
-		MODUL = 0x28,
+		MOD = 0x28,
 		CONJ = 0x29;
 	
 		public static String toString(byte code) {
@@ -160,9 +158,6 @@ public class ByteCodes {
 				case DEC:
 					s = "DEC";
 					break;
-				case MOD:
-					s = "MOD";
-					break;
 				case RE:
 					s = "RE";
 					break;
@@ -172,8 +167,8 @@ public class ByteCodes {
 				case ARG:
 					s = "ARG";
 					break;
-				case MODUL:
-					s = "MODUL";
+				case MOD:
+					s = "MOD";
 					break;
 				case CONJ:
 					s = "CONJ";

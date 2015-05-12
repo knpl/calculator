@@ -41,9 +41,6 @@ public class Visitor {
 	public Object visitDiv(Div node) throws Exception {
 		return visitBinOp((BinOp) node);
 	}
-	public Object visitMod(Mod node) throws Exception {
-		return visitBinOp((BinOp) node);
-	}
 	public Object visitPow(Pow node) throws Exception {
 		return visitBinOp((BinOp) node);
 	}

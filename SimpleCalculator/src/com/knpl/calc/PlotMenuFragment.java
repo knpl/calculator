@@ -34,6 +34,7 @@ import com.knpl.calc.plot.ParametricMapper;
 import com.knpl.calc.plot.PolarMapper;
 import com.knpl.calc.plot.ProgramMapper;
 import com.knpl.calc.plot.Range;
+import com.knpl.calc.plot.XtoYComputerMapper;
 import com.knpl.calc.util.PlotComputer;
 import com.knpl.calc.visitors.NumEvaluate;
 
@@ -217,6 +218,23 @@ public class PlotMenuFragment extends ListFragment {
 		}
 		activity.plot(mappers);
 	}
+	
+	private void compileAndPlot3d() {
+		ArrayList<Mapper> mappers = new ArrayList<Mapper>(plotEntries.size());
+		for (PlotEntry entry : plotEntries) {
+			try {
+				if (entry.type == PlotType.NORMAL) {
+					mappers.add(new XtoYComputerMapper(
+							new PlotComputer(entry.ufd.getProgram()), entry.color));
+				}
+			}
+			catch (Exception ex) {
+	    		ex.printStackTrace();
+	    		displayMessage(ex.getMessage());
+			}
+		}
+		activity.plot3d(mappers);
+	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -229,6 +247,9 @@ public class PlotMenuFragment extends ListFragment {
 		switch (item.getItemId()) {
 		case R.id.action_clear:
 			adapter.clear();
+			break;
+		case R.id.action_plot_3d:
+			compileAndPlot3d();
 			break;
 		case R.id.action_plot:
 			compileAndPlot();

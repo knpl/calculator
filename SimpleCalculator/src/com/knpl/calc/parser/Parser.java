@@ -171,12 +171,6 @@ public class Parser {
 					return false;
 				result = new Div(last, (Expr) result);
 				break;
-			case MOD:
-				nextToken();
-				if (!prefix())
-					return false;
-				result = new Mod(last, (Expr) result);
-				break;
 			default:
 				return true;
 			}

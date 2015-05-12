@@ -116,14 +116,6 @@ public class Compile extends Visitor {
 		code.write(ByteCodes.DIV);
 		return node;
 	}
-	
-	@Override
-	public Node visitMod(Mod node) throws Exception {
-		node.getLHS().accept(this);
-		node.getRHS().accept(this);
-		code.write(ByteCodes.MOD);
-		return node;
-	}
 
 	@Override
 	public Node visitPow(Pow node) throws Exception {
@@ -317,7 +309,7 @@ public class Compile extends Visitor {
 	
 	@Override
 	public Node visitModDef(ModDef node) {
-		code.write(ByteCodes.MODUL);
+		code.write(ByteCodes.MOD);
 		return node;
 	}
 	

@@ -3,13 +3,10 @@ package com.knpl.calc;
 import java.util.ArrayList;
 import com.knpl.calc.R;
 import com.knpl.calc.keyboard.CalculatorKeyboard;
-import com.knpl.calc.keyboard.MyKeyboardView;
 import com.knpl.calc.plot.Mapper;
 import com.knpl.calc.plot.Range;
 import com.knpl.calc.storage.CalculatorDb;
 
-import android.animation.LayoutTransition;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -31,7 +28,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class SimpleCalculatorActivity extends ActionBarActivity {
@@ -52,10 +48,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
 		"com.knpl.calc.CalculatorPreferenceFragment"
 	};
 	
-	public static final Range DEFAULT_AXIS = new Range(-5, 5);
-	
-	private static Range xaxis = DEFAULT_AXIS,
-						 yaxis = DEFAULT_AXIS;
+	private static Range xaxis, yaxis;
 	
 	private String[] items;
 	private DrawerLayout drawerLayout;
@@ -71,21 +64,8 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_calculator);
         
-        final LinearLayout container = (LinearLayout) findViewById(R.id.container);
-        
         keyboard = new CalculatorKeyboard(this, R.id.keyboard, 
         		R.xml.qwerty_keyboard, R.xml.greek_keyboard, R.xml.calculator_keyboard);
-        
-        final MyKeyboardView kbdv = keyboard.getKeyboardView();
-        LayoutTransition trans = container.getLayoutTransition();
-		if (trans != null) {
-			trans.disableTransitionType(LayoutTransition.APPEARING);
-			trans.setAnimator(LayoutTransition.DISAPPEARING, 
-					ObjectAnimator.ofFloat(kbdv, "alpha", 1f, 0f));
-			trans.disableTransitionType(LayoutTransition.CHANGE_APPEARING);
-			trans.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
-	        container.setLayoutTransition(trans);
-		}
 		
         items = getResources().getStringArray(R.array.listitems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -191,16 +171,7 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     	ft.replace(R.id.content_frame, frag);
     	ft.commit();
     }
-//    
-//    private void setFragment(Fragment fragment, boolean addToBackStack) {
-//		FragmentManager fm = getSupportFragmentManager();
-//    	FragmentTransaction ft = fm.beginTransaction();
-//    	ft.replace(R.id.content_frame, fragment);
-//    	if (addToBackStack)
-//    		ft.addToBackStack(null);
-//    	ft.commit();
-//    }    
-//    
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -223,6 +194,14 @@ public class SimpleCalculatorActivity extends ActionBarActivity {
     
     public void plot(ArrayList<Mapper> mappers) {
     	PlotFragment fragment = PlotFragment.createPlotFragment(mappers, xaxis, yaxis);
+    	FragmentManager fm = getSupportFragmentManager();
+    	FragmentTransaction ft = fm.beginTransaction();
+    	ft.replace(R.id.content_frame, fragment);
+    	ft.commit();
+    }
+    
+    public void plot3d(ArrayList<Mapper> mappers) {
+    	GLPlotFragment fragment = GLPlotFragment.createGLPlotFragment(mappers, xaxis, yaxis);
     	FragmentManager fm = getSupportFragmentManager();
     	FragmentTransaction ft = fm.beginTransaction();
     	ft.replace(R.id.content_frame, fragment);
